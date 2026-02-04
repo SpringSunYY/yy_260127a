@@ -1,9 +1,9 @@
 // TODO @芋艿：后续再优化
 // TODO @芋艿：可以共享么？
 
-import { isObject } from '@vben/utils';
+import {isObject} from '@vben/utils';
 
-import { useDictStore } from '#/store';
+import {useDictStore} from '#/store';
 
 // TODO @dhb52：top-level 调用 导致："getActivePinia()" was called but there was no active Pinia
 // 先临时移入到方法中
@@ -187,6 +187,8 @@ enum DICT_TYPE {
   USER_TYPE = 'user_type',
 
   // ========== biz模块 ==========
-  BIZ_CUSTOMER_INDUSTRY='biz_customer_industry',//所属行业
+  BIZ_CUSTOMER_INDUSTRY = 'biz_customer_industry',//所属行业
+  BIZ_RAW_MATERIALS_UNIT='biz_raw_materials_unit',//材料单位
 }
-export { DICT_TYPE, getDictLabel, getDictObj, getDictOptions };
+
+export {DICT_TYPE, getDictLabel, getDictObj, getDictOptions};

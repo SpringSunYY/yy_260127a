@@ -14,4 +14,6 @@ public interface ErrorCodeConstants {
 
     // ==========  供应商 模块 1-008-002-xxx ==========
     ErrorCode SUPPLIER_NOT_EXISTS = new ErrorCode(1_008_002_000, "供应商不存在");
+    // ========== 原材料信息 1-008-003-xxx  ==========
+    ErrorCode RAW_MATERIALS_NOT_EXISTS = new ErrorCode(1_008_003_000, "原材料信息不存在");
 }
