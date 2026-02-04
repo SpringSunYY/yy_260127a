@@ -1,0 +1,3 @@
+com.lz.framework.mq.redis.config.ProjectRedisMQProducerAutoConfiguration
+com.lz.framework.mq.redis.config.ProjectRedisMQConsumerAutoConfiguration
+com.lz.framework.mq.rabbitmq.config.ProjectRabbitMQAutoConfiguration

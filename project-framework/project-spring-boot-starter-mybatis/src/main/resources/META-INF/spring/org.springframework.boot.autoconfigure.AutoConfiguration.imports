@@ -1,0 +1,3 @@
+com.lz.framework.datasource.config.ProjectDataSourceAutoConfiguration
+com.lz.framework.mybatis.config.ProjectMybatisAutoConfiguration
+com.lz.framework.translate.config.ProjectTranslateAutoConfiguration

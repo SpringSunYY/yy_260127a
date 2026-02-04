@@ -1,0 +1,6 @@
+com.lz.framework.apilog.config.ProjectApiLogAutoConfiguration
+com.lz.framework.jackson.config.ProjectJacksonAutoConfiguration
+com.lz.framework.swagger.config.ProjectSwaggerAutoConfiguration
+com.lz.framework.web.config.ProjectWebAutoConfiguration
+com.lz.framework.xss.config.ProjectXssAutoConfiguration
+com.lz.framework.banner.config.ProjectBannerAutoConfiguration
