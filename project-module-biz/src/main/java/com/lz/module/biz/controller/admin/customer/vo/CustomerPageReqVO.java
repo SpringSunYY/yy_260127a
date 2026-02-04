@@ -19,9 +19,6 @@ public class CustomerPageReqVO extends PageParam {
     @Schema(description = "客户名称", example = "赵六")
     private String name;
 
-    @Schema(description = "手机")
-    private String mobile;
-
     @Schema(description = "电话")
     private String telephone;
 

@@ -1,7 +1,6 @@
-import type { PageParam, PageResult } from '@vben/request';
-import type { Dayjs } from 'dayjs';
+import type {PageParam, PageResult} from '@vben/request';
 
-import { requestClient } from '#/api/request';
+import {requestClient} from '#/api/request';
 
 export namespace CustomerApi {
   /** 客户信息信息 */

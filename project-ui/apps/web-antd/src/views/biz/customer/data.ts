@@ -2,7 +2,8 @@ import type {VbenFormSchema} from '#/adapter/form';
 import type {VxeTableGridOptions} from '#/adapter/vxe-table';
 import type {CustomerApi} from '#/api/biz/customer';
 import {DICT_TYPE, getDictOptions, getRangePickerDefaultProps} from '#/utils';
-
+import { z } from '#/adapter/form';
+import {getAreaTree} from "#/api/system/area";
 /** 新增/修改的表单 */
 export function useFormSchema(): VbenFormSchema[] {
   return [
@@ -17,18 +18,9 @@ export function useFormSchema(): VbenFormSchema[] {
     {
       fieldName: 'name',
       label: '客户名称',
-      rules: 'required',
       component: 'Input',
       componentProps: {
         placeholder: '请输入客户名称',
-      },
-    },
-    {
-      fieldName: 'mobile',
-      label: '手机',
-      component: 'Input',
-      componentProps: {
-        placeholder: '请输入手机',
       },
     },
     {
@@ -36,7 +28,7 @@ export function useFormSchema(): VbenFormSchema[] {
       label: '电话',
       component: 'Input',
       componentProps: {
-        placeholder: '请输入电话',
+        placeholder: '请输入电话号码',
       },
     },
     {
@@ -59,6 +51,7 @@ export function useFormSchema(): VbenFormSchema[] {
       fieldName: 'email',
       label: '邮箱',
       component: 'Input',
+      rules: z.string().email('邮箱格式不正确').or(z.literal('')).optional(),
       componentProps: {
         placeholder: '请输入邮箱',
       },
@@ -66,9 +59,10 @@ export function useFormSchema(): VbenFormSchema[] {
     {
       fieldName: 'areaId',
       label: '地区编号',
-      component: 'Input',
+      component: 'ApiTreeSelect',
       componentProps: {
-        placeholder: '请输入地区编号',
+        api: () => getAreaTree(),
+        fieldNames: { label: 'name', value: 'id', children: 'children' },
       },
     },
     {
@@ -118,15 +112,6 @@ export function useGridFormSchema(): VbenFormSchema[] {
       componentProps: {
         allowClear: true,
         placeholder: '请输入客户名称',
-      },
-    },
-    {
-      fieldName: 'mobile',
-      label: '手机',
-      component: 'Input',
-      componentProps: {
-        allowClear: true,
-        placeholder: '请输入手机',
       },
     },
     {
@@ -199,7 +184,7 @@ export function useGridFormSchema(): VbenFormSchema[] {
 /** 列表的字段 */
 export function useGridColumns(): VxeTableGridOptions<CustomerApi.Customer>['columns'] {
   return [
-    { type: 'checkbox', width: 40 },
+  { type: 'checkbox', width: 40 },
     {
       field: 'id',
       title: '编号',
@@ -208,11 +193,6 @@ export function useGridColumns(): VxeTableGridOptions<CustomerApi.Customer>['col
     {
       field: 'name',
       title: '客户名称',
-      minWidth: 120,
-    },
-    {
-      field: 'mobile',
-      title: '手机',
       minWidth: 120,
     },
     {

@@ -32,10 +32,6 @@ public class CustomerDO extends BaseDO {
      */
     private String name;
     /**
-     * 手机
-     */
-    private String mobile;
-    /**
      * 电话
      */
     private String telephone;

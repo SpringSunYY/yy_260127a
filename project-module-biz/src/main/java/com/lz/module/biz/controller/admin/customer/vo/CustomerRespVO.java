@@ -1,13 +1,19 @@
 package com.lz.module.biz.controller.admin.customer.vo;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
-import java.util.*;
-import org.springframework.format.annotation.DateTimeFormat;
-import java.time.LocalDateTime;
-import com.alibaba.excel.annotation.*;
+import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
+import com.alibaba.excel.annotation.ExcelProperty;
 import com.lz.framework.excel.core.annotations.DictFormat;
 import com.lz.framework.excel.core.convert.DictConvert;
+import com.mzt.logapi.starter.annotation.DiffLogField;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
+import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDateTime;
+
+import static com.lz.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND;
 
 @Schema(description = "管理后台 - 客户信息 Response VO")
 @Data
@@ -22,10 +28,6 @@ public class CustomerRespVO {
     @ExcelProperty("客户名称")
     private String name;
 
-    @Schema(description = "手机")
-    @ExcelProperty("手机")
-    private String mobile;
-
     @Schema(description = "电话")
     @ExcelProperty("电话")
     private String telephone;
@@ -38,8 +40,10 @@ public class CustomerRespVO {
     @ExcelProperty("微信")
     private String weChat;
 
-    @Schema(description = "邮箱")
-    @ExcelProperty("邮箱")
+    @Schema(description = "用户邮箱", example = "project@iocoder.cn")
+    @Email(message = "邮箱格式不正确")
+    @Size(max = 50, message = "邮箱长度不能超过 50 个字符")
+    @DiffLogField(name = "用户邮箱")
     private String email;
 
     @Schema(description = "地区编号", example = "22553")

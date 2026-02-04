@@ -21,7 +21,6 @@ public interface CustomerMapper extends BaseMapperX<CustomerDO> {
         return selectPage(reqVO, new LambdaQueryWrapperX<CustomerDO>()
                 .eqIfPresent(CustomerDO::getId, reqVO.getId())
                 .likeIfPresent(CustomerDO::getName, reqVO.getName())
-                .likeIfPresent(CustomerDO::getMobile, reqVO.getMobile())
                 .likeIfPresent(CustomerDO::getTelephone, reqVO.getTelephone())
                 .likeIfPresent(CustomerDO::getQq, reqVO.getQq())
                 .likeIfPresent(CustomerDO::getWeChat, reqVO.getWeChat())

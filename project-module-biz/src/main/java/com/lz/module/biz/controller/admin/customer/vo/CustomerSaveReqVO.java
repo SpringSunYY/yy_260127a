@@ -1,9 +1,9 @@
 package com.lz.module.biz.controller.admin.customer.vo;
 
+import com.lz.framework.common.validation.Mobile;
+import com.mzt.logapi.starter.annotation.DiffLogField;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
-import java.util.*;
-import jakarta.validation.constraints.*;
+import lombok.Data;
 
 @Schema(description = "管理后台 - 客户信息新增/修改 Request VO")
 @Data
@@ -15,10 +15,9 @@ public class CustomerSaveReqVO {
     @Schema(description = "客户名称", example = "赵六")
     private String name;
 
-    @Schema(description = "手机")
-    private String mobile;
-
-    @Schema(description = "电话")
+    @Schema(description = "电话", example = "15601691300")
+    @Mobile
+    @DiffLogField(name = "电话")
     private String telephone;
 
     @Schema(description = "QQ")

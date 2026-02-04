@@ -1,15 +1,15 @@
 <script lang="ts" setup>
-import type { CustomerApi } from '#/api/biz/customer';
+import type {CustomerApi} from '#/api/biz/customer';
+import {createCustomer, getCustomer, updateCustomer} from '#/api/biz/customer';
 
-import { useVbenModal } from '@vben/common-ui';
-import { message, Tabs, Checkbox, Input, Textarea, Select,RadioGroup,CheckboxGroup, DatePicker } from 'ant-design-vue';
+import {useVbenModal} from '@vben/common-ui';
+import {message} from 'ant-design-vue';
 
-import { computed, ref } from 'vue';
-import { $t } from '#/locales';
-import { useVbenForm } from '#/adapter/form';
-import { getCustomer, createCustomer, updateCustomer } from '#/api/biz/customer';
+import {computed, ref} from 'vue';
+import {$t} from '#/locales';
+import {useVbenForm} from '#/adapter/form';
 
-import { useFormSchema } from '../data';
+import {useFormSchema} from '../data';
 
 const emit = defineEmits(['success']);
 const formData = ref<CustomerApi.Customer>();
