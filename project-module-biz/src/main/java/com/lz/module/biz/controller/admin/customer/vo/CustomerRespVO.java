@@ -41,9 +41,6 @@ public class CustomerRespVO {
     private String weChat;
 
     @Schema(description = "用户邮箱", example = "project@iocoder.cn")
-    @Email(message = "邮箱格式不正确")
-    @Size(max = 50, message = "邮箱长度不能超过 50 个字符")
-    @DiffLogField(name = "用户邮箱")
     private String email;
 
     @Schema(description = "地区编号", example = "22553")
