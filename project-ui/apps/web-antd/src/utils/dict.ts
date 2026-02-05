@@ -188,7 +188,8 @@ enum DICT_TYPE {
 
   // ========== biz模块 ==========
   BIZ_CUSTOMER_INDUSTRY = 'biz_customer_industry',//所属行业
-  BIZ_RAW_MATERIALS_UNIT='biz_raw_materials_unit',//材料单位
+  BIZ_RAW_MATERIALS_UNIT = 'biz_raw_materials_unit',//材料单位
+  BIZ_PURCHASE_ORDER_STATUS = 'biz_purchase_order_status',//采购单状态
 }
 
 export {DICT_TYPE, getDictLabel, getDictObj, getDictOptions};
