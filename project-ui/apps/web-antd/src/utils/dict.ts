@@ -143,6 +143,7 @@ export const getBoolDictOptions = (dictType: string) => {
 enum DICT_TYPE {
   // ========== biz模块 ==========
   BIZ_CUSTOMER_INDUSTRY = 'biz_customer_industry', // 所属行业
+  BIZ_METER_DIRECTION = 'biz_meter_direction',
   BIZ_PROJECT_ENGINEERING_TYPE = 'biz_project_engineering_type',
   BIZ_PROJECT_PROJECT_PROGRESS = 'biz_project_project_progress', // 项目进度
   BIZ_PROJECT_TYPE = 'biz_project_type',
