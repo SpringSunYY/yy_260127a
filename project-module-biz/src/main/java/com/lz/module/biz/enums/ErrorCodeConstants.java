@@ -23,4 +23,6 @@ public interface ErrorCodeConstants {
     ErrorCode PROJECT_NOT_EXISTS = new ErrorCode(1_008_005_000, "项目信息不存在");
     // ========== 项目签证 1-008-006-xxx  ==========
     ErrorCode PROJECT_VISA_NOT_EXISTS = new ErrorCode(1_008_006_000, "项目签证不存在");
+    // ========== 零散工程 1-008-007-xxx  ==========
+    ErrorCode PROJECT_SCATTERED_NOT_EXISTS = new ErrorCode(1_008_007_000, "零散工程不存在");
 }

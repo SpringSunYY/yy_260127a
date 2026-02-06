@@ -97,7 +97,7 @@ export function useFormSchema(): VbenFormSchema[] {
       component: 'DatePicker',
       componentProps: {
         showTime: true,
-        format: 'YYYY-MM-DD HH:mm:ss',
+        format: 'YYYY-MM-DD',
         valueFormat: 'x',
       },
     },
@@ -419,7 +419,7 @@ export function useGridColumns(): VxeTableGridOptions<ProjectApi.Project>['colum
       field: 'deliverTime',
       title: '交底时间',
       minWidth: 120,
-      formatter: 'formatDateTime',
+      formatter: 'formatDate',
     },
     {
       field: 'fiscalYear',
