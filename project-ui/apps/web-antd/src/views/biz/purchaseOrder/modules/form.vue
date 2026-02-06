@@ -38,7 +38,7 @@ const loadSuppliers = async (keyword?: string) => {
   try {
     const res = await getSupplierPage({
       pageNo: 1,
-      pageSize: 20,
+      pageSize: 50,
       name: keyword || '',
     });
     supplierOptions.value = res.list || [];
@@ -56,7 +56,6 @@ const handleSupplierSearch = useDebounceFn((_value: string) => {
 // 供应商选择
 const handleSupplierChange = (_value: any, option: any) => {
   formApi.setFieldValue('supplierName', option?.name || option?.label || '');
-  formApi.setFieldValue('supplierId', option?.id || option?.value || '');
 };
 
 // 供应商下拉打开时加载数据
@@ -138,9 +137,9 @@ defineExpose({});
   <Modal :title="getTitle">
     <Form class="mx-4">
       <!-- 供应商自定义插槽 -->
-      <template #supplierId="{ fieldName }">
+      <template #supplierId="slotProps">
         <Select
-          v-model:value="formApi.form.values.supplierId"
+          v-bind="slotProps"
           show-search
           allow-clear
           placeholder="请选择供应商"

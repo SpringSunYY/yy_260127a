@@ -39,7 +39,6 @@ export function useFormSchema(): VbenFormSchema[] {
       component: 'Input',
       componentProps: {
         placeholder: '请选择供应商',
-        disabled: true,
       },
     },
     {
@@ -92,6 +91,7 @@ export function useFormSchema(): VbenFormSchema[] {
       fieldName: 'remark',
       label: '备注',
       component: 'Textarea',
+      formItemClass: 'col-span-2',
       componentProps: {
         placeholder: '请输入备注',
         rows: 3,
