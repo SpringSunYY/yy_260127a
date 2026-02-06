@@ -18,5 +18,7 @@ public interface ErrorCodeConstants {
     ErrorCode RAW_MATERIALS_NOT_EXISTS = new ErrorCode(1_008_003_000, "原材料信息不存在");
     // ========== 采购信息 1-008-004-xxx  ==========
     ErrorCode PURCHASE_ORDER_NOT_EXISTS = new ErrorCode(1_008_004_000, "采购信息不存在");
-    ErrorCode PURCHASE_ORDER_DETAIL_NOT_DATA=new ErrorCode(1_008_004_001,"采购明细数据不全，请检查是否是价格或者数量不对");
+    ErrorCode PURCHASE_ORDER_DETAIL_NOT_DATA = new ErrorCode(1_008_004_001, "采购明细数据不全，请检查是否是价格或者数量不对");
+    // ========== 项目 1-008-005-xxx  ==========
+    ErrorCode PROJECT_NOT_EXISTS = new ErrorCode(1_008_005_000, "项目信息不存在");
 }
