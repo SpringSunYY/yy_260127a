@@ -21,4 +21,6 @@ public interface ErrorCodeConstants {
     ErrorCode PURCHASE_ORDER_DETAIL_NOT_DATA = new ErrorCode(1_008_004_001, "采购明细数据不全，请检查是否是价格或者数量不对");
     // ========== 项目 1-008-005-xxx  ==========
     ErrorCode PROJECT_NOT_EXISTS = new ErrorCode(1_008_005_000, "项目信息不存在");
+    // ========== 项目签证 1-008-006-xxx  ==========
+    ErrorCode PROJECT_VISA_NOT_EXISTS = new ErrorCode(1_008_006_000, "项目签证不存在");
 }
