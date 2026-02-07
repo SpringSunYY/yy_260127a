@@ -31,4 +31,6 @@ public interface ErrorCodeConstants {
     ErrorCode PROJECT_OTHER_NOT_EXISTS = new ErrorCode(1_008_009_000, "其他工程不存在");
     // ========== 工人信息 1-008-010-xxx  ==========
     ErrorCode WORKER_NOT_EXISTS = new ErrorCode(1_008_010_000, "工人信息不存在");
+    // ========== 工资信息 1-008-011-xxx  ==========
+    ErrorCode SALARY_NOT_EXISTS = new ErrorCode(1_008_011_000, "工资信息不存在");
 }
