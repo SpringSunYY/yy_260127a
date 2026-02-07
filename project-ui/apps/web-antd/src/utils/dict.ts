@@ -145,6 +145,8 @@ enum DICT_TYPE {
   BIZ_CUSTOMER_INDUSTRY = 'biz_customer_industry', // 所属行业
   BIZ_METER_DIRECTION = 'biz_meter_direction',
   BIZ_PROJECT_ENGINEERING_TYPE = 'biz_project_engineering_type',
+  BIZ_PROJECT_OTHER_PROJECT_PROGRESS = 'biz_project_other_project_progress',
+  BIZ_PROJECT_OTHER_PROJECT_TYPE = 'biz_project_other_project_type',
   BIZ_PROJECT_PROJECT_PROGRESS = 'biz_project_project_progress', // 项目进度
   BIZ_PROJECT_TYPE = 'biz_project_type',
   BIZ_PURCHASE_ORDER_STATUS = 'biz_purchase_order_status', // 采购单状态

@@ -27,4 +27,6 @@ public interface ErrorCodeConstants {
     ErrorCode PROJECT_SCATTERED_NOT_EXISTS = new ErrorCode(1_008_007_000, "零散工程不存在");
     // ========== 装表信息 1-008-008-xxx  ==========
     ErrorCode INSTALL_TABLE_NOT_EXISTS = new ErrorCode(1_008_008_000, "装表信息不存在");
+    // ========== 其他工程 1-008-009-xxx  ==========
+    ErrorCode PROJECT_OTHER_NOT_EXISTS = new ErrorCode(1_008_009_000, "其他工程不存在");
 }
