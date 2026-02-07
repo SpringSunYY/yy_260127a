@@ -151,6 +151,10 @@ enum DICT_TYPE {
   BIZ_PROJECT_TYPE = 'biz_project_type',
   BIZ_PURCHASE_ORDER_STATUS = 'biz_purchase_order_status', // 采购单状态
   BIZ_RAW_MATERIALS_UNIT = 'biz_raw_materials_unit', // 材料单位
+  BIZ_WORKER_SKILL_LEVEL = 'biz_worker_skill_level',
+  BIZ_WORKER_STATUS = 'biz_worker_status',
+  BIZ_WORKER_WORK_TYPE = 'biz_worker_work_type',
+  BIZ_WORKER_WORKER_TYPE = 'biz_worker_worker_type',
   BPM_MODEL_FORM_TYPE = 'bpm_model_form_type',
   // ========== BPM 模块 ==========
   BPM_MODEL_TYPE = 'bpm_model_type',

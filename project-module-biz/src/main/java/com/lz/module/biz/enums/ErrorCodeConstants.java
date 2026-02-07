@@ -29,4 +29,6 @@ public interface ErrorCodeConstants {
     ErrorCode INSTALL_TABLE_NOT_EXISTS = new ErrorCode(1_008_008_000, "装表信息不存在");
     // ========== 其他工程 1-008-009-xxx  ==========
     ErrorCode PROJECT_OTHER_NOT_EXISTS = new ErrorCode(1_008_009_000, "其他工程不存在");
+    // ========== 工人信息 1-008-010-xxx  ==========
+    ErrorCode WORKER_NOT_EXISTS = new ErrorCode(1_008_010_000, "工人信息不存在");
 }

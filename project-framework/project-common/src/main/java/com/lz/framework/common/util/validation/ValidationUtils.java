@@ -2,6 +2,8 @@ package com.lz.framework.common.util.validation;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Assert;
+import cn.hutool.core.util.IdcardUtil;
+import cn.hutool.core.util.StrUtil;
 import org.springframework.util.StringUtils;
 
 import jakarta.validation.ConstraintViolation;
@@ -27,6 +29,11 @@ public class ValidationUtils {
     public static boolean isMobile(String mobile) {
         return StringUtils.hasText(mobile)
                 && PATTERN_MOBILE.matcher(mobile).matches();
+    }
+
+    public static boolean isIdCard(String idCard) {
+        return StringUtils.hasText(idCard)
+                && IdcardUtil.isValidCard(idCard);
     }
 
     public static boolean isURL(String url) {
