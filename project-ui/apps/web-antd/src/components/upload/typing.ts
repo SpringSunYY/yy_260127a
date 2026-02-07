@@ -12,8 +12,8 @@ export enum UploadResultStatus {
 export type UploadListType = 'picture' | 'picture-card' | 'text';
 
 export interface FileUploadProps {
-  // 根据后缀，或者其他
-  accept?: string[];
+  // 根据后缀，或者其他，格式：'jpg/jpeg/png/gif/webp' 或 ['jpg', 'jpeg', 'png', 'gif', 'webp']
+  accept?: string[] | string;
   api?: (
     file: File,
     onUploadProgress?: AxiosProgressEvent,
@@ -27,6 +27,8 @@ export interface FileUploadProps {
   maxNumber?: number;
   // 文件最大多少MB
   maxSize?: number;
+  // 文件最小多少MB，0或不传表示不限制
+  minSize?: number;
   // 是否支持多选
   multiple?: boolean;
   // support xxx.xxx.xx

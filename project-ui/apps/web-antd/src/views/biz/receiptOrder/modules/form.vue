@@ -1,13 +1,21 @@
 <script lang="ts" setup>
 import type { ReceiptOrderApi } from '#/api/biz/receiptOrder';
 
-import { useVbenModal } from '@vben/common-ui';
-import { message, Tabs, Checkbox, Input, Textarea, Select,RadioGroup,CheckboxGroup, DatePicker } from 'ant-design-vue';
+import { computed, onMounted, ref } from 'vue';
 
-import { computed, ref } from 'vue';
-import { $t } from '#/locales';
+import { useVbenModal } from '@vben/common-ui';
+
+import { useDebounceFn } from '@vueuse/core';
+import { message, Select } from 'ant-design-vue';
+
 import { useVbenForm } from '#/adapter/form';
-import { getReceiptOrder, createReceiptOrder, updateReceiptOrder } from '#/api/biz/receiptOrder';
+import { getProjectPage } from '#/api/biz/project';
+import {
+  createReceiptOrder,
+  getReceiptOrder,
+  updateReceiptOrder,
+} from '#/api/biz/receiptOrder';
+import { $t } from '#/locales';
 
 import { useFormSchema } from '../data';
 
@@ -19,6 +27,46 @@ const getTitle = computed(() => {
     : $t('ui.actionTitle.create', ['收款信息']);
 });
 
+onMounted(() => {
+  loadProjects();
+});
+// 项目搜索状态
+const projectKeyword = ref('');
+const projectOptions = ref<any[]>([]);
+const projectLoading = ref(false);
+
+// 加载项目列表
+const loadProjects = async (keyword?: string) => {
+  projectLoading.value = true;
+  try {
+    const res = await getProjectPage({
+      pageNo: 1,
+      pageSize: 50,
+      name: keyword || '',
+    });
+    projectOptions.value = res.list || [];
+  } finally {
+    projectLoading.value = false;
+  }
+};
+
+// 项目搜索
+const handleProjectSearch = useDebounceFn((_value: string) => {
+  projectKeyword.value = _value;
+  loadProjects(_value);
+}, 300);
+
+// 项目选择
+const handleProjectChange = (_value: any, option: any) => {
+  formApi.setFieldValue('projectName', option?.name || option?.label || '');
+};
+
+// 项目下拉打开时加载数据
+const handleProjectOpenChange = (open: boolean) => {
+  if (open) {
+    loadProjects();
+  }
+};
 
 const [Form, formApi] = useVbenForm({
   commonConfig: {
@@ -26,11 +74,11 @@ const [Form, formApi] = useVbenForm({
       class: 'w-full',
     },
     formItemClass: 'col-span-2',
-    labelWidth: 80
+    labelWidth: 80,
   },
   layout: 'horizontal',
   schema: useFormSchema(),
-  showDefaultActions: false
+  showDefaultActions: false,
 });
 
 const [Modal, modalApi] = useVbenModal({
@@ -39,15 +87,17 @@ const [Modal, modalApi] = useVbenModal({
     if (!valid) {
       return;
     }
-        modalApi.lock();
+    modalApi.lock();
     // 提交表单
     const data = (await formApi.getValues()) as ReceiptOrderApi.ReceiptOrder;
-        try {
-      await (formData.value?.id ? updateReceiptOrder(data) : createReceiptOrder(data));
+    try {
+      await (formData.value?.id
+        ? updateReceiptOrder(data)
+        : createReceiptOrder(data));
       // 关闭并提示
       await modalApi.close();
       emit('success');
-      message.success( $t('ui.actionMessage.operationSuccess') );
+      message.success($t('ui.actionMessage.operationSuccess'));
     } finally {
       modalApi.unlock();
     }
@@ -73,12 +123,30 @@ const [Modal, modalApi] = useVbenModal({
     // 设置到 values
     formData.value = data;
     await formApi.setValues(formData.value);
-  }
+  },
 });
 </script>
 
 <template>
   <Modal :title="getTitle">
-    <Form class="mx-4" />
-      </Modal>
+    <Form class="mx-4">
+      <!-- 项目自定义插槽 -->
+      <template #projectId="slotProps">
+        <Select
+          v-bind="slotProps"
+          show-search
+          allow-clear
+          placeholder="请选择项目"
+          :loading="projectLoading"
+          :options="projectOptions"
+          :field-names="{ label: 'name', value: 'id' }"
+          :filter-option="false"
+          class="w-full"
+          @search="handleProjectSearch"
+          @change="handleProjectChange"
+          @dropdown-open-change="handleProjectOpenChange"
+        />
+      </template>
+    </Form>
+  </Modal>
 </template>

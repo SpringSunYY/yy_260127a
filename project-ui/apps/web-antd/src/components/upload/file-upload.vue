@@ -36,7 +36,7 @@ const props = withDefaults(defineProps<FileUploadProps>(), {
 const emit = defineEmits(['change', 'update:value', 'delete', 'returnText']);
 const { accept, helpText, maxNumber, maxSize } = toRefs(props);
 const isInnerOperate = ref<boolean>(false);
-const { getStringAccept } = useUploadType({
+const { getAccept, getStringAccept } = useUploadType({
   acceptRef: accept,
   helpTextRef: helpText,
   maxNumberRef: maxNumber,
@@ -60,7 +60,8 @@ watch(
       if (Array.isArray(v)) {
         value = v;
       } else {
-        value.push(v);
+        // 支持 || 分隔符分隔的多个文件URL
+        value = v.split('||').filter((item) => item.trim());
       }
       fileList.value = value.map((item, i) => {
         if (item && isString(item)) {
@@ -160,7 +161,8 @@ function getValue() {
   if (props.maxNumber === 1) {
     return list.length > 0 ? list[0] : '';
   }
-  return list;
+  // 多个文件用 || 分隔符拼接成字符串
+  return list.length > 0 ? list.join('||') : '';
 }
 </script>
 
@@ -189,7 +191,7 @@ function getValue() {
         请上传不超过
         <div class="text-primary mx-1 font-bold">{{ maxSize }}MB</div>
         的
-        <div class="text-primary mx-1 font-bold">{{ accept.join('/') }}</div>
+        <div class="text-primary mx-1 font-bold">{{ getAccept.join('/') }}</div>
         格式文件
       </div>
     </Upload>

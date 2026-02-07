@@ -28,19 +28,25 @@ export function useUploadType({
   helpTextRef,
   maxNumberRef,
   maxSizeRef,
+  minSizeRef,
 }: {
-  acceptRef: Ref<string[]>;
+  acceptRef: Ref<string[] | string>;
   helpTextRef: Ref<string>;
   maxNumberRef: Ref<number>;
   maxSizeRef: Ref<number>;
+  minSizeRef?: Ref<number>;
 }) {
   // 文件类型限制
   const getAccept = computed(() => {
     const accept = unref(acceptRef);
-    if (accept && accept.length > 0) {
-      return accept;
+    if (!accept) {
+      return [];
     }
-    return [];
+    // 如果是字符串，用 / 分隔符分割成数组
+    if (typeof accept === 'string') {
+      return accept.split('/').filter((item) => item.trim());
+    }
+    return accept;
   });
   const getStringAccept = computed(() => {
     return unref(getAccept)
@@ -60,7 +66,7 @@ export function useUploadType({
     }
     const helpTexts: string[] = [];
 
-    const accept = unref(acceptRef);
+    const accept = unref(getAccept);
     if (accept.length > 0) {
       helpTexts.push($t('ui.upload.accept', [accept.join(',')]));
     }
@@ -68,6 +74,11 @@ export function useUploadType({
     const maxSize = unref(maxSizeRef);
     if (maxSize) {
       helpTexts.push($t('ui.upload.maxSize', [maxSize]));
+    }
+
+    const minSize = unref(minSizeRef);
+    if (minSize && minSize > 0) {
+      helpTexts.push($t('ui.upload.minSize', [minSize]));
     }
 
     const maxNumber = unref(maxNumberRef);

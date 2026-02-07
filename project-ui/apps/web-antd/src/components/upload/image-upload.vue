@@ -6,7 +6,7 @@ import type { FileUploadProps } from './typing';
 
 import type { AxiosProgressEvent } from '#/api/infra/file';
 
-import { ref, toRefs, watch } from 'vue';
+import { computed, ref, toRefs, watch } from 'vue';
 
 import { CloudUpload } from '@vben/icons';
 import { $t } from '@vben/locales';
@@ -27,6 +27,7 @@ const props = withDefaults(defineProps<FileUploadProps>(), {
   listType: 'picture-card',
   helpText: '',
   maxSize: 2,
+  minSize: 0,
   maxNumber: 1,
   accept: () => defaultImageAccepts,
   multiple: false,
@@ -37,7 +38,8 @@ const props = withDefaults(defineProps<FileUploadProps>(), {
 const emit = defineEmits(['change', 'update:value', 'delete']);
 const { accept, helpText, maxNumber, maxSize } = toRefs(props);
 const isInnerOperate = ref<boolean>(false);
-const { getStringAccept } = useUploadType({
+const maxSizeValue = computed(() => props.maxSize);
+const { getAccept, getStringAccept, getHelpText } = useUploadType({
   acceptRef: accept,
   helpTextRef: helpText,
   maxNumberRef: maxNumber,
@@ -64,7 +66,8 @@ watch(
       if (Array.isArray(v)) {
         value = v;
       } else {
-        value.push(v);
+        // 支持 || 分隔符分隔的多个文件URL
+        value = v.split('||').filter((item) => item.trim());
       }
       fileList.value = value.map((item, i) => {
         if (item && isString(item)) {
@@ -133,13 +136,14 @@ function handleCancel() {
 }
 
 async function beforeUpload(file: File) {
-  const { maxSize, accept } = props;
+  const { maxSize, minSize, accept } = props;
   const isAct = checkImgType(file, accept);
   if (!isAct) {
     message.error($t('ui.upload.acceptUpload', [accept]));
     isActMsg.value = false;
     // 防止弹出多个错误提示
     setTimeout(() => (isActMsg.value = true), 1000);
+    return Upload.LIST_IGNORE;
   }
   const isLt = file.size / 1024 / 1024 > maxSize;
   if (isLt) {
@@ -147,8 +151,14 @@ async function beforeUpload(file: File) {
     isLtMsg.value = false;
     // 防止弹出多个错误提示
     setTimeout(() => (isLtMsg.value = true), 1000);
+    return Upload.LIST_IGNORE;
   }
-  return (isAct && !isLt) || Upload.LIST_IGNORE;
+  // 检查最小文件大小
+  if (minSize && minSize > 0 && file.size / 1024 / 1024 < minSize) {
+    message.error($t('ui.upload.minSizeMultiple', [minSize]));
+    return Upload.LIST_IGNORE;
+  }
+  return true;
 }
 
 async function customRequest(info: UploadRequestOption<any>) {
@@ -190,7 +200,8 @@ function getValue() {
   if (props.maxNumber === 1) {
     return list.length > 0 ? list[0] : '';
   }
-  return list;
+  // 多个文件用 || 分隔符拼接成字符串
+  return list.length > 0 ? list.join('||') : '';
 }
 </script>
 
@@ -223,10 +234,12 @@ function getValue() {
       class="mt-2 flex flex-wrap items-center text-[14px]"
     >
       请上传不超过
-      <div class="text-primary mx-1 font-bold">{{ maxSize }}MB</div>
+      <div class="text-primary mx-1 font-bold">{{ maxSizeValue }}MB</div>
       的
-      <div class="text-primary mx-1 font-bold">{{ accept.join('/') }}</div>
-      格式文件
+      <div class="text-primary mx-1 font-bold">{{ getAccept.join('/') }}</div>
+      格式文件，最多
+      <div class="text-primary mx-1 font-bold">{{ maxNumber }}</div>
+      张
     </div>
     <Modal
       :footer="null"

@@ -43,26 +43,26 @@ export function useFormSchema(): VbenFormSchema[] {
         placeholder: '请选择项目类型',
       },
     },
-    {
-      fieldName: 'projectScatteredType',
-      label: '工程类型',
-      component: 'Select',
-      componentProps: {
-        options: getDictOptions(
-          DICT_TYPE.BIZ_PROJECT_ENGINEERING_TYPE,
-          'string',
-        ),
-        placeholder: '请选择工程类型',
-      },
-    },
-    {
-      fieldName: 'fiscalYear',
-      label: '财年',
-      component: 'Input',
-      componentProps: {
-        placeholder: '请输入财年',
-      },
-    },
+    // {
+    //   fieldName: 'projectScatteredType',
+    //   label: '工程类型',
+    //   component: 'Select',
+    //   componentProps: {
+    //     options: getDictOptions(
+    //       DICT_TYPE.BIZ_PROJECT_ENGINEERING_TYPE,
+    //       'string',
+    //     ),
+    //     placeholder: '请选择工程类型',
+    //   },
+    // },
+    // {
+    //   fieldName: 'fiscalYear',
+    //   label: '财年',
+    //   component: 'Input',
+    //   componentProps: {
+    //     placeholder: '请输入财年',
+    //   },
+    // },
     {
       fieldName: 'projectId',
       label: '项目ID',
@@ -71,22 +71,22 @@ export function useFormSchema(): VbenFormSchema[] {
         placeholder: '请输入项目ID',
       },
     },
-    {
-      fieldName: 'projectNo',
-      label: '项目编号',
-      component: 'Input',
-      componentProps: {
-        placeholder: '请输入项目编号',
-      },
-    },
-    {
-      fieldName: 'projectName',
-      label: '项目名称',
-      component: 'Input',
-      componentProps: {
-        placeholder: '请输入项目名称',
-      },
-    },
+    // {
+    //   fieldName: 'projectNo',
+    //   label: '项目编号',
+    //   component: 'Input',
+    //   componentProps: {
+    //     placeholder: '请输入项目编号',
+    //   },
+    // },
+    // {
+    //   fieldName: 'projectName',
+    //   label: '项目名称',
+    //   component: 'Input',
+    //   componentProps: {
+    //     placeholder: '请输入项目名称',
+    //   },
+    // },
     {
       fieldName: 'payerName',
       label: '付款方',
@@ -111,8 +111,10 @@ export function useFormSchema(): VbenFormSchema[] {
       fieldName: 'receiptAmount',
       label: '收款金额',
       rules: 'required',
-      component: 'Input',
+      component: 'InputNumber',
       componentProps: {
+        precision: 2,
+        min: 0,
         placeholder: '请输入收款金额',
       },
     },
@@ -130,6 +132,11 @@ export function useFormSchema(): VbenFormSchema[] {
       fieldName: 'receiptCertificate',
       label: '收款凭证',
       component: 'ImageUpload',
+      componentProps: {
+        accept: 'jpg/jpeg/png/gif/webp',
+        maxSize: 5,
+        maxNumber: 5,
+      },
     },
     {
       fieldName: 'receiptPurpose',
@@ -363,6 +370,9 @@ export function useGridColumns(): VxeTableGridOptions<ReceiptOrderApi.ReceiptOrd
       field: 'receiptCertificate',
       title: '收款凭证',
       minWidth: 120,
+      cellRender: {
+        name: 'CellImage',
+      },
     },
     {
       field: 'receiptPurpose',

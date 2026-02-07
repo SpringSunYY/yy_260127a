@@ -18,6 +18,7 @@ import {
 } from '@vben/utils';
 
 import { Button, Image, Popconfirm, Switch } from 'ant-design-vue';
+import CellImage from '#/components/image/cell-image.vue';
 
 import { DictTag } from '#/components/dict-tag';
 import { $t } from '#/locales';
@@ -73,10 +74,14 @@ setupVbenVxeTable({
     });
 
     // 表格配置项可以用 cellRender: { name: 'CellImage' },
+    // 支持单个图片URL或 || 分隔的多张图片字符串
+    // 默认只显示第一张，点击后预览全部并支持左右切换
     vxeUI.renderer.add('CellImage', {
       renderTableDefault(_renderOpts, params) {
         const { column, row } = params;
-        return h(Image, { src: row[column.field] });
+        const value = row[column.field];
+        // 直接传递原始值给组件处理
+        return h(CellImage, { src: value });
       },
     });
 
@@ -84,7 +89,14 @@ setupVbenVxeTable({
       renderTableDefault(_renderOpts, params) {
         const { column, row } = params;
         if (column && column.field && row[column.field]) {
-          return row[column.field].map((item: any) => h(Image, { src: item }));
+          let list = row[column.field];
+          // 如果是字符串且包含分隔符，拆分
+          if (typeof list === 'string' && list.includes('||')) {
+            list = list.split('||').map((item: string) => item.trim());
+          }
+          if (Array.isArray(list)) {
+            return list.map((item: any) => h(Image, { src: item }));
+          }
         }
         return '';
       },

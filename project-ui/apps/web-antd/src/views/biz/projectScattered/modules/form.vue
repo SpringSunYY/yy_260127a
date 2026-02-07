@@ -36,6 +36,7 @@ const loadProjects = async (keyword?: string) => {
       pageNo: 1,
       pageSize: 50,
       name: keyword || '',
+      projectType: '1',
     });
     projectOptions.value = res.list || [];
   } finally {
