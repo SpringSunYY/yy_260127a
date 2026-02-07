@@ -1,15 +1,10 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-
-import { Image } from 'ant-design-vue';
-
-const ImagePreviewGroup = Image.PreviewGroup;
+import { computed, ref } from 'vue';
 
 const props = defineProps<{
-  src: string;
+  src: string | string[];
 }>();
 
-// 解析图片URL列表
 const imageUrls = computed(() => {
   if (!props.src) return [];
   if (Array.isArray(props.src)) return props.src;
@@ -18,21 +13,32 @@ const imageUrls = computed(() => {
   }
   return [props.src];
 });
+const visible = ref(false);
 </script>
 
 <template>
-  <ImagePreviewGroup>
-    <template v-for="(url, index) in imageUrls" :key="index">
-      <Image
-        v-if="index === 0"
+  <a-image
+    :preview="{ visible: false }"
+    width="100%"
+    :src="imageUrls[0]"
+    @click="visible = true"
+  />
+  <div style="display: none">
+    <a-image-preview-group
+      :preview="{ visible, onVisibleChange: (vis) => (visible = vis) }"
+    >
+      <a-image
+        v-for="url in imageUrls"
+        :key="url"
         :src="url"
-        :style="{ width: '80px', height: '80px' }"
+        class="hidden-preview-source"
       />
-      <Image
-        v-else
-        :src="url"
-        :style="{ position: 'absolute', width: '0', height: '0', overflow: 'hidden' }"
-      />
-    </template>
-  </ImagePreviewGroup>
+    </a-image-preview-group>
+  </div>
 </template>
+
+<style scoped>
+.hidden-preview-source {
+  display: none;
+}
+</style>
