@@ -1,8 +1,13 @@
 package com.lz.module.biz.service.salary;
 
 import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.StrUtil;
+import com.lz.framework.common.exception.ServiceException;
 import com.lz.framework.common.pojo.PageResult;
 import com.lz.framework.common.util.object.BeanUtils;
+import com.lz.framework.mybatis.core.query.LambdaQueryWrapperX;
+import com.lz.module.biz.controller.admin.salary.vo.SalaryImportExcelVO;
+import com.lz.module.biz.controller.admin.salary.vo.SalaryImportRespVO;
 import com.lz.module.biz.controller.admin.salary.vo.SalaryPageReqVO;
 import com.lz.module.biz.controller.admin.salary.vo.SalarySaveReqVO;
 import com.lz.module.biz.dal.dataobject.salary.SalaryDO;
@@ -13,7 +18,11 @@ import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.lz.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static com.lz.module.biz.enums.ErrorCodeConstants.SALARY_NOT_EXISTS;
@@ -96,6 +105,38 @@ public class SalaryServiceImpl implements SalaryService {
     @Override
     public PageResult<SalaryDO> getSalaryPage(SalaryPageReqVO pageReqVO) {
         return salaryMapper.selectPage(pageReqVO);
+    }
+
+    @Override
+    public SalaryImportRespVO importSalaryList(List<SalaryImportExcelVO> list) {
+        //遍历去重所有的工人编号，查询出所有的工人，防止没有这个工人
+        List<Long> workerIds = list.stream().map(SalaryImportExcelVO::getWorkerId).filter(Objects::nonNull).distinct().toList();
+        List<WorkerDO> workerDOList = workerMapper.selectList(new LambdaQueryWrapperX<WorkerDO>()
+                .in(WorkerDO::getDailySalary, workerIds));
+        //因为把所有的工人编号为key的map
+        Map<Long, WorkerDO> workerDOMap = workerDOList.stream().collect(Collectors.toMap(WorkerDO::getId, v -> v));
+        //遍历列表，从map里面获取对应的工人信息
+        for (int i = 0; i < workerIds.size(); i++) {
+            Long id = workerIds.get(i);
+            WorkerDO workerDO = workerDOMap.get(id);
+            if (ObjUtil.isNull(workerDO)) {
+                throw new ServiceException(400,
+                        StrUtil.format("第{}行导入失败，不存在编号: {} 的工人", i + 1,id));
+            }
+        }
+
+        ArrayList<SalaryDO> salaryDOS = new ArrayList<>();
+        for (SalaryImportExcelVO salaryImportExcelVO : list) {
+            if (ObjUtil.isNotNull(salaryImportExcelVO.getWorkerId())) {
+                salaryImportExcelVO.setWorkerName(workerDOMap.get(salaryImportExcelVO.getWorkerId()).getWorkerName());
+            }
+            SalaryDO salaryDO = BeanUtils.toBean(salaryImportExcelVO, SalaryDO.class);
+            salaryDOS.add(salaryDO);
+        }
+        salaryMapper.insertBatch(salaryDOS);
+        return SalaryImportRespVO.builder()
+                .message(StrUtil.format("成功导入 {} 个工资信息", salaryDOS.size()))
+                .build();
     }
 
 }

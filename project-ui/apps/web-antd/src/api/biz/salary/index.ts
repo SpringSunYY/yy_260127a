@@ -1,5 +1,6 @@
-import type { PageParam, PageResult } from '@vben/request';
 import type { Dayjs } from 'dayjs';
+
+import type { PageParam, PageResult } from '@vben/request';
 
 import { requestClient } from '#/api/request';
 
@@ -10,7 +11,7 @@ export namespace SalaryApi {
     workerId: number; // 工人编号
     workerName: string; // 工人姓名
     isSettlement: string; // 是否结算
-    settlementTime: string | Dayjs; // 结算日期
+    settlementTime: Dayjs | string; // 结算日期
     attendanceDays: number; // 出勤天数
     overtimeDays: number; // 加班天数
     laborFeeAmount: number; // 劳务费金额
@@ -25,7 +26,9 @@ export namespace SalaryApi {
 
 /** 查询工资信息分页 */
 export function getSalaryPage(params: PageParam) {
-  return requestClient.get<PageResult<SalaryApi.Salary>>('/biz/salary/page', { params });
+  return requestClient.get<PageResult<SalaryApi.Salary>>('/biz/salary/page', {
+    params,
+  });
 }
 
 /** 查询工资信息详情 */
@@ -50,10 +53,22 @@ export function deleteSalary(id: number) {
 
 /** 批量删除工资信息 */
 export function deleteSalaryList(ids: number[]) {
-  return requestClient.delete(`/biz/salary/delete-list?ids=${ids.join(',')}`)
+  return requestClient.delete(`/biz/salary/delete-list?ids=${ids.join(',')}`);
 }
 
 /** 导出工资信息 */
 export function exportSalary(params: any) {
   return requestClient.download('/biz/salary/export-excel', params);
+}
+
+/** 导入工资信息模版 */
+export function importSalaryTemplate() {
+  return requestClient.download('/biz/salary/get-import-template');
+}
+
+/** 导入工资信息 */
+export function importSalary(file: File) {
+  return requestClient.upload('/biz/salary/import', {
+    file,
+  });
 }

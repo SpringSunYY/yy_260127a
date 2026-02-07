@@ -2,29 +2,44 @@
 import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { SalaryApi } from '#/api/biz/salary';
 
+import { ref } from 'vue';
+
 import { Page, useVbenModal } from '@vben/common-ui';
-import { message,Tabs } from 'ant-design-vue';
-import Form from './modules/form.vue';
-
-
-import { ref, computed } from 'vue';
-import { $t } from '#/locales';
-import { ACTION_ICON, TableAction, useVbenVxeGrid } from '#/adapter/vxe-table';
-import { getSalaryPage, deleteSalary, deleteSalaryList, exportSalary } from '#/api/biz/salary';
 import { downloadFileFromBlobPart, isEmpty } from '@vben/utils';
 
-import { useGridColumns, useGridFormSchema } from './data';
+import { message } from 'ant-design-vue';
 
+import { ACTION_ICON, TableAction, useVbenVxeGrid } from '#/adapter/vxe-table';
+import {
+  deleteSalary,
+  deleteSalaryList,
+  exportSalary,
+  getSalaryPage,
+} from '#/api/biz/salary';
+import { $t } from '#/locales';
+import ImportForm from '#/views/biz/salary/modules/import-form.vue';
+
+import { useGridColumns, useGridFormSchema } from './data';
+import Form from './modules/form.vue';
 
 const [FormModal, formModalApi] = useVbenModal({
   connectedComponent: Form,
-  destroyOnClose: true
+  destroyOnClose: true,
 });
 
+const [ImportModal, importModalApi] = useVbenModal({
+  connectedComponent: ImportForm,
+  destroyOnClose: true,
+});
 
 /** 刷新表格 */
 function onRefresh() {
   gridApi.query();
+}
+
+/** 导入用户 */
+function handleImport() {
+  importModalApi.open();
 }
 
 /** 创建工资信息 */
@@ -37,12 +52,11 @@ function handleEdit(row: SalaryApi.Salary) {
   formModalApi.setData(row).open();
 }
 
-
 /** 删除工资信息 */
 async function handleDelete(row: SalaryApi.Salary) {
   const hideLoading = message.loading({
     content: $t('ui.actionMessage.deleting', [row.id]),
-    key: 'action_key_msg'
+    key: 'action_key_msg',
   });
   try {
     await deleteSalary(row.id as number);
@@ -60,7 +74,7 @@ async function handleDelete(row: SalaryApi.Salary) {
 async function handleDeleteBatch() {
   const hideLoading = message.loading({
     content: $t('ui.actionMessage.deleting'),
-    key: 'action_key_msg'
+    key: 'action_key_msg',
   });
   try {
     await deleteSalaryList(checkedIds.value);
@@ -74,12 +88,9 @@ async function handleDeleteBatch() {
   }
 }
 
-const checkedIds = ref<number[]>([])
-function handleRowCheckboxChange({
-  records
-}: {
-  records: SalaryApi.Salary[];
-}) {
+const checkedIds = ref<number[]>([]);
+
+function handleRowCheckboxChange({ records }: { records: SalaryApi.Salary[] }) {
   checkedIds.value = records.map((item) => item.id);
 }
 
@@ -91,7 +102,7 @@ async function handleExport() {
 
 const [Grid, gridApi] = useVbenVxeGrid({
   formOptions: {
-    schema: useGridFormSchema()
+    schema: useGridFormSchema(),
   },
   gridOptions: {
     columns: useGridColumns(),
@@ -117,19 +128,19 @@ const [Grid, gridApi] = useVbenVxeGrid({
     toolbarConfig: {
       refresh: { code: 'query' },
       search: true,
-    }
+    },
   } as VxeTableGridOptions<SalaryApi.Salary>,
-  gridEvents:{
-      checkboxAll: handleRowCheckboxChange,
-      checkboxChange: handleRowCheckboxChange
-  }
+  gridEvents: {
+    checkboxAll: handleRowCheckboxChange,
+    checkboxChange: handleRowCheckboxChange,
+  },
 });
 </script>
 
 <template>
   <Page auto-content-height>
     <FormModal @success="onRefresh" />
-
+    <ImportModal @success="onRefresh" />
     <Grid table-title="工资信息列表">
       <template #toolbar-tools>
         <TableAction
@@ -156,6 +167,13 @@ const [Grid, gridApi] = useVbenVxeGrid({
               disabled: isEmpty(checkedIds),
               auth: ['biz:salary:delete'],
               onClick: handleDeleteBatch,
+            },
+            {
+              label: $t('ui.actionTitle.import', ['工资']),
+              type: 'primary',
+              icon: ACTION_ICON.UPLOAD,
+              auth: ['biz:salary:create'],
+              onClick: handleImport,
             },
           ]"
         />
@@ -185,6 +203,5 @@ const [Grid, gridApi] = useVbenVxeGrid({
         />
       </template>
     </Grid>
-
   </Page>
 </template>

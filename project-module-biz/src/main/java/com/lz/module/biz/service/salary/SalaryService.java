@@ -59,4 +59,11 @@ public interface SalaryService {
      */
     PageResult<SalaryDO> getSalaryPage(SalaryPageReqVO pageReqVO);
 
+    /**
+     * 导入工资信息
+     *
+     * @param list 文件列表
+     * @return 导入结果
+     */
+    SalaryImportRespVO importSalaryList(List<SalaryImportExcelVO> list);
 }

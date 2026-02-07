@@ -277,3 +277,16 @@ export function useGridColumns(): VxeTableGridOptions<SalaryApi.Salary>['columns
     },
   ];
 }
+
+/** 工资导入的表单 */
+export function salaryImportFormSchema(): VbenFormSchema[] {
+  return [
+    {
+      fieldName: 'file',
+      label: '工资数据',
+      component: 'Upload',
+      rules: 'required',
+      help: '仅允许导入 xls、xlsx 格式文件',
+    },
+  ];
+}
