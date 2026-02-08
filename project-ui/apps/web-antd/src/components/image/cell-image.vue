@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue';
 
 const props = defineProps<{
-  src: string | string[];
+  src: string | string[] | null;
 }>();
 
 const imageUrls = computed(() => {
@@ -14,6 +14,10 @@ const imageUrls = computed(() => {
   return [props.src];
 });
 const visible = ref(false);
+
+const handleVisibleChange = (vis: boolean) => {
+  visible.value = vis;
+};
 </script>
 
 <template>
@@ -25,7 +29,7 @@ const visible = ref(false);
   />
   <div style="display: none">
     <a-image-preview-group
-      :preview="{ visible, onVisibleChange: (vis) => (visible = vis) }"
+      :preview="{ visible, onVisibleChange: handleVisibleChange }"
     >
       <a-image
         v-for="url in imageUrls"

@@ -154,13 +154,6 @@ const [Modal, modalApi] = useVbenModal({
     }
     // 设置到 values
     formData.value = data;
-    // // 处理时间戳字段，转换为 dayjs 对象以适配 DatePicker (valueFormat: 'x')
-    // const formattedData = {
-    //   ...formData.value,
-    //   receiptDate: formData.value.receiptDate
-    //     ? dayjs(Number(formData.value.receiptDate))
-    //     : undefined,
-    // };
     await formApi.setValues(formData.value);
 
     // 加载项目列表
