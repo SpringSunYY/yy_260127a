@@ -1,4 +1,4 @@
-package com.lz.framework.common.enums;
+package com.lz.module.biz.enums;
 
 import com.lz.framework.common.core.ArrayValuable;
 import lombok.AllArgsConstructor;
@@ -8,11 +8,11 @@ import java.util.Arrays;
 
 @Getter
 @AllArgsConstructor
-public enum CommonWhetherEnum implements ArrayValuable<String> {
-    COMMON_WHETHER_1("1", "是"),
-    COMMON_WHETHER_2("2", "否");
+public enum BizReceiptProjectTypeEnum implements ArrayValuable<String> {
+    BIZ_RECEIPT_PROJECT_TYPE_1("1", "工程项目"),
+    BIZ_RECEIPT_PROJECT_TYPE_2("2", "其他");
 
-    public static final String[] ARRAYS = Arrays.stream(values()).map(CommonWhetherEnum::getStatus).toArray(String[]::new);
+    public static final String[] ARRAYS = Arrays.stream(values()).map(BizReceiptProjectTypeEnum::getStatus).toArray(String[]::new);
 
     /**
      * 状态值

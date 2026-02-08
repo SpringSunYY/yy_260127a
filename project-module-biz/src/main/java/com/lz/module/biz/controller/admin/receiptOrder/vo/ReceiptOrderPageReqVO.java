@@ -1,11 +1,10 @@
 package com.lz.module.biz.controller.admin.receiptOrder.vo;
 
-import lombok.*;
-import java.util.*;
-import io.swagger.v3.oas.annotations.media.Schema;
 import com.lz.framework.common.pojo.PageParam;
-import java.math.BigDecimal;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDateTime;
 
 import static com.lz.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY;
@@ -32,6 +31,9 @@ public class ReceiptOrderPageReqVO extends PageParam {
 
     @Schema(description = "项目名称", example = "李四")
     private String projectName;
+
+    @Schema(description = "财年")
+    private Integer fiscalYear;
 
     @Schema(description = "付款方", example = "赵六")
     private String payerName;

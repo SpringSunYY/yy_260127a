@@ -30,6 +30,13 @@ public interface ReceiptOrderService {
     void updateReceiptOrder(@Valid ReceiptOrderSaveReqVO updateReqVO);
 
     /**
+     * 更新收款信息(包含null值)
+     *
+     * @param updateReqVO 更新信息
+     */
+    void updateReceiptOrderWithNull(@Valid ReceiptOrderDO updateReqVO);
+
+    /**
      * 删除收款信息
      *
      * @param id 编号

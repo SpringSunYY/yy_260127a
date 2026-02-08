@@ -4,8 +4,12 @@ import type { ReceiptOrderApi } from '#/api/biz/receiptOrder';
 
 import { DICT_TYPE, getDictOptions, getRangePickerDefaultProps } from '#/utils';
 
+export interface FormSchemaOptions {
+  onProjectTypeChange?: () => void;
+}
+
 /** 新增/修改的表单 */
-export function useFormSchema(): VbenFormSchema[] {
+export function useFormSchema(options?: FormSchemaOptions): VbenFormSchema[] {
   return [
     {
       fieldName: 'id',
@@ -41,6 +45,7 @@ export function useFormSchema(): VbenFormSchema[] {
       componentProps: {
         options: getDictOptions(DICT_TYPE.BIZ_RECEIPT_PROJECT_TYPE, 'string'),
         placeholder: '请选择项目类型',
+        onChange: options?.onProjectTypeChange,
       },
     },
     // {
@@ -129,6 +134,16 @@ export function useFormSchema(): VbenFormSchema[] {
       },
     },
     {
+      fieldName: 'isInvoiced',
+      label: '是否开票',
+      rules: 'required',
+      component: 'Select',
+      componentProps: {
+        options: getDictOptions(DICT_TYPE.COMMON_WHETHER, 'string'),
+        placeholder: '请选择是否开票',
+      },
+    },
+    {
       fieldName: 'receiptCertificate',
       label: '收款凭证',
       component: 'ImageUpload',
@@ -144,16 +159,6 @@ export function useFormSchema(): VbenFormSchema[] {
       component: 'Input',
       componentProps: {
         placeholder: '请输入收款事由',
-      },
-    },
-    {
-      fieldName: 'isInvoiced',
-      label: '是否开票',
-      rules: 'required',
-      component: 'Select',
-      componentProps: {
-        options: getDictOptions(DICT_TYPE.COMMON_WHETHER, 'string'),
-        placeholder: '请选择是否开票',
       },
     },
     {
@@ -219,6 +224,15 @@ export function useGridFormSchema(): VbenFormSchema[] {
       componentProps: {
         allowClear: true,
         placeholder: '请输入项目编号',
+      },
+    },
+    {
+      fieldName: 'fiscalYear',
+      label: '财年',
+      component: 'InputNumber',
+      componentProps: {
+        allowClear: true,
+        placeholder: '请输入财年',
       },
     },
     {
@@ -329,6 +343,7 @@ export function useGridColumns(): VxeTableGridOptions<ReceiptOrderApi.ReceiptOrd
     {
       field: 'projectId',
       title: '项目ID',
+      visible: false,
       minWidth: 120,
     },
     {
@@ -350,7 +365,7 @@ export function useGridColumns(): VxeTableGridOptions<ReceiptOrderApi.ReceiptOrd
       field: 'receiptDate',
       title: '收款日期',
       minWidth: 120,
-      formatter: 'formatDateTime',
+      formatter: 'formatDate',
     },
     {
       field: 'receiptAmount',

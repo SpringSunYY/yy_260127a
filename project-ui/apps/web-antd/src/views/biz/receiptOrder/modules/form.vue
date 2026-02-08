@@ -10,12 +10,14 @@ import { message, Select } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
 import { getProjectPage } from '#/api/biz/project';
+import { getProjectOtherPage } from '#/api/biz/projectOther';
 import {
   createReceiptOrder,
   getReceiptOrder,
   updateReceiptOrder,
 } from '#/api/biz/receiptOrder';
 import { $t } from '#/locales';
+import { BIZ_RECEIPT_PROJECT_TYPE } from '#/utils/constants';
 
 import { useFormSchema } from '../data';
 
@@ -28,7 +30,7 @@ const getTitle = computed(() => {
 });
 
 onMounted(() => {
-  loadProjects();
+  // 移除 onMounted 中的调用，改由 Modal onOpenChange 触发
 });
 // 项目搜索状态
 const projectKeyword = ref('');
@@ -39,15 +41,45 @@ const projectLoading = ref(false);
 const loadProjects = async (keyword?: string) => {
   projectLoading.value = true;
   try {
-    const res = await getProjectPage({
-      pageNo: 1,
-      pageSize: 50,
-      name: keyword || '',
-    });
-    projectOptions.value = res.list || [];
+    // 优先从 form 状态获取，如果未就绪则根据表单结构默认
+    const projectType =
+      (formApi?.form as any)?.values?.projectType ||
+      formData.value?.projectType;
+
+    if (projectType === BIZ_RECEIPT_PROJECT_TYPE.receipt_project_type_2) {
+      // 其他工程
+      const res = await getProjectOtherPage({
+        pageNo: 1,
+        pageSize: 50,
+        projectName: keyword || '',
+      });
+      // 解析结果，把projectName改为name
+      projectOptions.value = res.list.map((item: any) => ({
+        id: item.id,
+        name: item.projectName,
+        value: item.id,
+        label: item.projectName,
+      }));
+    } else {
+      // 默认项目
+      const res = await getProjectPage({
+        pageNo: 1,
+        pageSize: 50,
+        name: keyword || '',
+      });
+      projectOptions.value = res.list || [];
+    }
   } finally {
     projectLoading.value = false;
   }
+};
+
+// 项目类型变更
+const handleProjectTypeChange = () => {
+  formApi.setFieldValue('projectId', undefined);
+  formApi.setFieldValue('projectName', undefined);
+  projectOptions.value = [];
+  loadProjects();
 };
 
 // 项目搜索
@@ -77,7 +109,7 @@ const [Form, formApi] = useVbenForm({
     labelWidth: 80,
   },
   layout: 'horizontal',
-  schema: useFormSchema(),
+  schema: useFormSchema({ onProjectTypeChange: handleProjectTypeChange }),
   showDefaultActions: false,
 });
 
@@ -122,7 +154,17 @@ const [Modal, modalApi] = useVbenModal({
     }
     // 设置到 values
     formData.value = data;
+    // // 处理时间戳字段，转换为 dayjs 对象以适配 DatePicker (valueFormat: 'x')
+    // const formattedData = {
+    //   ...formData.value,
+    //   receiptDate: formData.value.receiptDate
+    //     ? dayjs(Number(formData.value.receiptDate))
+    //     : undefined,
+    // };
     await formApi.setValues(formData.value);
+
+    // 加载项目列表
+    loadProjects();
   },
 });
 </script>

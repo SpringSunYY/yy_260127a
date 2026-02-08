@@ -2,25 +2,29 @@
 import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { ReceiptOrderApi } from '#/api/biz/receiptOrder';
 
+import { ref } from 'vue';
+
 import { Page, useVbenModal } from '@vben/common-ui';
-import { message,Tabs } from 'ant-design-vue';
-import Form from './modules/form.vue';
-
-
-import { ref, computed } from 'vue';
-import { $t } from '#/locales';
-import { ACTION_ICON, TableAction, useVbenVxeGrid } from '#/adapter/vxe-table';
-import { getReceiptOrderPage, deleteReceiptOrder, deleteReceiptOrderList, exportReceiptOrder } from '#/api/biz/receiptOrder';
 import { downloadFileFromBlobPart, isEmpty } from '@vben/utils';
 
-import { useGridColumns, useGridFormSchema } from './data';
+import { message } from 'ant-design-vue';
 
+import { ACTION_ICON, TableAction, useVbenVxeGrid } from '#/adapter/vxe-table';
+import {
+  deleteReceiptOrder,
+  deleteReceiptOrderList,
+  exportReceiptOrder,
+  getReceiptOrderPage,
+} from '#/api/biz/receiptOrder';
+import { $t } from '#/locales';
+
+import { useGridColumns, useGridFormSchema } from './data';
+import Form from './modules/form.vue';
 
 const [FormModal, formModalApi] = useVbenModal({
   connectedComponent: Form,
-  destroyOnClose: true
+  destroyOnClose: true,
 });
-
 
 /** 刷新表格 */
 function onRefresh() {
@@ -37,12 +41,11 @@ function handleEdit(row: ReceiptOrderApi.ReceiptOrder) {
   formModalApi.setData(row).open();
 }
 
-
 /** 删除收款信息 */
 async function handleDelete(row: ReceiptOrderApi.ReceiptOrder) {
   const hideLoading = message.loading({
     content: $t('ui.actionMessage.deleting', [row.id]),
-    key: 'action_key_msg'
+    key: 'action_key_msg',
   });
   try {
     await deleteReceiptOrder(row.id as number);
@@ -60,7 +63,7 @@ async function handleDelete(row: ReceiptOrderApi.ReceiptOrder) {
 async function handleDeleteBatch() {
   const hideLoading = message.loading({
     content: $t('ui.actionMessage.deleting'),
-    key: 'action_key_msg'
+    key: 'action_key_msg',
   });
   try {
     await deleteReceiptOrderList(checkedIds.value);
@@ -74,9 +77,9 @@ async function handleDeleteBatch() {
   }
 }
 
-const checkedIds = ref<number[]>([])
+const checkedIds = ref<number[]>([]);
 function handleRowCheckboxChange({
-  records
+  records,
 }: {
   records: ReceiptOrderApi.ReceiptOrder[];
 }) {
@@ -91,7 +94,7 @@ async function handleExport() {
 
 const [Grid, gridApi] = useVbenVxeGrid({
   formOptions: {
-    schema: useGridFormSchema()
+    schema: useGridFormSchema(),
   },
   gridOptions: {
     columns: useGridColumns(),
@@ -117,12 +120,12 @@ const [Grid, gridApi] = useVbenVxeGrid({
     toolbarConfig: {
       refresh: { code: 'query' },
       search: true,
-    }
+    },
   } as VxeTableGridOptions<ReceiptOrderApi.ReceiptOrder>,
-  gridEvents:{
-      checkboxAll: handleRowCheckboxChange,
-      checkboxChange: handleRowCheckboxChange
-  }
+  gridEvents: {
+    checkboxAll: handleRowCheckboxChange,
+    checkboxChange: handleRowCheckboxChange,
+  },
 });
 </script>
 
@@ -185,6 +188,5 @@ const [Grid, gridApi] = useVbenVxeGrid({
         />
       </template>
     </Grid>
-
   </Page>
 </template>

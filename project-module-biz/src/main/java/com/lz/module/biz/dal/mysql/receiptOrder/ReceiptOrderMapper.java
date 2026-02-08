@@ -24,6 +24,7 @@ public interface ReceiptOrderMapper extends BaseMapperX<ReceiptOrderDO> {
                 .eqIfPresent(ReceiptOrderDO::getProjectType, reqVO.getProjectType())
                 .eqIfPresent(ReceiptOrderDO::getProjectScatteredType, reqVO.getProjectScatteredType())
                 .likeIfPresent(ReceiptOrderDO::getProjectNo, reqVO.getProjectNo())
+                .eqIfPresent(ReceiptOrderDO::getFiscalYear, reqVO.getFiscalYear())
                 .likeIfPresent(ReceiptOrderDO::getProjectName, reqVO.getProjectName())
                 .likeIfPresent(ReceiptOrderDO::getPayerName, reqVO.getPayerName())
                 .betweenIfPresent(ReceiptOrderDO::getReceiptDate, reqVO.getReceiptDate())
