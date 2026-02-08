@@ -24,6 +24,7 @@ import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -166,6 +167,11 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
     @Override
     public PageResult<ReceiptOrderDO> getReceiptOrderPage(ReceiptOrderPageReqVO pageReqVO) {
         return receiptOrderMapper.selectPage(pageReqVO);
+    }
+
+    @Override
+    public BigDecimal getReceiptOrderAmount(ReceiptOrderPageReqVO pageReqVO) {
+        return receiptOrderMapper.getReceiptOrderAmount(pageReqVO);
     }
 
     @Override

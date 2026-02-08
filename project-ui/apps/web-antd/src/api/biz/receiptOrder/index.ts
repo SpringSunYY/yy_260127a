@@ -35,6 +35,14 @@ export function getReceiptOrderPage(params: PageParam) {
   );
 }
 
+/** 查询收款信息总价*/
+export function getReceiptOrderAmount(params: PageParam) {
+  return requestClient.get<PageResult<ReceiptOrderApi.ReceiptOrder>>(
+    '/biz/receipt-order/get/amount',
+    { params },
+  );
+}
+
 /** 查询收款信息详情 */
 export function getReceiptOrder(id: number) {
   return requestClient.get<ReceiptOrderApi.ReceiptOrder>(

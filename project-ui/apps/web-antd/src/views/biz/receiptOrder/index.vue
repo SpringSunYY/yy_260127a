@@ -14,6 +14,7 @@ import {
   deleteReceiptOrder,
   deleteReceiptOrderList,
   exportReceiptOrder,
+  getReceiptOrderAmount,
   getReceiptOrderPage,
 } from '#/api/biz/receiptOrder';
 import { $t } from '#/locales';
@@ -84,6 +85,8 @@ async function handleDeleteBatch() {
 }
 
 const checkedIds = ref<number[]>([]);
+const totalAmount = ref<number>(0);
+
 function handleRowCheckboxChange({
   records,
 }: {
@@ -115,6 +118,13 @@ const [Grid, gridApi] = useVbenVxeGrid({
     proxyConfig: {
       ajax: {
         query: async ({ page }, formValues) => {
+          // 获取总金额
+          try {
+            totalAmount.value = await getReceiptOrderAmount(formValues);
+          } catch (error) {
+            console.error('Failed to fetch total amount', error);
+          }
+
           return await getReceiptOrderPage({
             pageNo: page.currentPage,
             pageSize: page.pageSize,
@@ -143,7 +153,15 @@ const [Grid, gridApi] = useVbenVxeGrid({
   <Page auto-content-height>
     <FormModal @success="onRefresh" />
     <ImportModal @success="onRefresh" />
-    <Grid table-title="收款信息列表">
+    <Grid>
+      <template #table-title>
+        <div class="flex items-center">
+          <span class="mr-4 text-lg font-bold">收款信息列表</span>
+          <span class="text-primary text-lg font-bold">
+            总金额: {{ totalAmount }}
+          </span>
+        </div>
+      </template>
       <template #toolbar-tools>
         <TableAction
           :actions="[

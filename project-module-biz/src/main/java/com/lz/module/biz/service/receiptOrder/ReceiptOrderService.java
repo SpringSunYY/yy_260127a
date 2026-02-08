@@ -1,5 +1,6 @@
 package com.lz.module.biz.service.receiptOrder;
 
+import java.math.BigDecimal;
 import java.util.*;
 import jakarta.validation.*;
 import com.lz.module.biz.controller.admin.receiptOrder.vo.*;
@@ -65,6 +66,15 @@ public interface ReceiptOrderService {
      * @return 收款信息分页
      */
     PageResult<ReceiptOrderDO> getReceiptOrderPage(ReceiptOrderPageReqVO pageReqVO);
+
+
+    /**
+     * 获得收款信息金额
+     *
+     * @param pageReqVO 分页查询
+     * @return 收款信息金额
+     */
+    BigDecimal getReceiptOrderAmount(@Valid ReceiptOrderPageReqVO pageReqVO);
 
     /**
      * 导入收款信息列表, 用于 Excel 导入

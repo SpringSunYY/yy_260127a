@@ -87,6 +87,14 @@ public class ReceiptOrderController {
         return success(BeanUtils.toBean(receiptOrder, ReceiptOrderRespVO.class));
     }
 
+    @GetMapping("/get/amount")
+    @Operation(summary = "获得收款信息总额")
+    @PreAuthorize("@ss.hasPermission('biz:receipt-order:query')")
+    public CommonResult<BigDecimal> getReceiptOrderAmount(@Valid ReceiptOrderPageReqVO pageReqVO) {
+        BigDecimal amount = receiptOrderService.getReceiptOrderAmount(pageReqVO);
+        return success(amount);
+    }
+
     @GetMapping("/page")
     @Operation(summary = "获得收款信息分页")
     @PreAuthorize("@ss.hasPermission('biz:receipt-order:query')")
