@@ -40,17 +40,17 @@ public class ProjectScatteredRespVO {
 
     @Schema(description = "工程阶段", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty(value = "工程阶段", converter = DictConvert.class)
-    @DictFormat("biz_project_project_progress") // TODO 代码优化：建议设置到对应的 DictTypeConstants 枚举类中
+    @DictFormat("biz_project_project_progress")  
     private String projectProgress;
 
     @Schema(description = "竣工图")
     @ExcelProperty(value = "竣工图", converter = DictConvert.class)
-    @DictFormat("common_whether") // TODO 代码优化：建议设置到对应的 DictTypeConstants 枚举类中
+    @DictFormat("common_whether")  
     private String completedImage;
 
     @Schema(description = "现场核销")
     @ExcelProperty(value = "现场核销", converter = DictConvert.class)
-    @DictFormat("common_whether") // TODO 代码优化：建议设置到对应的 DictTypeConstants 枚举类中
+    @DictFormat("common_whether")  
     private String verification;
 
     @Schema(description = "附件")

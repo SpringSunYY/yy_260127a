@@ -37,7 +37,7 @@ function onRefresh() {
   gridApi.query();
 }
 
-/** 导入用户 */
+/** 导入工资 */
 function handleImport() {
   importModalApi.open();
 }

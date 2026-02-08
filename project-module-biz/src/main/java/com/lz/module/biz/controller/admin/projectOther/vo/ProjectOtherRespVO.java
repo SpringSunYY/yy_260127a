@@ -25,7 +25,7 @@ public class ProjectOtherRespVO {
 
     @Schema(description = "项目类型", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     @ExcelProperty(value = "项目类型", converter = DictConvert.class)
-    @DictFormat("biz_project_other_project_type") // TODO 代码优化：建议设置到对应的 DictTypeConstants 枚举类中
+    @DictFormat("biz_project_other_project_type")  
     private String projectType;
 
     @Schema(description = "地址")
@@ -42,7 +42,7 @@ public class ProjectOtherRespVO {
 
     @Schema(description = "已结算", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty(value = "已结算", converter = DictConvert.class)
-    @DictFormat("common_whether") // TODO 代码优化：建议设置到对应的 DictTypeConstants 枚举类中
+    @DictFormat("common_whether")  
     private String isSettled;
 
     @Schema(description = "附件")
@@ -55,7 +55,7 @@ public class ProjectOtherRespVO {
 
     @Schema(description = "进度", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     @ExcelProperty(value = "进度", converter = DictConvert.class)
-    @DictFormat("biz_project_other_project_progress") // TODO 代码优化：建议设置到对应的 DictTypeConstants 枚举类中
+    @DictFormat("biz_project_other_project_progress")  
     private String progressStatus;
 
     @Schema(description = "备注", example = "你猜")

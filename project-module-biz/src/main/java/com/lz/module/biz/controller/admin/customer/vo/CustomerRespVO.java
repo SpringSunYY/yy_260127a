@@ -53,7 +53,7 @@ public class CustomerRespVO {
 
     @Schema(description = "所属行业")
     @ExcelProperty(value = "所属行业", converter = DictConvert.class)
-    @DictFormat("biz_customer_industry") // TODO 代码优化：建议设置到对应的 DictTypeConstants 枚举类中
+    @DictFormat("biz_customer_industry")  
     private String industry;
 
     @Schema(description = "备注", example = "你说的对")

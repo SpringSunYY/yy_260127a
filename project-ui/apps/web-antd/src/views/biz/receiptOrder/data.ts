@@ -129,7 +129,7 @@ export function useFormSchema(options?: FormSchemaOptions): VbenFormSchema[] {
       rules: 'required',
       component: 'Select',
       componentProps: {
-        options: getDictOptions(DICT_TYPE.BIZ_RECEIVABLE_RETURN_TYPE, 'string'),
+        options: getDictOptions(DICT_TYPE.BIZ_RECEIPT_METHOD, 'string'),
         placeholder: '请选择收款方式',
       },
     },
@@ -268,7 +268,7 @@ export function useGridFormSchema(): VbenFormSchema[] {
       component: 'Select',
       componentProps: {
         allowClear: true,
-        options: getDictOptions(DICT_TYPE.BIZ_RECEIVABLE_RETURN_TYPE, 'string'),
+        options: getDictOptions(DICT_TYPE.BIZ_RECEIPT_METHOD, 'string'),
         placeholder: '请选择收款方式',
       },
     },
@@ -378,7 +378,7 @@ export function useGridColumns(): VxeTableGridOptions<ReceiptOrderApi.ReceiptOrd
       minWidth: 120,
       cellRender: {
         name: 'CellDict',
-        props: { type: DICT_TYPE.BIZ_RECEIVABLE_RETURN_TYPE },
+        props: { type: DICT_TYPE.BIZ_RECEIPT_METHOD },
       },
     },
     {
@@ -419,6 +419,19 @@ export function useGridColumns(): VxeTableGridOptions<ReceiptOrderApi.ReceiptOrd
       width: 200,
       fixed: 'right',
       slots: { default: 'actions' },
+    },
+  ];
+}
+
+/** 工资导入的表单 */
+export function receiptOrderImportFormSchema(): VbenFormSchema[] {
+  return [
+    {
+      fieldName: 'file',
+      label: '工资数据',
+      component: 'Upload',
+      rules: 'required',
+      help: '仅允许导入 xls、xlsx 格式文件',
     },
   ];
 }

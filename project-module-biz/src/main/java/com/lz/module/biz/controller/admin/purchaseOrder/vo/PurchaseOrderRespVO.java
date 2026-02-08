@@ -57,7 +57,7 @@ public class PurchaseOrderRespVO {
 
     @Schema(description = "采购状态", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     @ExcelProperty(value = "采购状态", converter = DictConvert.class)
-    @DictFormat("biz_purchase_order_status") // TODO 代码优化：建议设置到对应的 DictTypeConstants 枚举类中
+    @DictFormat("biz_purchase_order_status")  
     private String orderStatus;
 
     @Schema(description = "备注", example = "你猜")

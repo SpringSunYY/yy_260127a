@@ -1,16 +1,21 @@
 package com.lz.module.biz.service.receiptOrder;
 
+import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
-import com.lz.framework.common.pojo.PageResult;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import com.lz.framework.common.exception.ServiceException;
+import com.lz.framework.common.pojo.PageResult;
 import com.lz.framework.common.util.object.BeanUtils;
+import com.lz.module.biz.controller.admin.receiptOrder.vo.ReceiptOrderImportExcelVO;
+import com.lz.module.biz.controller.admin.receiptOrder.vo.ReceiptOrderImportRespVO;
 import com.lz.module.biz.controller.admin.receiptOrder.vo.ReceiptOrderPageReqVO;
 import com.lz.module.biz.controller.admin.receiptOrder.vo.ReceiptOrderSaveReqVO;
 import com.lz.module.biz.dal.dataobject.project.ProjectDO;
 import com.lz.module.biz.dal.dataobject.projectOther.ProjectOtherDO;
 import com.lz.module.biz.dal.dataobject.receiptOrder.ReceiptOrderDO;
+import com.lz.module.biz.dal.dto.ProjectCommonDto;
 import com.lz.module.biz.dal.mysql.project.ProjectMapper;
 import com.lz.module.biz.dal.mysql.projectOther.ProjectOtherMapper;
 import com.lz.module.biz.dal.mysql.receiptOrder.ReceiptOrderMapper;
@@ -19,7 +24,10 @@ import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.lz.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static com.lz.module.biz.enums.ErrorCodeConstants.RECEIPT_ORDER_NOT_EXISTS;
@@ -158,6 +166,75 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
     @Override
     public PageResult<ReceiptOrderDO> getReceiptOrderPage(ReceiptOrderPageReqVO pageReqVO) {
         return receiptOrderMapper.selectPage(pageReqVO);
+    }
+
+    @Override
+    public ReceiptOrderImportRespVO importReceiptOrderList(List<ReceiptOrderImportExcelVO> list) {
+        if (ArrayUtil.isEmpty(list)) {
+            throw new ServiceException(400, "导入数据不能为空");
+        }
+        //查询到所有的项目，其他的和工程的
+        List<Long> projectIds = new ArrayList<>();
+        List<Long> projectOtherIds = new ArrayList<>();
+        for (ReceiptOrderImportExcelVO item : list) {
+            if (ObjUtil.isNull(item.getProjectId())) {
+                continue;
+            }
+            if (StrUtil.equals(item.getProjectType(), BizReceiptProjectTypeEnum.BIZ_RECEIPT_PROJECT_TYPE_1.getStatus())) {
+                projectIds.add(item.getProjectId());
+            } else {
+                projectOtherIds.add(item.getProjectId());
+            }
+        }
+
+        List<ProjectDO> projectDOS = new ArrayList<>();
+        if (!projectIds.isEmpty()) {
+            projectDOS = projectMapper.selectByIds(projectIds);
+        }
+
+        List<ProjectOtherDO> projectOtherDOS = new ArrayList<>();
+        if (!projectOtherIds.isEmpty()) {
+            projectOtherDOS = projectOtherMapper.selectByIds(projectOtherIds);
+        }
+        //创建一个map，key为项目类型-项目id，value为项目信息
+        Map<String, ProjectCommonDto> projectMap = new HashMap<>();
+        projectDOS.forEach(item -> {
+            projectMap.put(BizReceiptProjectTypeEnum.BIZ_RECEIPT_PROJECT_TYPE_1.getStatus() + "-" + item.getId(),
+                    new ProjectCommonDto(item.getId(), item.getProjectNo(), item.getName(), item.getEngineeringType(), item.getFiscalYear()));
+        });
+        projectOtherDOS.forEach(item -> {
+            projectMap.put(BizReceiptProjectTypeEnum.BIZ_RECEIPT_PROJECT_TYPE_2.getStatus() + "-" + item.getId(),
+                    new ProjectCommonDto(item.getId(), null, item.getProjectName(), null, null));
+        });
+        ArrayList<ReceiptOrderDO> dos = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            ReceiptOrderDO receiptOrderDO = new ReceiptOrderDO();
+            ReceiptOrderImportExcelVO orderImportExcelVO = list.get(i);
+            BeanUtils.copyProperties(orderImportExcelVO, receiptOrderDO);
+            //如果有项目
+            if (ObjUtil.isNull(orderImportExcelVO.getProjectId())) {
+                continue;
+            }
+            if (StrUtil.isEmpty(orderImportExcelVO.getProjectType())) {
+                throw new ServiceException(400, "第" + (i + 1) + "行项目类型不能为空");
+            }
+            ProjectCommonDto projectCommonDto = projectMap.get(orderImportExcelVO.getProjectType() + "-" + orderImportExcelVO.getProjectId());
+            if (ObjUtil.isNull(projectCommonDto)) {
+                throw new ServiceException(400, "第" + (i + 1) + "行项目不存在,请检查项目编号与类型是否对应");
+            }
+            receiptOrderDO.setProjectName(projectCommonDto.getName());
+
+            if (orderImportExcelVO.getProjectType().equals(BizReceiptProjectTypeEnum.BIZ_RECEIPT_PROJECT_TYPE_1.getStatus())) {
+                receiptOrderDO.setProjectNo(projectCommonDto.getProjectNo());
+                receiptOrderDO.setFiscalYear(projectCommonDto.getFiscalYear());
+                receiptOrderDO.setProjectScatteredType(projectCommonDto.getEngineeringType());
+            }
+            dos.add(receiptOrderDO);
+        }
+        receiptOrderMapper.insertBatch(dos);
+        return ReceiptOrderImportRespVO.builder()
+                .message("导入成功")
+                .build();
     }
 
 }

@@ -109,7 +109,7 @@ public class SalaryController {
     @Parameters({
             @Parameter(name = "file", description = "Excel 文件", required = true),
     })
-    @PreAuthorize("@ss.hasPermission('system:user:import')")
+    @PreAuthorize("@ss.hasPermission('biz:salary:create')")
     public CommonResult<SalaryImportRespVO> importExcel(@RequestParam("file") MultipartFile file) throws Exception {
         List<SalaryImportExcelVO> list = ExcelUtils.read(file, SalaryImportExcelVO.class);
         return success(salaryService.importSalaryList(list));

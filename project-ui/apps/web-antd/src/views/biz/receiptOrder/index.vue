@@ -17,12 +17,18 @@ import {
   getReceiptOrderPage,
 } from '#/api/biz/receiptOrder';
 import { $t } from '#/locales';
+import ImportForm from '#/views/biz/receiptOrder/modules/import-form.vue';
 
 import { useGridColumns, useGridFormSchema } from './data';
 import Form from './modules/form.vue';
 
 const [FormModal, formModalApi] = useVbenModal({
   connectedComponent: Form,
+  destroyOnClose: true,
+});
+
+const [ImportModal, importModalApi] = useVbenModal({
+  connectedComponent: ImportForm,
   destroyOnClose: true,
 });
 
@@ -92,6 +98,10 @@ async function handleExport() {
   downloadFileFromBlobPart({ fileName: '收款信息.xls', source: data });
 }
 
+function handleImport() {
+  importModalApi.open();
+}
+
 const [Grid, gridApi] = useVbenVxeGrid({
   formOptions: {
     schema: useGridFormSchema(),
@@ -132,7 +142,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
 <template>
   <Page auto-content-height>
     <FormModal @success="onRefresh" />
-
+    <ImportModal @success="onRefresh" />
     <Grid table-title="收款信息列表">
       <template #toolbar-tools>
         <TableAction
@@ -159,6 +169,13 @@ const [Grid, gridApi] = useVbenVxeGrid({
               disabled: isEmpty(checkedIds),
               auth: ['biz:receipt-order:delete'],
               onClick: handleDeleteBatch,
+            },
+            {
+              label: $t('ui.actionTitle.import', ['工资']),
+              type: 'primary',
+              icon: ACTION_ICON.UPLOAD,
+              auth: ['biz:receipt-order:create'],
+              onClick: handleImport,
             },
           ]"
         />

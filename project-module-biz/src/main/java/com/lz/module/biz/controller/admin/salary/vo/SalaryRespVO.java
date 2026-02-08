@@ -29,7 +29,7 @@ public class SalaryRespVO {
 
     @Schema(description = "是否结算")
     @ExcelProperty(value = "是否结算", converter = DictConvert.class)
-    @DictFormat("common_whether") // TODO 代码优化：建议设置到对应的 DictTypeConstants 枚举类中
+    @DictFormat("common_whether")  
     private String isSettlement;
 
     @Schema(description = "结算日期")

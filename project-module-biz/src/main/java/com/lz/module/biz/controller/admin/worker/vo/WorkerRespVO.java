@@ -25,7 +25,7 @@ public class WorkerRespVO {
 
     @Schema(description = "性别")
     @ExcelProperty(value = "性别", converter = DictConvert.class)
-    @DictFormat("system_user_sex") // TODO 代码优化：建议设置到对应的 DictTypeConstants 枚举类中
+    @DictFormat("system_user_sex")  
     private String gender;
 
     @Schema(description = "身份证号")
@@ -38,12 +38,12 @@ public class WorkerRespVO {
 
     @Schema(description = "工人类型", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     @ExcelProperty(value = "工人类型", converter = DictConvert.class)
-    @DictFormat("biz_worker_worker_type") // TODO 代码优化：建议设置到对应的 DictTypeConstants 枚举类中
+    @DictFormat("biz_worker_worker_type")  
     private String workerType;
 
     @Schema(description = "工种", example = "2")
     @ExcelProperty(value = "工种", converter = DictConvert.class)
-    @DictFormat("biz_worker_work_type") // TODO 代码优化：建议设置到对应的 DictTypeConstants 枚举类中
+    @DictFormat("biz_worker_work_type")  
     private String workType;
 
     @Schema(description = "日薪")
@@ -60,12 +60,12 @@ public class WorkerRespVO {
 
     @Schema(description = "技能等级")
     @ExcelProperty(value = "技能等级", converter = DictConvert.class)
-    @DictFormat("biz_worker_skill_level") // TODO 代码优化：建议设置到对应的 DictTypeConstants 枚举类中
+    @DictFormat("biz_worker_skill_level")  
     private String skillLevel;
 
     @Schema(description = "状态", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
     @ExcelProperty(value = "状态", converter = DictConvert.class)
-    @DictFormat("biz_worker_status") // TODO 代码优化：建议设置到对应的 DictTypeConstants 枚举类中
+    @DictFormat("biz_worker_status")  
     private String status;
 
     @Schema(description = "备注", example = "你说的对")

@@ -1,5 +1,6 @@
 package com.lz.module.biz.service.salary;
 
+import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import com.lz.framework.common.exception.ServiceException;
@@ -109,6 +110,9 @@ public class SalaryServiceImpl implements SalaryService {
 
     @Override
     public SalaryImportRespVO importSalaryList(List<SalaryImportExcelVO> list) {
+        if (ArrayUtil.isEmpty( list)) {
+            throw new ServiceException(400, "导入数据不能为空");
+        }
         //遍历去重所有的工人编号，查询出所有的工人，防止没有这个工人
         List<Long> workerIds = list.stream().map(SalaryImportExcelVO::getWorkerId).filter(Objects::nonNull).distinct().toList();
         List<WorkerDO> workerDOList = workerMapper.selectList(new LambdaQueryWrapperX<WorkerDO>()

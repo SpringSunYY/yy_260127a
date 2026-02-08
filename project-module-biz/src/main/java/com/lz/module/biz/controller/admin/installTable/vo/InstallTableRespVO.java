@@ -85,7 +85,7 @@ public class InstallTableRespVO {
 
     @Schema(description = "表向")
     @ExcelProperty(value = "表向", converter = DictConvert.class)
-    @DictFormat("biz_meter_direction") // TODO 代码优化：建议设置到对应的 DictTypeConstants 枚举类中
+    @DictFormat("biz_meter_direction")  
     private String meterDirection;
 
     @Schema(description = "层高及入住情况", example = "2")
@@ -114,12 +114,12 @@ public class InstallTableRespVO {
 
     @Schema(description = "高空作业")
     @ExcelProperty(value = "高空作业", converter = DictConvert.class)
-    @DictFormat("common_whether") // TODO 代码优化：建议设置到对应的 DictTypeConstants 枚举类中
+    @DictFormat("common_whether")  
     private String isHighAltitude;
 
     @Schema(description = "开T")
     @ExcelProperty(value = "开T", converter = DictConvert.class)
-    @DictFormat("common_whether") // TODO 代码优化：建议设置到对应的 DictTypeConstants 枚举类中
+    @DictFormat("common_whether")  
     private String isOpenTee;
 
     @Schema(description = "备注", example = "你猜")

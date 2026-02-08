@@ -1,23 +1,27 @@
 package com.lz.module.biz.controller.admin.receiptOrder.vo;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
-import java.util.*;
-import java.math.BigDecimal;
-import org.springframework.format.annotation.DateTimeFormat;
-import java.time.LocalDateTime;
-import com.alibaba.excel.annotation.*;
+import com.alibaba.excel.annotation.ExcelProperty;
 import com.lz.framework.excel.core.annotations.DictFormat;
 import com.lz.framework.excel.core.convert.DictConvert;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
-@Schema(description = "管理后台 - 收款信息 Response VO")
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+/**
+ * 用户 Excel 导入 VO
+ */
 @Data
-@ExcelIgnoreUnannotated
-public class ReceiptOrderRespVO {
-
-    @Schema(description = "编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "21549")
-    @ExcelProperty("编号")
-    private Long id;
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Accessors(chain = false) // 设置 chain = false，避免用户导入有问题
+public class ReceiptOrderImportExcelVO {
 
     @Schema(description = "收款单号", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("收款单号")
@@ -33,22 +37,9 @@ public class ReceiptOrderRespVO {
     @DictFormat("biz_receipt_project_type")
     private String projectType;
 
-    @Schema(description = "工程类型", example = "1")
-    @ExcelProperty(value = "工程类型", converter = DictConvert.class)
-    @DictFormat("biz_project_engineering_type")
-    private String projectScatteredType;
-
-    @Schema(description = "财年")
-    @ExcelProperty("财年")
-    private Integer fiscalYear;
-
     @Schema(description = "项目ID", example = "5697")
     @ExcelProperty("项目ID")
     private Long projectId;
-
-    @Schema(description = "项目编号")
-    @ExcelProperty("项目编号")
-    private String projectNo;
 
     @Schema(description = "项目名称", example = "李四")
     @ExcelProperty("项目名称")
@@ -71,9 +62,6 @@ public class ReceiptOrderRespVO {
     @DictFormat("biz_receipt_method")
     private String receiptMethod;
 
-    @Schema(description = "收款凭证")
-    @ExcelProperty("收款凭证")
-    private String receiptCertificate;
 
     @Schema(description = "收款事由")
     @ExcelProperty("收款事由")
@@ -88,8 +76,5 @@ public class ReceiptOrderRespVO {
     @ExcelProperty("备注")
     private String remark;
 
-    @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED)
-    @ExcelProperty("创建时间")
-    private LocalDateTime createTime;
 
 }

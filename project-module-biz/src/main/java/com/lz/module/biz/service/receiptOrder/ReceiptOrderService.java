@@ -66,4 +66,10 @@ public interface ReceiptOrderService {
      */
     PageResult<ReceiptOrderDO> getReceiptOrderPage(ReceiptOrderPageReqVO pageReqVO);
 
+    /**
+     * 导入收款信息列表, 用于 Excel 导入
+     *
+     * @return 收款信息列表
+     */
+    ReceiptOrderImportRespVO importReceiptOrderList(List<ReceiptOrderImportExcelVO> list);
 }

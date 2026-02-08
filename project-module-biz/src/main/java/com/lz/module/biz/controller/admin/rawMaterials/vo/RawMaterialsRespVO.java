@@ -30,7 +30,7 @@ public class RawMaterialsRespVO {
 
     @Schema(description = "计量单位", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty(value = "计量单位", converter = DictConvert.class)
-    @DictFormat("biz_raw_materials_unit") // TODO 代码优化：建议设置到对应的 DictTypeConstants 枚举类中
+    @DictFormat("biz_raw_materials_unit")  
     private String unit;
 
     @Schema(description = "采购单价", requiredMode = Schema.RequiredMode.REQUIRED, example = "22053")
