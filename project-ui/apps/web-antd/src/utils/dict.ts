@@ -144,6 +144,7 @@ enum DICT_TYPE {
   // ========== biz模块 ==========
   BIZ_CUSTOMER_INDUSTRY = 'biz_customer_industry', // 所属行业
   BIZ_METER_DIRECTION = 'biz_meter_direction',
+  BIZ_PAYMENT_PAYEE_TYPE = 'biz_payment_payee_type',
   BIZ_PROJECT_ENGINEERING_TYPE = 'biz_project_engineering_type',
   BIZ_PROJECT_OTHER_PROJECT_PROGRESS = 'biz_project_other_project_progress',
   BIZ_PROJECT_OTHER_PROJECT_TYPE = 'biz_project_other_project_type',
@@ -158,8 +159,8 @@ enum DICT_TYPE {
   BIZ_WORKER_STATUS = 'biz_worker_status',
   BIZ_WORKER_WORK_TYPE = 'biz_worker_work_type',
   BIZ_WORKER_WORKER_TYPE = 'biz_worker_worker_type',
-  BPM_MODEL_FORM_TYPE = 'bpm_model_form_type',
   // ========== BPM 模块 ==========
+  BPM_MODEL_FORM_TYPE = 'bpm_model_form_type',
   BPM_MODEL_TYPE = 'bpm_model_type',
   BPM_OA_LEAVE_TYPE = 'bpm_oa_leave_type',
   BPM_PROCESS_INSTANCE_STATUS = 'bpm_process_instance_status',
