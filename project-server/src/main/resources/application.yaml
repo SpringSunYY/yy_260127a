@@ -273,7 +273,7 @@ project:
     delete-batch-enable: true # 是否生成批量删除接口
     unit-test-enable: false # 是否生成单元测试
   tenant: # 多租户相关配置项
-    enable: true
+    enable: false
     enable-user: false
     user-prefix: /app-api
     ignore-urls:

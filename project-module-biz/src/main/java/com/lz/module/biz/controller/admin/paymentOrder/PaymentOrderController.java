@@ -8,7 +8,6 @@ import com.lz.framework.common.pojo.PageResult;
 import com.lz.framework.common.util.object.BeanUtils;
 import com.lz.framework.excel.core.util.ExcelUtils;
 import com.lz.module.biz.controller.admin.paymentOrder.vo.*;
-import com.lz.module.biz.controller.admin.receiptOrder.vo.ReceiptOrderImportExcelVO;
 import com.lz.module.biz.dal.dataobject.paymentOrder.PaymentOrderDO;
 import com.lz.module.biz.enums.BizPaymentPayeeTypeEnum;
 import com.lz.module.biz.enums.BizReceiptMethodEnum;
@@ -84,6 +83,14 @@ public class PaymentOrderController {
     public CommonResult<PaymentOrderRespVO> getPaymentOrder(@RequestParam("id") Long id) {
         PaymentOrderDO paymentOrder = paymentOrderService.getPaymentOrder(id);
         return success(BeanUtils.toBean(paymentOrder, PaymentOrderRespVO.class));
+    }
+
+    @GetMapping("/get/amount")
+    @Operation(summary = "获得收款信息总额")
+    @PreAuthorize("@ss.hasPermission('biz:payment-order:query')")
+    public CommonResult<BigDecimal> getReceiptOrderAmount(@Valid PaymentOrderPageReqVO pageReqVO) {
+        BigDecimal amount = paymentOrderService.getPaymentOrderAmount(pageReqVO);
+        return success(amount);
     }
 
     @GetMapping("/page")

@@ -30,6 +30,7 @@ import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -171,6 +172,11 @@ public class PaymentOrderServiceImpl implements PaymentOrderService {
     @Override
     public PageResult<PaymentOrderDO> getPaymentOrderPage(PaymentOrderPageReqVO pageReqVO) {
         return paymentOrderMapper.selectPage(pageReqVO);
+    }
+
+    @Override
+    public BigDecimal getPaymentOrderAmount(PaymentOrderPageReqVO pageReqVO) {
+        return paymentOrderMapper.getPaymentOrderAmount(pageReqVO);
     }
 
     @Override

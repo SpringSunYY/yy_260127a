@@ -8,8 +8,6 @@ import com.lz.module.biz.dal.dataobject.receiptOrder.ReceiptOrderDO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * 收款信息 Mapper
@@ -41,16 +39,5 @@ public interface ReceiptOrderMapper extends BaseMapperX<ReceiptOrderDO> {
                 .orderByDesc(ReceiptOrderDO::getId);
     }
 
-    default BigDecimal getReceiptOrderAmount(ReceiptOrderPageReqVO pageReqVO){
-        LambdaQueryWrapperX<ReceiptOrderDO> queryWrapper = initReceiptOrderQuery(pageReqVO);
-        // 先查询符合条件的所有记录，然后在内存中计算总和
-        List<ReceiptOrderDO> list = selectList(queryWrapper.select(ReceiptOrderDO::getReceiptAmount));
-        if (list.isEmpty()) {
-            return BigDecimal.ZERO;
-        }
-        return list.stream()
-                .map(ReceiptOrderDO::getReceiptAmount)
-                .filter(Objects::nonNull)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
+    public BigDecimal getReceiptOrderAmount(ReceiptOrderPageReqVO pageReqVO);
 }

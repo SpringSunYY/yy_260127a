@@ -9,4 +9,45 @@
         文档可见：https://www.iocoder.cn/MyBatis/x-plugins/
      -->
 
+    <!-- 获取付款金额总和 -->
+    <select id="getPaymentOrderAmount" resultType="java.math.BigDecimal">
+        SELECT SUM(payment_amount) FROM biz_payment_order
+        <where>
+            <if test="paymentNo != null and paymentNo != ''">
+                AND payment_no LIKE CONCAT('%', #{paymentNo}, '%')
+            </if>
+            <if test="projectId != null">
+                AND project_id = #{projectId}
+            </if>
+            <if test="projectType != null">
+                AND project_type = #{projectType}
+            </if>
+            <if test="projectName != null and projectName != ''">
+                AND project_name LIKE CONCAT('%', #{projectName}, '%')
+            </if>
+            <if test="payeeType != null">
+                AND payee_type = #{payeeType}
+            </if>
+            <if test="payeeId != null">
+                AND payee_id = #{payeeId}
+            </if>
+            <if test="payeeName != null and payeeName != ''">
+                AND payee_name LIKE CONCAT('%', #{payeeName}, '%')
+            </if>
+            <if test="paymentTime != null">
+                AND payment_time BETWEEN #{paymentTime.begin} AND #{paymentTime.end}
+            </if>
+            <if test="paymentMethod != null">
+                AND payment_method = #{paymentMethod}
+            </if>
+            <if test="isInvoiced != null">
+                AND is_invoiced = #{isInvoiced}
+            </if>
+            <if test="createTime != null">
+                AND create_time BETWEEN #{createTime.begin} AND #{createTime.end}
+            </if>
+            and deleted = false
+        </where>
+    </select>
+
 </mapper>

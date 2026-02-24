@@ -1,5 +1,6 @@
 package com.lz.module.biz.dal.mysql.paymentOrder;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import com.lz.framework.common.pojo.PageResult;
@@ -33,4 +34,5 @@ public interface PaymentOrderMapper extends BaseMapperX<PaymentOrderDO> {
                 .orderByDesc(PaymentOrderDO::getId));
     }
 
+    BigDecimal getPaymentOrderAmount(PaymentOrderPageReqVO pageReqVO);
 }

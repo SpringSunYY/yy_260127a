@@ -9,4 +9,48 @@
         文档可见：https://www.iocoder.cn/MyBatis/x-plugins/
      -->
 
+    <!-- 获取收款金额总和 -->
+    <select id="getReceiptOrderAmount" resultType="java.math.BigDecimal">
+        SELECT SUM(receipt_amount) FROM biz_receipt_order
+        <where>
+            <if test="receiptNo != null and receiptNo != ''">
+                AND receipt_no LIKE CONCAT('%', #{receiptNo}, '%')
+            </if>
+            <if test="receiptType != null">
+                AND receipt_type = #{receiptType}
+            </if>
+            <if test="projectType != null">
+                AND project_type = #{projectType}
+            </if>
+            <if test="projectScatteredType != null">
+                AND project_scattered_type = #{projectScatteredType}
+            </if>
+            <if test="projectNo != null and projectNo != ''">
+                AND project_no LIKE CONCAT('%', #{projectNo}, '%')
+            </if>
+            <if test="fiscalYear != null">
+                AND fiscal_year = #{fiscalYear}
+            </if>
+            <if test="projectName != null and projectName != ''">
+                AND project_name LIKE CONCAT('%', #{projectName}, '%')
+            </if>
+            <if test="payerName != null and payerName != ''">
+                AND payer_name LIKE CONCAT('%', #{payerName}, '%')
+            </if>
+            <if test="receiptDate != null">
+                AND receipt_date BETWEEN #{receiptDate.begin} AND #{receiptDate.end}
+            </if>
+            <if test="receiptMethod != null">
+                AND receipt_method = #{receiptMethod}
+            </if>
+            <if test="isInvoiced != null">
+                AND is_invoiced = #{isInvoiced}
+            </if>
+            <if test="createTime != null">
+                AND create_time BETWEEN #{createTime.begin} AND #{createTime.end}
+            </if>
+            and deleted = false
+        </where>
+    </select>
+
 </mapper>

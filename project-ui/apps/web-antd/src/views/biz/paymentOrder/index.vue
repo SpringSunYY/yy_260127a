@@ -14,6 +14,7 @@ import {
   deletePaymentOrder,
   deletePaymentOrderList,
   exportPaymentOrder,
+  getPaymentOrderAmount,
   getPaymentOrderPage,
 } from '#/api/biz/paymentOrder';
 import { $t } from '#/locales';
@@ -31,6 +32,8 @@ const [ImportModal, importModalApi] = useVbenModal({
   connectedComponent: ImportForm,
   destroyOnClose: true,
 });
+
+const totalAmount = ref<number>(0);
 
 /** 刷新表格 */
 function onRefresh() {
@@ -88,6 +91,7 @@ async function handleDeleteBatch() {
 }
 
 const checkedIds = ref<number[]>([]);
+
 function handleRowCheckboxChange({
   records,
 }: {
@@ -115,6 +119,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
     proxyConfig: {
       ajax: {
         query: async ({ page }, formValues) => {
+          totalAmount.value = await getPaymentOrderAmount(formValues);
           return await getPaymentOrderPage({
             pageNo: page.currentPage,
             pageSize: page.pageSize,
@@ -144,6 +149,14 @@ const [Grid, gridApi] = useVbenVxeGrid({
     <FormModal @success="onRefresh" />
     <ImportModal @success="onRefresh" />
     <Grid table-title="付款信息列表">
+      <template #table-title>
+        <div class="flex items-center">
+          <span class="mr-4 text-lg font-bold">付款信息列表</span>
+          <span class="text-primary text-lg font-bold">
+            总金额: {{ totalAmount }}
+          </span>
+        </div>
+      </template>
       <template #toolbar-tools>
         <TableAction
           :actions="[

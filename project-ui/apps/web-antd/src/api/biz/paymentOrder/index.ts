@@ -33,6 +33,11 @@ export function getPaymentOrderPage(params: PageParam) {
   );
 }
 
+/** 查询收款信息总价*/
+export function getPaymentOrderAmount(params: PageParam) {
+  return requestClient.get<number>('/biz/payment-order/get/amount', { params });
+}
+
 /** 查询付款信息详情 */
 export function getPaymentOrder(id: number) {
   return requestClient.get<PaymentOrderApi.PaymentOrder>(

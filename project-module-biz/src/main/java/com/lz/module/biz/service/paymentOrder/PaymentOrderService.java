@@ -1,13 +1,15 @@
 package com.lz.module.biz.service.paymentOrder;
 
-import java.util.*;
-
-import com.lz.module.biz.controller.admin.receiptOrder.vo.ReceiptOrderImportExcelVO;
-import jakarta.validation.*;
-import com.lz.module.biz.controller.admin.paymentOrder.vo.*;
-import com.lz.module.biz.dal.dataobject.paymentOrder.PaymentOrderDO;
 import com.lz.framework.common.pojo.PageResult;
-import com.lz.framework.common.pojo.PageParam;
+import com.lz.module.biz.controller.admin.paymentOrder.vo.PaymentOrderImportExcelVO;
+import com.lz.module.biz.controller.admin.paymentOrder.vo.PaymentOrderImportRespVO;
+import com.lz.module.biz.controller.admin.paymentOrder.vo.PaymentOrderPageReqVO;
+import com.lz.module.biz.controller.admin.paymentOrder.vo.PaymentOrderSaveReqVO;
+import com.lz.module.biz.dal.dataobject.paymentOrder.PaymentOrderDO;
+import jakarta.validation.Valid;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 付款信息 Service 接口
@@ -39,10 +41,10 @@ public interface PaymentOrderService {
     void deletePaymentOrder(Long id);
 
     /**
-    * 批量删除付款信息
-    *
-    * @param ids 编号
-    */
+     * 批量删除付款信息
+     *
+     * @param ids 编号
+     */
     void deletePaymentOrderListByIds(List<Long> ids);
 
     /**
@@ -60,6 +62,15 @@ public interface PaymentOrderService {
      * @return 付款信息分页
      */
     PageResult<PaymentOrderDO> getPaymentOrderPage(PaymentOrderPageReqVO pageReqVO);
+
+
+    /**
+     * 获得付款信息金额
+     *
+     * @param pageReqVO 分页查询
+     * @return 付款信息金额
+     */
+    BigDecimal getPaymentOrderAmount(@Valid PaymentOrderPageReqVO pageReqVO);
 
     PaymentOrderImportRespVO importPaymentOrderList(List<PaymentOrderImportExcelVO> list);
 }
