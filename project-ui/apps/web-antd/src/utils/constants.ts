@@ -98,6 +98,12 @@ export const BIZ_RECEIPT_PROJECT_TYPE = {
   receipt_project_type_1: '1', // 工程项目
   receipt_project_type_2: '2', // 其他项目
 };
+
+export const BIZ_PAYMENT_PAYEE_TYPE = {
+  payment_payee_type_1: '1', // 工人
+  payment_payee_type_2: '2', // 供应商
+  payment_payee_type_3: '3', // 客户
+};
 // ========== BPM 模块 ==========
 
 // 候选人策略枚举 （ 用于审批节点。抄送节点 )

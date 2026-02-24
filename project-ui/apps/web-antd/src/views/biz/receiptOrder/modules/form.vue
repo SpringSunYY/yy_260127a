@@ -157,7 +157,7 @@ const [Modal, modalApi] = useVbenModal({
     await formApi.setValues(formData.value);
 
     // 加载项目列表
-    loadProjects();
+    await loadProjects();
   },
 });
 </script>

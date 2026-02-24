@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.lz.framework.common.exception.util.ServiceExceptionUtil.exception;
-import static com.lz.module.biz.enums.ErrorCodeConstants.RECEIPT_ORDER_NOT_EXISTS;
+import static com.lz.module.biz.enums.ErrorCodeConstants.*;
 
 /**
  * 收款信息 Service 实现类
@@ -73,17 +73,18 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
             //查询项目是否存在
             ProjectOtherDO projectOtherDO = projectOtherMapper.selectById(receiptOrder.getProjectId());
             if (ObjUtil.isNull(projectOtherDO)) {
-                throw exception(RECEIPT_ORDER_NOT_EXISTS);
+                throw exception(PROJECT_OTHER_NOT_EXISTS);
             }
             receiptOrder.setProjectName(projectOtherDO.getProjectName());
             receiptOrder.setProjectNo(null);
             receiptOrder.setFiscalYear(null);
             receiptOrder.setProjectScatteredType(null);
         } else {
+            receiptOrder.setProjectType(BizReceiptProjectTypeEnum.BIZ_RECEIPT_PROJECT_TYPE_1.getStatus());
             //默认就是这个
             ProjectDO projectDO = projectMapper.selectById(receiptOrder.getProjectId());
             if (ObjUtil.isNull(projectDO)) {
-                throw exception(RECEIPT_ORDER_NOT_EXISTS);
+                throw exception(PROJECT_NOT_EXISTS);
             }
             receiptOrder.setProjectNo(projectDO.getProjectNo());
             receiptOrder.setProjectName(projectDO.getName());
