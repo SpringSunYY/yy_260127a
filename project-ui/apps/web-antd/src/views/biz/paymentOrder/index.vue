@@ -2,25 +2,35 @@
 import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { PaymentOrderApi } from '#/api/biz/paymentOrder';
 
+import { ref } from 'vue';
+
 import { Page, useVbenModal } from '@vben/common-ui';
-import { message,Tabs } from 'ant-design-vue';
-import Form from './modules/form.vue';
-
-
-import { ref, computed } from 'vue';
-import { $t } from '#/locales';
-import { ACTION_ICON, TableAction, useVbenVxeGrid } from '#/adapter/vxe-table';
-import { getPaymentOrderPage, deletePaymentOrder, deletePaymentOrderList, exportPaymentOrder } from '#/api/biz/paymentOrder';
 import { downloadFileFromBlobPart, isEmpty } from '@vben/utils';
 
-import { useGridColumns, useGridFormSchema } from './data';
+import { message } from 'ant-design-vue';
 
+import { ACTION_ICON, TableAction, useVbenVxeGrid } from '#/adapter/vxe-table';
+import {
+  deletePaymentOrder,
+  deletePaymentOrderList,
+  exportPaymentOrder,
+  getPaymentOrderPage,
+} from '#/api/biz/paymentOrder';
+import { $t } from '#/locales';
+import ImportForm from '#/views/biz/paymentOrder/modules/import-form.vue';
+
+import { useGridColumns, useGridFormSchema } from './data';
+import Form from './modules/form.vue';
 
 const [FormModal, formModalApi] = useVbenModal({
   connectedComponent: Form,
-  destroyOnClose: true
+  destroyOnClose: true,
 });
 
+const [ImportModal, importModalApi] = useVbenModal({
+  connectedComponent: ImportForm,
+  destroyOnClose: true,
+});
 
 /** 刷新表格 */
 function onRefresh() {
@@ -37,12 +47,15 @@ function handleEdit(row: PaymentOrderApi.PaymentOrder) {
   formModalApi.setData(row).open();
 }
 
+function handleImport() {
+  importModalApi.open();
+}
 
 /** 删除付款信息 */
 async function handleDelete(row: PaymentOrderApi.PaymentOrder) {
   const hideLoading = message.loading({
     content: $t('ui.actionMessage.deleting', [row.id]),
-    key: 'action_key_msg'
+    key: 'action_key_msg',
   });
   try {
     await deletePaymentOrder(row.id as number);
@@ -60,7 +73,7 @@ async function handleDelete(row: PaymentOrderApi.PaymentOrder) {
 async function handleDeleteBatch() {
   const hideLoading = message.loading({
     content: $t('ui.actionMessage.deleting'),
-    key: 'action_key_msg'
+    key: 'action_key_msg',
   });
   try {
     await deletePaymentOrderList(checkedIds.value);
@@ -74,9 +87,9 @@ async function handleDeleteBatch() {
   }
 }
 
-const checkedIds = ref<number[]>([])
+const checkedIds = ref<number[]>([]);
 function handleRowCheckboxChange({
-  records
+  records,
 }: {
   records: PaymentOrderApi.PaymentOrder[];
 }) {
@@ -91,7 +104,7 @@ async function handleExport() {
 
 const [Grid, gridApi] = useVbenVxeGrid({
   formOptions: {
-    schema: useGridFormSchema()
+    schema: useGridFormSchema(),
   },
   gridOptions: {
     columns: useGridColumns(),
@@ -117,19 +130,19 @@ const [Grid, gridApi] = useVbenVxeGrid({
     toolbarConfig: {
       refresh: { code: 'query' },
       search: true,
-    }
+    },
   } as VxeTableGridOptions<PaymentOrderApi.PaymentOrder>,
-  gridEvents:{
-      checkboxAll: handleRowCheckboxChange,
-      checkboxChange: handleRowCheckboxChange
-  }
+  gridEvents: {
+    checkboxAll: handleRowCheckboxChange,
+    checkboxChange: handleRowCheckboxChange,
+  },
 });
 </script>
 
 <template>
   <Page auto-content-height>
     <FormModal @success="onRefresh" />
-
+    <ImportModal @success="onRefresh" />
     <Grid table-title="付款信息列表">
       <template #toolbar-tools>
         <TableAction
@@ -156,6 +169,13 @@ const [Grid, gridApi] = useVbenVxeGrid({
               disabled: isEmpty(checkedIds),
               auth: ['biz:payment-order:delete'],
               onClick: handleDeleteBatch,
+            },
+            {
+              label: $t('ui.actionTitle.import', ['收款']),
+              type: 'primary',
+              icon: ACTION_ICON.UPLOAD,
+              auth: ['biz:receipt-order:create'],
+              onClick: handleImport,
             },
           ]"
         />
@@ -185,6 +205,5 @@ const [Grid, gridApi] = useVbenVxeGrid({
         />
       </template>
     </Grid>
-
   </Page>
 </template>

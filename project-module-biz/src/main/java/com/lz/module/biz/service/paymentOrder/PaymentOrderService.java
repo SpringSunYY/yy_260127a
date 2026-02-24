@@ -1,6 +1,8 @@
 package com.lz.module.biz.service.paymentOrder;
 
 import java.util.*;
+
+import com.lz.module.biz.controller.admin.receiptOrder.vo.ReceiptOrderImportExcelVO;
 import jakarta.validation.*;
 import com.lz.module.biz.controller.admin.paymentOrder.vo.*;
 import com.lz.module.biz.dal.dataobject.paymentOrder.PaymentOrderDO;
@@ -59,4 +61,5 @@ public interface PaymentOrderService {
      */
     PageResult<PaymentOrderDO> getPaymentOrderPage(PaymentOrderPageReqVO pageReqVO);
 
+    PaymentOrderImportRespVO importPaymentOrderList(List<PaymentOrderImportExcelVO> list);
 }

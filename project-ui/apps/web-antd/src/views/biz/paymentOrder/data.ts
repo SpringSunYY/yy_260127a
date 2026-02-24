@@ -88,7 +88,7 @@ export function useFormSchema(options?: FormSchemaOptions): VbenFormSchema[] {
       component: 'DatePicker',
       componentProps: {
         showTime: true,
-        format: 'YYYY-MM-DD',
+        format: 'YYYY-MM-DD HH:mm:ss',
         valueFormat: 'x',
       },
     },
@@ -96,8 +96,10 @@ export function useFormSchema(options?: FormSchemaOptions): VbenFormSchema[] {
       fieldName: 'paymentAmount',
       label: '付款金额',
       rules: 'required',
-      component: 'Input',
+      component: 'InputNumber',
       componentProps: {
+        precision: 2,
+        min: 0,
         placeholder: '请输入付款金额',
       },
     },
@@ -318,7 +320,7 @@ export function useGridColumns(): VxeTableGridOptions<PaymentOrderApi.PaymentOrd
       field: 'paymentTime',
       title: '付款日期',
       minWidth: 120,
-      formatter: 'formatDate',
+      formatter: 'formatDateTime',
     },
     {
       field: 'paymentAmount',
@@ -372,6 +374,19 @@ export function useGridColumns(): VxeTableGridOptions<PaymentOrderApi.PaymentOrd
       width: 200,
       fixed: 'right',
       slots: { default: 'actions' },
+    },
+  ];
+}
+
+/** 付款信息导入的表单 */
+export function pymentOrderImportFormSchema(): VbenFormSchema[] {
+  return [
+    {
+      fieldName: 'file',
+      label: '付款信息',
+      component: 'Upload',
+      rules: 'required',
+      help: '仅允许导入 xls、xlsx 格式文件',
     },
   ];
 }

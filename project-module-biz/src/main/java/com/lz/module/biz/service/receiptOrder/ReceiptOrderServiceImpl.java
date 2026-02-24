@@ -180,6 +180,30 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
         if (ArrayUtil.isEmpty(list)) {
             throw new ServiceException(400, "导入数据不能为空");
         }
+        //校验数据
+        for (int i = 0; i < list.size(); i++) {
+            //校验数据,收款单号、收款类型、收款方、收款金额、收款方式、是否开票
+            ReceiptOrderImportExcelVO orderImportExcelVO = list.get(i);
+            int index = i + 1;
+            if (StrUtil.isBlank(orderImportExcelVO.getReceiptNo())) {
+                throw new ServiceException(400, "第" + index + "行收款单号不能为空");
+            }
+            if (StrUtil.isBlank(orderImportExcelVO.getReceiptType())) {
+                throw new ServiceException(400, "第" + index + "行收款类型不能为空");
+            }
+            if (StrUtil.isBlank(orderImportExcelVO.getPayerName())) {
+                throw new ServiceException(400, "第" + index + "行收款方不能为空");
+            }
+            if (ObjUtil.isNull(orderImportExcelVO.getReceiptAmount())) {
+                throw new ServiceException(400, "第" + index + "行收款金额不能为空");
+            }
+            if (StrUtil.isBlank(orderImportExcelVO.getReceiptMethod())) {
+                throw new ServiceException(400, "第" + index + "行收款方式不能为空");
+            }
+            if (StrUtil.isBlank(orderImportExcelVO.getIsInvoiced())) {
+                throw new ServiceException(400, "第" + index + "行是否开票不能为空");
+            }
+        }
         //查询到所有的项目，其他的和工程的
         List<Long> projectIds = new ArrayList<>();
         List<Long> projectOtherIds = new ArrayList<>();

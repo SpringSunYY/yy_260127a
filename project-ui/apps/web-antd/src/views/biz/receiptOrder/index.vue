@@ -189,7 +189,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
               onClick: handleDeleteBatch,
             },
             {
-              label: $t('ui.actionTitle.import', ['工资']),
+              label: $t('ui.actionTitle.import', ['收款']),
               type: 'primary',
               icon: ACTION_ICON.UPLOAD,
               auth: ['biz:receipt-order:create'],

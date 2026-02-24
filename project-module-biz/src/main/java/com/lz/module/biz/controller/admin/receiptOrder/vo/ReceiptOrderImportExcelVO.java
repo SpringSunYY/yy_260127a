@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * 用户 Excel 导入 VO
+ * 收款 Excel 导入 VO
  */
 @Data
 @Builder

@@ -108,7 +108,7 @@ export function useFormSchema(options?: FormSchemaOptions): VbenFormSchema[] {
       component: 'DatePicker',
       componentProps: {
         showTime: true,
-        format: 'YYYY-MM-DD',
+        format: 'YYYY-MM-DD HH:mm:ss',
         valueFormat: 'x',
       },
     },
@@ -365,7 +365,7 @@ export function useGridColumns(): VxeTableGridOptions<ReceiptOrderApi.ReceiptOrd
       field: 'receiptDate',
       title: '收款日期',
       minWidth: 120,
-      formatter: 'formatDate',
+      formatter: 'formatDateTime',
     },
     {
       field: 'receiptAmount',
@@ -423,12 +423,12 @@ export function useGridColumns(): VxeTableGridOptions<ReceiptOrderApi.ReceiptOrd
   ];
 }
 
-/** 工资导入的表单 */
+/** 收款信息导入的表单 */
 export function receiptOrderImportFormSchema(): VbenFormSchema[] {
   return [
     {
       fieldName: 'file',
-      label: '工资数据',
+      label: '收款信息',
       component: 'Upload',
       rules: 'required',
       help: '仅允许导入 xls、xlsx 格式文件',

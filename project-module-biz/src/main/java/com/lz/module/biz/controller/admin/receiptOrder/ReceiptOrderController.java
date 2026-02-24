@@ -117,7 +117,7 @@ public class ReceiptOrderController {
     }
 
     @GetMapping("/get-import-template")
-    @Operation(summary = "获得导入工资模板")
+    @Operation(summary = "获得导入收款信息模板")
     public void importTemplate(HttpServletResponse response) throws IOException {
         // 手动创建导出 demo
         List<ReceiptOrderImportExcelVO> list = Collections.singletonList(

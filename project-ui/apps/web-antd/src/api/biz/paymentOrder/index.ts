@@ -66,3 +66,13 @@ export function deletePaymentOrderList(ids: number[]) {
 export function exportPaymentOrder(params: any) {
   return requestClient.download('/biz/payment-order/export-excel', params);
 }
+
+/** 导入付款信息模版 */
+export function importPaymentOrderTemplate() {
+  return requestClient.download('/biz/payment-order/get-import-template');
+}
+
+/** 导入付款信息 */
+export function importPaymentOrder(file: File) {
+  return requestClient.upload('/biz/payment-order/import', { file });
+}
