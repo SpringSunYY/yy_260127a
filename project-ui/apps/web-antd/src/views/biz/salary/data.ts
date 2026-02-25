@@ -2,6 +2,7 @@ import type { VbenFormSchema } from '#/adapter/form';
 import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { SalaryApi } from '#/api/biz/salary';
 
+import { z } from '#/adapter/form';
 import { DICT_TYPE, getDictOptions, getRangePickerDefaultProps } from '#/utils';
 
 /** 新增/修改的表单 */
@@ -287,6 +288,17 @@ export function salaryImportFormSchema(): VbenFormSchema[] {
       component: 'Upload',
       rules: 'required',
       help: '仅允许导入 xls、xlsx 格式文件',
+    },
+    {
+      fieldName: 'isAddPayment',
+      label: '是否新增',
+      component: 'Switch',
+      componentProps: {
+        checkedChildren: '是',
+        unCheckedChildren: '否',
+      },
+      rules: z.boolean().default(true),
+      help: '是否同时新增付款信息',
     },
   ];
 }

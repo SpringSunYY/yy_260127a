@@ -25,7 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -108,11 +107,14 @@ public class SalaryController {
     @Operation(summary = "导入工资")
     @Parameters({
             @Parameter(name = "file", description = "Excel 文件", required = true),
+            @Parameter(name = "isAddPayment", description = "是否导入付款信息", required = true)
     })
     @PreAuthorize("@ss.hasPermission('biz:salary:create')")
-    public CommonResult<SalaryImportRespVO> importExcel(@RequestParam("file") MultipartFile file) throws Exception {
+    public CommonResult<SalaryImportRespVO> importExcel(@RequestParam("file") MultipartFile file,
+                                                        @RequestParam(value = "isAddPayment", required = false, defaultValue = "true") Boolean isAddPayment)
+                                                        throws Exception {
         List<SalaryImportExcelVO> list = ExcelUtils.read(file, SalaryImportExcelVO.class);
-        return success(salaryService.importSalaryList(list));
+        return success(salaryService.importSalaryList(list, isAddPayment));
     }
 
     @GetMapping("/get-import-template")

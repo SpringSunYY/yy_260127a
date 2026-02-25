@@ -1,11 +1,14 @@
 package com.lz.module.biz.service.salary;
 
-import java.util.*;
-import jakarta.validation.*;
-import com.lz.module.biz.controller.admin.salary.vo.*;
-import com.lz.module.biz.dal.dataobject.salary.SalaryDO;
 import com.lz.framework.common.pojo.PageResult;
-import com.lz.framework.common.pojo.PageParam;
+import com.lz.module.biz.controller.admin.salary.vo.SalaryImportExcelVO;
+import com.lz.module.biz.controller.admin.salary.vo.SalaryImportRespVO;
+import com.lz.module.biz.controller.admin.salary.vo.SalaryPageReqVO;
+import com.lz.module.biz.controller.admin.salary.vo.SalarySaveReqVO;
+import com.lz.module.biz.dal.dataobject.salary.SalaryDO;
+import jakarta.validation.Valid;
+
+import java.util.List;
 
 /**
  * 工资信息 Service 接口
@@ -37,10 +40,10 @@ public interface SalaryService {
     void deleteSalary(Long id);
 
     /**
-    * 批量删除工资信息
-    *
-    * @param ids 编号
-    */
+     * 批量删除工资信息
+     *
+     * @param ids 编号
+     */
     void deleteSalaryListByIds(List<Long> ids);
 
     /**
@@ -62,8 +65,9 @@ public interface SalaryService {
     /**
      * 导入工资信息
      *
-     * @param list 文件列表
+     * @param list         文件列表
+     * @param isAddPayment 是否添加付款信息
      * @return 导入结果
      */
-    SalaryImportRespVO importSalaryList(List<SalaryImportExcelVO> list);
+    SalaryImportRespVO importSalaryList(List<SalaryImportExcelVO> list, Boolean isAddPayment);
 }

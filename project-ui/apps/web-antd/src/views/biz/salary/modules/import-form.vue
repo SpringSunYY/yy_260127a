@@ -34,7 +34,7 @@ const [Modal, modalApi] = useVbenModal({
     // 提交表单
     const data = await formApi.getValues();
     try {
-      await importSalary(data.file);
+      await importSalary(data.file, data.isAddPayment);
       // 关闭并提示
       await modalApi.close();
       emit('success');
@@ -68,14 +68,14 @@ async function handleDownload() {
             accept=".xls,.xlsx"
             :before-upload="beforeUpload"
           >
-            <Button type="primary"> 选择 Excel 文件 </Button>
+            <Button type="primary"> 选择 Excel 文件</Button>
           </Upload>
         </div>
       </template>
     </Form>
     <template #prepend-footer>
       <div class="flex flex-auto items-center">
-        <Button @click="handleDownload"> 下载导入模板 </Button>
+        <Button @click="handleDownload"> 下载导入模板</Button>
       </div>
     </template>
   </Modal>

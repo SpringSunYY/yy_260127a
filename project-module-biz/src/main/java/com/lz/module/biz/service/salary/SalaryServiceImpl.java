@@ -11,12 +11,17 @@ import com.lz.module.biz.controller.admin.salary.vo.SalaryImportExcelVO;
 import com.lz.module.biz.controller.admin.salary.vo.SalaryImportRespVO;
 import com.lz.module.biz.controller.admin.salary.vo.SalaryPageReqVO;
 import com.lz.module.biz.controller.admin.salary.vo.SalarySaveReqVO;
+import com.lz.module.biz.dal.dataobject.paymentOrder.PaymentOrderDO;
 import com.lz.module.biz.dal.dataobject.salary.SalaryDO;
 import com.lz.module.biz.dal.dataobject.worker.WorkerDO;
+import com.lz.module.biz.dal.mysql.paymentOrder.PaymentOrderMapper;
 import com.lz.module.biz.dal.mysql.salary.SalaryMapper;
 import com.lz.module.biz.dal.mysql.worker.WorkerMapper;
+import com.lz.module.biz.enums.BizPaymentPayeeTypeEnum;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.ArrayList;
@@ -34,6 +39,7 @@ import static com.lz.module.biz.enums.ErrorCodeConstants.WORKER_NOT_EXISTS;
  *
  * @author 芋道源码
  */
+@Slf4j
 @Service
 @Validated
 public class SalaryServiceImpl implements SalaryService {
@@ -43,6 +49,12 @@ public class SalaryServiceImpl implements SalaryService {
 
     @Resource
     private WorkerMapper workerMapper;
+
+    @Resource
+    private TransactionTemplate transactionTemplate;
+
+    @Resource
+    private PaymentOrderMapper paymentOrderMapper;
 
     @Override
     public Long createSalary(SalarySaveReqVO createReqVO) {
@@ -109,9 +121,39 @@ public class SalaryServiceImpl implements SalaryService {
     }
 
     @Override
-    public SalaryImportRespVO importSalaryList(List<SalaryImportExcelVO> list) {
-        if (ArrayUtil.isEmpty( list)) {
+    public SalaryImportRespVO importSalaryList(List<SalaryImportExcelVO> list, Boolean isAddPayment) {
+        if (ArrayUtil.isEmpty(list)) {
             throw new ServiceException(400, "导入数据不能为空");
+        }
+        //校验数据
+        for (int i = 0; i < list.size(); i++) {
+            SalaryImportExcelVO vo = list.get(i);
+            int index = i + 1;
+            if (ObjUtil.isNull(vo.getWorkerId())) {
+                throw new ServiceException(400,
+                        StrUtil.format("第{}行工人编号不能为空", index));
+            }
+            if (!isAddPayment) {
+                continue;
+            }
+            if (ObjUtil.isEmpty(vo.getPaymentNo())) {
+                throw new ServiceException(400,
+                        StrUtil.format(
+                                "第{}行请填写付款单号，因为您需要添加付款信息，付款信息的付款单号不能为空",
+                                index));
+            }
+            if (ObjUtil.isEmpty(vo.getPaymentMethod())) {
+                throw new ServiceException(400,
+                        StrUtil.format(
+                                "第{}行请填写付款方式，因为您需要添加付款信息，付款信息的付款方式不能为空",
+                                index));
+            }
+            if (ObjUtil.isEmpty(vo.getIsInvoiced())) {
+                throw new ServiceException(400,
+                        StrUtil.format(
+                                "第{}行请填写是否开票，因为您需要添加付款信息，付款信息的是否开票不能为空",
+                                index));
+            }
         }
         //遍历去重所有的工人编号，查询出所有的工人，防止没有这个工人
         List<Long> workerIds = list.stream().map(SalaryImportExcelVO::getWorkerId).filter(Objects::nonNull).distinct().toList();
@@ -125,22 +167,45 @@ public class SalaryServiceImpl implements SalaryService {
             WorkerDO workerDO = workerDOMap.get(id);
             if (ObjUtil.isNull(workerDO)) {
                 throw new ServiceException(400,
-                        StrUtil.format("第{}行导入失败，不存在编号: {} 的工人", i + 1,id));
+                        StrUtil.format("第{}行导入失败，不存在编号: {} 的工人", i + 1, id));
             }
         }
 
         ArrayList<SalaryDO> salaryDOS = new ArrayList<>();
-        for (SalaryImportExcelVO salaryImportExcelVO : list) {
-            if (ObjUtil.isNotNull(salaryImportExcelVO.getWorkerId())) {
-                salaryImportExcelVO.setWorkerName(workerDOMap.get(salaryImportExcelVO.getWorkerId()).getWorkerName());
+        ArrayList<PaymentOrderDO> paymentOrderDOS = new ArrayList<>();
+        for (SalaryImportExcelVO vo : list) {
+            if (ObjUtil.isNotNull(vo.getWorkerId())) {
+                vo.setWorkerName(workerDOMap.get(vo.getWorkerId()).getWorkerName());
             }
-            SalaryDO salaryDO = BeanUtils.toBean(salaryImportExcelVO, SalaryDO.class);
+            SalaryDO salaryDO = BeanUtils.toBean(vo, SalaryDO.class);
             salaryDOS.add(salaryDO);
+            if (!isAddPayment) {
+                continue;
+            }
+            PaymentOrderDO paymentOrderDO = getPaymentOrderDO(vo);
+            paymentOrderDOS.add(paymentOrderDO);
         }
-        salaryMapper.insertBatch(salaryDOS);
+        transactionTemplate.executeWithoutResult(status -> {
+            salaryMapper.insertBatch(salaryDOS);
+            paymentOrderMapper.insertBatch(paymentOrderDOS);
+        });
         return SalaryImportRespVO.builder()
                 .message(StrUtil.format("成功导入 {} 个工资信息", salaryDOS.size()))
                 .build();
+    }
+
+    private PaymentOrderDO getPaymentOrderDO(SalaryImportExcelVO vo) {
+        PaymentOrderDO paymentOrderDO = new PaymentOrderDO();
+        paymentOrderDO.setPaymentNo(vo.getPaymentNo());
+        paymentOrderDO.setPayeeType(BizPaymentPayeeTypeEnum.BIZ_PAYMENT_PAYEE_TYPE_1.getStatus());
+        paymentOrderDO.setPayeeId(vo.getWorkerId());
+        paymentOrderDO.setPayeeName(vo.getWorkerName());
+        paymentOrderDO.setPaymentTime(vo.getSettlementTime());
+        paymentOrderDO.setPaymentAmount(vo.getPayableAmount());
+        paymentOrderDO.setPaymentMethod(vo.getPaymentMethod());
+        paymentOrderDO.setPaymentPurpose("导入工资信息，系统自动新增");
+        paymentOrderDO.setIsInvoiced(vo.getIsInvoiced());
+        return paymentOrderDO;
     }
 
 }

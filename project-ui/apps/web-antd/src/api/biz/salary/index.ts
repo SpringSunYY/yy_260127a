@@ -67,8 +67,9 @@ export function importSalaryTemplate() {
 }
 
 /** 导入工资信息 */
-export function importSalary(file: File) {
+export function importSalary(file: File, isAddPayment: boolean) {
   return requestClient.upload('/biz/salary/import', {
     file,
+    isAddPayment,
   });
 }
