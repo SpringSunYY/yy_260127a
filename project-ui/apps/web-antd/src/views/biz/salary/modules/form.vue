@@ -72,15 +72,17 @@ const [Form, formApi] = useVbenForm({
     componentProps: {
       class: 'w-full',
     },
-    formItemClass: 'col-span-2',
-    labelWidth: 80,
+    formItemClass: 'col-span-1',
+    labelWidth: 120,
   },
   layout: 'horizontal',
   schema: useFormSchema(),
   showDefaultActions: false,
+  wrapperClass: 'grid-cols-2 gap-x-4',
 });
 
 const [Modal, modalApi] = useVbenModal({
+  class: 'w-[1000px]',
   async onConfirm() {
     const { valid } = await formApi.validate();
     if (!valid) {

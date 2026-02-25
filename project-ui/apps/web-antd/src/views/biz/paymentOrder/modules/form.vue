@@ -9,6 +9,7 @@ import { useDebounceFn } from '@vueuse/core';
 import { message, Select } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
+import { getCustomerPage } from '#/api/biz/customer';
 import {
   createPaymentOrder,
   getPaymentOrder,
@@ -16,11 +17,10 @@ import {
 } from '#/api/biz/paymentOrder';
 import { getProjectPage } from '#/api/biz/project';
 import { getProjectOtherPage } from '#/api/biz/projectOther';
-import { getCustomerPage } from '#/api/biz/customer';
-import { getWorkerPage } from '#/api/biz/worker';
 import { getSupplierPage } from '#/api/biz/supplier';
+import { getWorkerPage } from '#/api/biz/worker';
 import { $t } from '#/locales';
-import { BIZ_RECEIPT_PROJECT_TYPE, BIZ_PAYMENT_PAYEE_TYPE } from '#/utils';
+import { BIZ_PAYMENT_PAYEE_TYPE, BIZ_RECEIPT_PROJECT_TYPE } from '#/utils';
 
 import { useFormSchema } from '../data';
 
@@ -118,8 +118,7 @@ const loadPayees = async (keyword?: string) => {
   payeeLoading.value = true;
   try {
     const payeeType =
-      (formApi?.form as any)?.values?.payeeType ||
-      formData.value?.payeeType;
+      (formApi?.form as any)?.values?.payeeType || formData.value?.payeeType;
 
     if (!payeeType) {
       payeeOptions.value = [];
@@ -127,41 +126,62 @@ const loadPayees = async (keyword?: string) => {
     }
 
     let res: any;
-    if (payeeType === BIZ_PAYMENT_PAYEE_TYPE.payment_payee_type_1) {
-      // 工人
-      res = await getWorkerPage({
-        pageNo: 1,
-        pageSize: 50,
-        name: keyword || '',
-      });
-    } else if (payeeType === BIZ_PAYMENT_PAYEE_TYPE.payment_payee_type_2) {
-      // 供应商
-      res = await getSupplierPage({
-        pageNo: 1,
-        pageSize: 50,
-        name: keyword || '',
-      });
-    } else if (payeeType === BIZ_PAYMENT_PAYEE_TYPE.payment_payee_type_3) {
-      // 客户
-      res = await getCustomerPage({
-        pageNo: 1,
-        pageSize: 50,
-        name: keyword || '',
-      });
+    switch (payeeType) {
+      case BIZ_PAYMENT_PAYEE_TYPE.payment_payee_type_1: {
+        // 工人
+        res = await getWorkerPage({
+          pageNo: 1,
+          pageSize: 50,
+          name: keyword || '',
+        });
+
+        break;
+      }
+      case BIZ_PAYMENT_PAYEE_TYPE.payment_payee_type_2: {
+        // 供应商
+        res = await getSupplierPage({
+          pageNo: 1,
+          pageSize: 50,
+          name: keyword || '',
+        });
+
+        break;
+      }
+      case BIZ_PAYMENT_PAYEE_TYPE.payment_payee_type_3: {
+        // 客户
+        res = await getCustomerPage({
+          pageNo: 1,
+          pageSize: 50,
+          name: keyword || '',
+        });
+
+        break;
+      }
+      // No default
     }
 
     if (res?.list) {
       payeeOptions.value = res.list.map((item: any) => ({
         id: item.id,
-        name: item.name || item.workerName || item.customerName || item.supplierName || '', // 兼容不同字段名
+        name:
+          item.name ||
+          item.workerName ||
+          item.customerName ||
+          item.supplierName ||
+          '', // 兼容不同字段名
         value: item.id,
-        label: item.name || item.workerName || item.customerName || item.supplierName || '',
+        label:
+          item.name ||
+          item.workerName ||
+          item.customerName ||
+          item.supplierName ||
+          '',
       }));
     } else {
       payeeOptions.value = [];
     }
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error(error);
     payeeOptions.value = [];
   } finally {
     payeeLoading.value = false;
@@ -195,7 +215,10 @@ const [Form, formApi] = useVbenForm({
     labelWidth: 120,
   },
   layout: 'horizontal',
-  schema: useFormSchema({ onProjectTypeChange: handleProjectTypeChange, onPayeeTypeChange: handlePayeeTypeChange }),
+  schema: useFormSchema({
+    onProjectTypeChange: handleProjectTypeChange,
+    onPayeeTypeChange: handlePayeeTypeChange,
+  }),
   showDefaultActions: false,
   wrapperClass: 'grid-cols-2 gap-x-4',
 });

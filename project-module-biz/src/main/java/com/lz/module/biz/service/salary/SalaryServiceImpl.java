@@ -24,6 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -60,10 +62,20 @@ public class SalaryServiceImpl implements SalaryService {
     public Long createSalary(SalarySaveReqVO createReqVO) {
         // 插入
         SalaryDO salary = BeanUtils.toBean(createReqVO, SalaryDO.class);
-        validateWorkerExists(salary);
         //查询是否存在工人
-        salaryMapper.insert(salary);
-
+        validateWorkerExists(salary);
+        //如果工资信息有新增付款信息
+        if (createReqVO.getIsAddPayment()) {
+            PaymentOrderDO paymentOrderDO = getPaymentOrderDO(createReqVO.getPaymentNo(), createReqVO.getWorkerId(), salary.getWorkerName(),
+                    createReqVO.getSettlementTime(), createReqVO.getPayableAmount(),
+                    createReqVO.getPaymentMethod(), createReqVO.getIsInvoiced(), createReqVO.getPaymentCertificate(), "新增工资信息，系统自动新增");
+            transactionTemplate.executeWithoutResult(status -> {
+                paymentOrderMapper.insert(paymentOrderDO);
+                salaryMapper.insert(salary);
+            });
+        } else {
+            salaryMapper.insert(salary);
+        }
         // 返回
         return salary.getId();
     }
@@ -133,6 +145,14 @@ public class SalaryServiceImpl implements SalaryService {
                 throw new ServiceException(400,
                         StrUtil.format("第{}行工人编号不能为空", index));
             }
+            if (ObjUtil.isNull(vo.getSettlementTime())) {
+                throw new ServiceException(400,
+                        StrUtil.format("第{}行请填写结算时间", index));
+            }
+            if (ObjUtil.isNull(vo.getPayableAmount())) {
+                throw new ServiceException(400,
+                        StrUtil.format("第{}行请填写应发款项", index));
+            }
             if (!isAddPayment) {
                 continue;
             }
@@ -182,7 +202,9 @@ public class SalaryServiceImpl implements SalaryService {
             if (!isAddPayment) {
                 continue;
             }
-            PaymentOrderDO paymentOrderDO = getPaymentOrderDO(vo);
+            PaymentOrderDO paymentOrderDO = getPaymentOrderDO(vo.getPaymentNo(), vo.getWorkerId(),
+                    vo.getWorkerName(), vo.getSettlementTime(), vo.getPayableAmount(),
+                    vo.getPaymentMethod(), vo.getIsInvoiced(), null, "导入工资信息，系统自动新增");
             paymentOrderDOS.add(paymentOrderDO);
         }
         transactionTemplate.executeWithoutResult(status -> {
@@ -194,17 +216,20 @@ public class SalaryServiceImpl implements SalaryService {
                 .build();
     }
 
-    private PaymentOrderDO getPaymentOrderDO(SalaryImportExcelVO vo) {
+    private PaymentOrderDO getPaymentOrderDO(String paymentNo, Long workerId, String workerName,
+                                             LocalDateTime settlementTime, BigDecimal payableAmount,
+                                             String paymentMethod, String isInvoiced, String paymentCertificate, String remark) {
         PaymentOrderDO paymentOrderDO = new PaymentOrderDO();
-        paymentOrderDO.setPaymentNo(vo.getPaymentNo());
+        paymentOrderDO.setPaymentNo(paymentNo);
         paymentOrderDO.setPayeeType(BizPaymentPayeeTypeEnum.BIZ_PAYMENT_PAYEE_TYPE_1.getStatus());
-        paymentOrderDO.setPayeeId(vo.getWorkerId());
-        paymentOrderDO.setPayeeName(vo.getWorkerName());
-        paymentOrderDO.setPaymentTime(vo.getSettlementTime());
-        paymentOrderDO.setPaymentAmount(vo.getPayableAmount());
-        paymentOrderDO.setPaymentMethod(vo.getPaymentMethod());
-        paymentOrderDO.setPaymentPurpose("导入工资信息，系统自动新增");
-        paymentOrderDO.setIsInvoiced(vo.getIsInvoiced());
+        paymentOrderDO.setPayeeId(workerId);
+        paymentOrderDO.setPayeeName(workerName);
+        paymentOrderDO.setPaymentTime(settlementTime);
+        paymentOrderDO.setPaymentAmount(payableAmount);
+        paymentOrderDO.setPaymentMethod(paymentMethod);
+        paymentOrderDO.setIsInvoiced(isInvoiced);
+        paymentOrderDO.setPaymentCertificate(paymentCertificate);
+        paymentOrderDO.setRemark(remark);
         return paymentOrderDO;
     }
 

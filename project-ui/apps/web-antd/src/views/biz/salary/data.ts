@@ -19,6 +19,7 @@ export function useFormSchema(): VbenFormSchema[] {
     {
       fieldName: 'workerId',
       label: '工人编号',
+      rules: 'required',
       component: 'Input',
       componentProps: {
         placeholder: '请输入工人编号',
@@ -45,6 +46,7 @@ export function useFormSchema(): VbenFormSchema[] {
     {
       fieldName: 'settlementTime',
       label: '结算日期',
+      rules: 'required',
       component: 'DatePicker',
       componentProps: {
         showTime: true,
@@ -123,6 +125,7 @@ export function useFormSchema(): VbenFormSchema[] {
     {
       fieldName: 'payableAmount',
       label: '应发款项',
+      rules: 'required',
       component: 'InputNumber',
       componentProps: {
         min: 0,
@@ -133,9 +136,127 @@ export function useFormSchema(): VbenFormSchema[] {
     {
       fieldName: 'remark',
       label: '备注',
-      component: 'Input',
+      component: 'Textarea',
+      formItemClass: 'col-span-2',
       componentProps: {
         placeholder: '请输入备注',
+        rows: 3,
+      },
+    },
+    {
+      fieldName: 'isAddPayment',
+      label: '是否新增',
+      component: 'RadioGroup',
+      componentProps: {
+        options: [
+          { label: '是', value: true },
+          { label: '否', value: false },
+        ],
+        checkedChildren: '是',
+        unCheckedChildren: '否',
+        buttonStyle: 'solid',
+      },
+      dependencies: {
+        triggerFields: ['id'],
+        show: (values) => !values.id,
+      },
+      rules: z.boolean().default(true),
+      help: '是否同时新增付款信息，仅新增时有效',
+    },
+    {
+      fieldName: 'paymentNo',
+      label: '付款单号',
+      rules: 'required',
+      component: 'Input',
+      componentProps: {
+        placeholder: '请输入付款单号',
+      },
+      dependencies: {
+        triggerFields: ['isAddPayment', 'id'],
+        show: (values) => !!values.isAddPayment && !values.id,
+      },
+    },
+    {
+      fieldName: 'isInvoiced',
+      label: '是否开票',
+      rules: 'required',
+      component: 'RadioGroup',
+      componentProps: {
+        options: getDictOptions(DICT_TYPE.COMMON_WHETHER, 'string'),
+        buttonStyle: 'solid',
+        optionType: 'button',
+      },
+      dependencies: {
+        triggerFields: ['isAddPayment', 'id'],
+        show: (values) => !!values.isAddPayment && !values.id,
+      },
+    },
+    // {
+    //   fieldName: 'paymentPurpose',
+    //   label: '付款事由',
+    //   component: 'Input',
+    //   componentProps: {
+    //     placeholder: '请输入付款事由',
+    //   },
+    //   dependencies: {
+    //     triggerFields: ['isAddPayment', 'id'],
+    //     show: (values) => !!values.isAddPayment && !values.id,
+    //   },
+    // },
+    {
+      fieldName: 'paymentMethod',
+      label: '付款方式',
+      rules: 'required',
+      component: 'Select',
+      componentProps: {
+        options: getDictOptions(DICT_TYPE.BIZ_RECEIPT_METHOD, 'string'),
+        placeholder: '请选择付款方式',
+      },
+      dependencies: {
+        triggerFields: ['isAddPayment', 'id'],
+        show: (values) => !!values.isAddPayment && !values.id,
+      },
+    },
+    // {
+    //   fieldName: 'paymentAmount',
+    //   label: '付款金额',
+    //   component: 'InputNumber',
+    //   componentProps: {
+    //     precision: 2,
+    //     min: 0,
+    //     placeholder: '请输入付款金额',
+    //   },
+    //   dependencies: {
+    //     triggerFields: ['isAddPayment', 'id'],
+    //     show: (values) => !!values.isAddPayment && !values.id,
+    //   },
+    // },
+    // {
+    //   fieldName: 'paymentTime',
+    //   label: '付款日期',
+    //   component: 'DatePicker',
+    //   componentProps: {
+    //     showTime: true,
+    //     format: 'YYYY-MM-DD HH:mm:ss',
+    //     valueFormat: 'x',
+    //   },
+    //   dependencies: {
+    //     triggerFields: ['isAddPayment', 'id'],
+    //     show: (values) => !!values.isAddPayment && !values.id,
+    //   },
+    // },
+    {
+      fieldName: 'paymentCertificate',
+      label: '付款凭证',
+      component: 'ImageUpload',
+      componentProps: {
+        accept: 'jpg/jpeg/png/gif/webp',
+        maxSize: 5,
+        maxNumber: 5,
+      },
+      dependencies: {
+        triggerFields: ['isAddPayment', 'id'],
+        show: (values) => !!values.isAddPayment && !values.id,
       },
     },
   ];
