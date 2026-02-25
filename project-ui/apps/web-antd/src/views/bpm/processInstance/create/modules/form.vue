@@ -80,6 +80,18 @@ const detailForm = ref<ProcessFormData>({
   value: {},
 });
 
+/** 监听表单数据变化 */
+watch(
+  () => detailForm.value.value,
+  (newVal) => {
+    console.log('[form.vue] detailForm.value changed:', JSON.stringify(newVal));
+    // 打印每个 rule 的 type 和 field
+    const ruleFields = detailForm.value.rule?.map((r: any) => ({ type: r.type, field: r.field, id: r.id }));
+    console.log('[form.vue] detailForm.rule fields:', JSON.stringify(ruleFields));
+  },
+  { deep: true },
+);
+
 const fApi = ref<ApiAttrs>();
 const startUserSelectTasks = ref<UserTask[]>([]);
 const startUserSelectAssignees = ref<Record<string, string[]>>({});
@@ -114,6 +126,8 @@ async function submitForm() {
 
     // 提交请求
     processInstanceStartLoading.value = true;
+    console.log('[submitForm] detailForm.value before submit:', JSON.stringify(detailForm.value));
+    console.log('[submitForm] fApi.formData():', fApi.value ? JSON.stringify(fApi.value.formData()) : 'fApi is null');
     await createProcessInstance({
       processDefinitionId: props.selectProcessDefinition.id,
       variables: detailForm.value.value,

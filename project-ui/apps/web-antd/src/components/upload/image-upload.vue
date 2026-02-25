@@ -6,7 +6,7 @@ import type { FileUploadProps } from './typing';
 
 import type { AxiosProgressEvent } from '#/api/infra/file';
 
-import { computed, ref, toRefs, watch } from 'vue';
+import { computed, nextTick, ref, toRefs, watch } from 'vue';
 
 import { CloudUpload } from '@vben/icons';
 import { $t } from '@vben/locales';
@@ -176,6 +176,8 @@ async function customRequest(info: UploadRequestOption<any>) {
     info.onSuccess!(res);
     message.success($t('ui.upload.uploadSuccess'));
 
+    // 等待 fileList 更新后再获取值
+    await nextTick();
     // 更新文件
     const value = getValue();
     isInnerOperate.value = true;

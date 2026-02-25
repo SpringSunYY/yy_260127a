@@ -6,7 +6,7 @@ import type { FileUploadProps } from './typing';
 
 import type { AxiosProgressEvent } from '#/api/infra/file';
 
-import { ref, toRefs, watch } from 'vue';
+import { nextTick, ref, toRefs, watch } from 'vue';
 
 import { CloudUpload } from '@vben/icons';
 import { $t } from '@vben/locales';
@@ -137,6 +137,8 @@ async function customRequest(info: UploadRequestOption<any>) {
     info.onSuccess!(res);
     message.success($t('ui.upload.uploadSuccess'));
 
+    // 等待 fileList 更新后再获取值
+    await nextTick();
     // 更新文件
     const value = getValue();
     isInnerOperate.value = true;
@@ -164,6 +166,16 @@ function getValue() {
   // 多个文件用 || 分隔符拼接成字符串
   return list.length > 0 ? list.join('||') : '';
 }
+
+// 点击文件预览/下载
+function handlePreview(file: UploadFile) {
+  if (file.url) {
+    window.open(file.url, '_blank');
+  } else if (file.response) {
+    // 如果 url 不存在，尝试从 response 中获取
+    window.open(file.response, '_blank');
+  }
+}
 </script>
 
 <template>
@@ -180,6 +192,7 @@ function getValue() {
       list-type="text"
       :progress="{ showInfo: true }"
       @remove="handleRemove"
+      @preview="handlePreview"
     >
       <div v-if="fileList && fileList.length < maxNumber">
         <Button>
@@ -192,7 +205,9 @@ function getValue() {
         <div class="text-primary mx-1 font-bold">{{ maxSize }}MB</div>
         的
         <div class="text-primary mx-1 font-bold">{{ getAccept.join('/') }}</div>
-        格式文件
+        格式文件，最多
+        <div class="text-primary mx-1 font-bold">{{ maxNumber }}</div>
+        个
       </div>
     </Upload>
   </div>
