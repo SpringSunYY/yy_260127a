@@ -12,7 +12,7 @@ import com.lz.module.biz.controller.admin.salary.vo.*;
 /**
  * 工资信息 Mapper
  *
- * @author 芋道源码
+ * @author YY
  */
 @Mapper
 public interface SalaryMapper extends BaseMapperX<SalaryDO> {

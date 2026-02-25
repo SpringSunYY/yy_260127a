@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * 工资信息 Service 接口
  *
- * @author 芋道源码
+ * @author YY
  */
 public interface SalaryService {
 
