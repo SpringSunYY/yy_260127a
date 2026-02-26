@@ -123,13 +123,13 @@ const dashboardMenus = [
     },
     name: 'Dashboard',
     path: '/',
-    redirect: '/analytics',
+    redirect: '/workspace',
     children: [
       {
         name: 'Analytics',
-        path: '/analytics',
+        path: '/workspace',
         // Here is the path of the page, need to remove 'views/' and '.vue'
-        component: '/dashboard/analytics/index',
+        component: '/dashboard/workspace/index',
         meta: {
           affixTab: true,
           title: 'page.dashboard.analytics',

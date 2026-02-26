@@ -29,7 +29,7 @@ export const MOCK_USERS: UserInfo[] = [
     realName: 'Jack',
     roles: ['user'],
     username: 'jack',
-    homePath: '/analytics',
+    homePath: '/workspace',
   },
 ];
 
@@ -59,17 +59,17 @@ const dashboardMenus = [
     },
     name: 'Dashboard',
     path: '/dashboard',
-    redirect: '/analytics',
+    redirect: '/workspace',
     children: [
-      {
-        name: 'Analytics',
-        path: '/analytics',
-        component: '/dashboard/analytics/index',
-        meta: {
-          affixTab: true,
-          title: 'page.dashboard.analytics',
-        },
-      },
+      // {
+      //   name: 'Analytics',
+      //   path: '/analytics',
+      //   component: '/dashboard/analytics/index',
+      //   meta: {
+      //     affixTab: true,
+      //     title: 'page.dashboard.analytics',
+      //   },
+      // },
       {
         name: 'Workspace',
         path: '/workspace',

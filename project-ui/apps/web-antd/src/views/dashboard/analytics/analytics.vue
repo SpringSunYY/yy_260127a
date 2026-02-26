@@ -4,8 +4,9 @@ import type { TabOption } from '@vben/types';
 
 import type { StatisticsApi } from '#/api/biz/statistics';
 
-import { markRaw, onMounted, ref } from 'vue';
+import { computed, markRaw, onMounted, ref } from 'vue';
 
+import { useAccess } from '@vben/access';
 import { AnalysisChartsTabs, AnalysisOverview } from '@vben/common-ui';
 import { SvgCakeIcon, SvgCardIcon, SvgDownloadIcon } from '@vben/icons';
 
@@ -23,32 +24,59 @@ import BarAutoCarouselCharts from '#/views/dashboard/analytics/BarAutoCarouselCh
 import BarLineZoomCharts from '#/views/dashboard/analytics/BarLineZoomCharts.vue';
 import BarTrendCharts from '#/views/dashboard/analytics/BarTrendCharts.vue';
 
-const overviewItems = ref<AnalysisOverviewItem[]>([
-  {
-    key: 'payment',
-    icon: markRaw(SvgCardIcon),
-    title: '本月付款金额',
-    totalTitle: '总付款金额',
-    totalValue: 0,
-    value: 0,
-  },
-  {
-    key: 'receipt',
-    icon: markRaw(SvgCakeIcon),
-    title: '本月收款金额',
-    totalTitle: '总收款金额',
-    totalValue: 0,
-    value: 0,
-  },
-  {
-    key: 'salary',
-    icon: markRaw(SvgDownloadIcon),
-    title: '本月工资',
-    totalTitle: '总工资',
-    totalValue: 0,
-    value: 0,
-  },
-]);
+const { hasAccessByCodes } = useAccess();
+
+// 权限码配置 - 需要根据后端配置的权限码进行调整
+const PAYMENT_PERMISSION = 'biz:payment-order:query'; // 付款数据权限
+const RECEIPT_PERMISSION = 'biz:receipt-order:query'; // 收款数据权限
+const SALARY_PERMISSION = 'biz:salary:query'; // 工资数据权限
+
+// 各模块权限状态
+const hasPaymentPermission = hasAccessByCodes([PAYMENT_PERMISSION]);
+const hasReceiptPermission = hasAccessByCodes([RECEIPT_PERMISSION]);
+const hasSalaryPermission = hasAccessByCodes([SALARY_PERMISSION]);
+
+// 根据权限过滤概览数据项
+const getOverviewItems = () => {
+  const items: AnalysisOverviewItem[] = [];
+
+  if (hasPaymentPermission) {
+    items.push({
+      key: 'payment',
+      icon: markRaw(SvgCardIcon),
+      title: '本月付款金额',
+      totalTitle: '总付款金额',
+      totalValue: 0,
+      value: 0,
+    });
+  }
+
+  if (hasReceiptPermission) {
+    items.push({
+      key: 'receipt',
+      icon: markRaw(SvgCakeIcon),
+      title: '本月收款金额',
+      totalTitle: '总收款金额',
+      totalValue: 0,
+      value: 0,
+    });
+  }
+
+  if (hasSalaryPermission) {
+    items.push({
+      key: 'salary',
+      icon: markRaw(SvgDownloadIcon),
+      title: '本月工资',
+      totalTitle: '总工资',
+      totalValue: 0,
+      value: 0,
+    });
+  }
+
+  return items;
+};
+
+const overviewItems = ref<AnalysisOverviewItem[]>(getOverviewItems());
 
 // 获取本月开始和结束日期
 const getMonthRange = () => {
@@ -131,11 +159,22 @@ const fetchSalaryData = async () => {
 
 // 组件创建时获取数据
 onMounted(async () => {
-  await Promise.all([
-    fetchPaymentData(),
-    fetchReceiptData(),
-    fetchSalaryData(),
-  ]);
+  const fetchPromises: Promise<any>[] = [];
+
+  // 根据权限判断是否请求对应数据
+  if (hasPaymentPermission) {
+    fetchPromises.push(fetchPaymentData());
+  }
+  if (hasReceiptPermission) {
+    fetchPromises.push(fetchReceiptData());
+  }
+  if (hasSalaryPermission) {
+    fetchPromises.push(fetchSalaryData());
+  }
+
+  if (fetchPromises.length > 0) {
+    await Promise.all(fetchPromises);
+  }
 });
 
 const paymentStatisticsData = ref<StatisticsApi.StatisticsResult[]>([]);
@@ -158,12 +197,16 @@ const handleDateChange = (value: {
   if (!startDate || !endDate) {
     return;
   }
-  // 获取支付数据
-  getPaymentStatisticsData(startDate, endDate, type);
-  // 获取收款数据
-  getReceiptStatisticsData(startDate, endDate, type);
-  // 获取工资数据
-  getSalaryStatisticsData(startDate, endDate, type);
+  // 根据权限获取对应数据
+  if (hasPaymentPermission) {
+    getPaymentStatisticsData(startDate, endDate, type);
+  }
+  if (hasReceiptPermission) {
+    getReceiptStatisticsData(startDate, endDate, type);
+  }
+  if (hasSalaryPermission) {
+    getSalaryStatisticsData(startDate, endDate, type);
+  }
 };
 const getPaymentStatisticsData = (
   startTime: string,
@@ -218,26 +261,43 @@ const getSalaryStatisticsData = (
   });
 };
 
-const chartTabs: TabOption[] = [
-  {
-    label: paymentStatisticsName.value,
-    value: 'payment',
-  },
-  {
-    label: '收款金额',
-    value: 'receipt',
-  },
-  {
-    label: '工资信息',
-    value: 'salary',
-  },
-];
+// 根据权限动态生成标签页
+const getChartTabs = () => {
+  const tabs: TabOption[] = [];
+
+  if (hasPaymentPermission) {
+    tabs.push({
+      label: paymentStatisticsName.value,
+      value: 'payment',
+    });
+  }
+  if (hasReceiptPermission) {
+    tabs.push({
+      label: '收款金额',
+      value: 'receipt',
+    });
+  }
+  if (hasSalaryPermission) {
+    tabs.push({
+      label: '工资信息',
+      value: 'salary',
+    });
+  }
+
+  return tabs;
+};
+
+const chartTabs = computed<TabOption[]>(() => getChartTabs());
 </script>
 
 <template>
   <div class="p-5">
-    <AnalysisOverview :items="overviewItems" />
+    <AnalysisOverview
+      :items="overviewItems"
+      v-if="hasPaymentPermission || hasReceiptPermission || hasSalaryPermission"
+    />
     <AnalysisChartsTabs
+      v-if="hasPaymentPermission || hasReceiptPermission || hasSalaryPermission"
       :tabs="chartTabs"
       class="mt-5"
       @date-change="handleDateChange"

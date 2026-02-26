@@ -96,7 +96,6 @@ export function useFormSchema(): VbenFormSchema[] {
       label: '交底时间',
       component: 'DatePicker',
       componentProps: {
-        showTime: true,
         format: 'YYYY-MM-DD',
         valueFormat: 'x',
       },

@@ -268,6 +268,7 @@ export function useGridColumns(): VxeTableGridOptions<ProjectScatteredApi.Projec
     {
       field: 'appendixFile',
       title: '附件',
+      visible: false,
       minWidth: 120,
     },
     {
