@@ -21,16 +21,16 @@ const routes: RouteRecordRaw[] = [
           title: $t('page.dashboard.workspace'),
         },
       },
-      {
-        name: 'Analytics',
-        path: '/analytics',
-        component: () => import('#/views/dashboard/analytics/index.vue'),
-        meta: {
-          affixTab: true,
-          icon: 'lucide:area-chart',
-          title: $t('page.dashboard.analytics'),
-        },
-      },
+      // {
+      //   name: 'Analytics',
+      //   path: '/analytics',
+      //   component: () => import('#/views/dashboard/analytics/analytics.vue'),
+      //   meta: {
+      //     affixTab: true,
+      //     icon: 'lucide:area-chart',
+      //     title: $t('page.dashboard.analytics'),
+      //   },
+      // },
     ],
   },
   {

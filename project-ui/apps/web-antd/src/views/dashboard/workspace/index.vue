@@ -5,6 +5,8 @@ import { WorkbenchHeader } from '@vben/common-ui';
 import { preferences } from '@vben/preferences';
 import { useUserStore } from '@vben/stores';
 
+import Analytics from '#/views/dashboard/analytics/analytics.vue';
+
 const userStore = useUserStore();
 const appTitle = ref(import.meta.env.VITE_APP_TITLE);
 </script>
@@ -19,5 +21,6 @@ const appTitle = ref(import.meta.env.VITE_APP_TITLE);
       </template>
       <template #description> 欢迎使用，{{ appTitle }}！ </template>
     </WorkbenchHeader>
+    <Analytics />
   </div>
 </template>

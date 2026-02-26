@@ -4,11 +4,7 @@ import type { TabOption } from '@vben/types';
 
 import { markRaw, onMounted, ref } from 'vue';
 
-import {
-  AnalysisChartCard,
-  AnalysisChartsTabs,
-  AnalysisOverview,
-} from '@vben/common-ui';
+import { AnalysisChartsTabs, AnalysisOverview } from '@vben/common-ui';
 import { SvgCakeIcon, SvgCardIcon, SvgDownloadIcon } from '@vben/icons';
 
 import dayjs from 'dayjs';
@@ -16,12 +12,9 @@ import dayjs from 'dayjs';
 import { getPaymentOrderAmount } from '#/api/biz/paymentOrder';
 import { getReceiptOrderAmount } from '#/api/biz/receiptOrder';
 import { getTotalPayableAmount } from '#/api/biz/salary';
-
-import AnalyticsTrends from './analytics-trends.vue';
-import AnalyticsVisitsData from './analytics-visits-data.vue';
-import AnalyticsVisitsSales from './analytics-visits-sales.vue';
-import AnalyticsVisitsSource from './analytics-visits-source.vue';
-import AnalyticsVisits from './analytics-visits.vue';
+import BarAutoCarouselCharts from '#/views/dashboard/analytics/BarAutoCarouselCharts.vue';
+import BarLineZoomCharts from '#/views/dashboard/analytics/BarLineZoomCharts.vue';
+import BarTrendCharts from '#/views/dashboard/analytics/BarTrendCharts.vue';
 
 const overviewItems = ref<AnalysisOverviewItem[]>([
   {
@@ -162,15 +155,15 @@ const handleDateChange = (value: {
 const chartTabs: TabOption[] = [
   {
     label: '付款金额',
-    value: 'trends',
+    value: 'payment',
   },
   {
     label: '收款金额',
-    value: 'visits',
+    value: 'receipt',
   },
   {
     label: '工资信息',
-    value: 'sales',
+    value: 'salary',
   },
 ];
 </script>
@@ -183,24 +176,15 @@ const chartTabs: TabOption[] = [
       class="mt-5"
       @date-change="handleDateChange"
     >
-      <template #trends>
-        <AnalyticsTrends />
+      <template #payment>
+        <BarLineZoomCharts />
       </template>
-      <template #visits>
-        <AnalyticsVisits />
+      <template #receipt>
+        <BarTrendCharts />
+      </template>
+      <template #salary>
+        <BarAutoCarouselCharts />
       </template>
     </AnalysisChartsTabs>
-
-    <div class="mt-5 w-full md:flex">
-      <AnalysisChartCard class="mt-5 md:mr-4 md:mt-0 md:w-1/3" title="访问数量">
-        <AnalyticsVisitsData />
-      </AnalysisChartCard>
-      <AnalysisChartCard class="mt-5 md:mr-4 md:mt-0 md:w-1/3" title="访问来源">
-        <AnalyticsVisitsSource />
-      </AnalysisChartCard>
-      <AnalysisChartCard class="mt-5 md:mt-0 md:w-1/3" title="访问来源">
-        <AnalyticsVisitsSales />
-      </AnalysisChartCard>
-    </div>
   </div>
 </template>

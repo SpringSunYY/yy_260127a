@@ -80,7 +80,7 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'VbenAbout',
         path: '/vben-admin/about',
-        component: () => import('#/views/_core/about/index.vue'),
+        component: () => import('#/views/_core/about/analytics.vue'),
         meta: {
           badgeType: 'dot',
           badgeVariants: 'destructive',
@@ -248,7 +248,7 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'HomeIndex',
         path: '/home/index',
-        component: () => import('#/views/home/index.vue'),
+        component: () => import('#/views/home/analytics.vue'),
         meta: {
           icon: 'mdi:home',
           title: $t('page.home.index'),

@@ -193,7 +193,7 @@ onMounted(() => {
         </div>
       </div>
       <template v-for="tab in tabs" :key="tab.label">
-        <TabsContent :value="tab.value" class="pt-4">
+        <TabsContent :value="tab.value" class="pt-4" style="height: 400px">
           <slot :name="tab.value"></slot>
         </TabsContent>
       </template>
