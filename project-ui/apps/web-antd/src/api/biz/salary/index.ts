@@ -31,6 +31,11 @@ export function getSalaryPage(params: PageParam) {
   });
 }
 
+/** 查询工资信息总价*/
+export function getTotalPayableAmount(params: PageParam) {
+  return requestClient.get<number>('/biz/salary/get/amount', { params });
+}
+
 /** 查询工资信息详情 */
 export function getSalary(id: number) {
   return requestClient.get<SalaryApi.Salary>(`/biz/salary/get?id=${id}`);

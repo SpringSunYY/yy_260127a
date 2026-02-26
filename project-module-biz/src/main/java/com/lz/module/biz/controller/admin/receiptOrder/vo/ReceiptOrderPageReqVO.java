@@ -39,7 +39,7 @@ public class ReceiptOrderPageReqVO extends PageParam {
     private String payerName;
 
     @Schema(description = "收款日期")
-    @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY)
+    @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
     private LocalDateTime[] receiptDate;
 
     @Schema(description = "收款方式")

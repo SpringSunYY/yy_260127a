@@ -88,7 +88,7 @@ public class PaymentOrderController {
     @GetMapping("/get/amount")
     @Operation(summary = "获得收款信息总额")
     @PreAuthorize("@ss.hasPermission('biz:payment-order:query')")
-    public CommonResult<BigDecimal> getReceiptOrderAmount(@Valid PaymentOrderPageReqVO pageReqVO) {
+    public CommonResult<BigDecimal> getPaymentOrderAmount(@Valid PaymentOrderPageReqVO pageReqVO) {
         BigDecimal amount = paymentOrderService.getPaymentOrderAmount(pageReqVO);
         return success(amount);
     }

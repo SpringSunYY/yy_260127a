@@ -8,6 +8,7 @@ import com.lz.module.biz.controller.admin.salary.vo.SalarySaveReqVO;
 import com.lz.module.biz.dal.dataobject.salary.SalaryDO;
 import jakarta.validation.Valid;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -61,6 +62,14 @@ public interface SalaryService {
      * @return 工资信息分页
      */
     PageResult<SalaryDO> getSalaryPage(SalaryPageReqVO pageReqVO);
+
+    /**
+     * 获得工资信息总数-应付款金额
+     *
+     * @param pageReqVO 分页查询
+     * @return 工资信息总数
+     */
+    BigDecimal getTotalPayableAmount(@Valid SalaryPageReqVO pageReqVO);
 
     /**
      * 导入工资信息

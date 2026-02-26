@@ -1,5 +1,6 @@
 package com.lz.module.biz.dal.mysql.salary;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import com.lz.framework.common.pojo.PageResult;
@@ -26,4 +27,5 @@ public interface SalaryMapper extends BaseMapperX<SalaryDO> {
                 .orderByDesc(SalaryDO::getId));
     }
 
+    BigDecimal getTotalPayableAmount(SalaryPageReqVO pageReqVO);
 }

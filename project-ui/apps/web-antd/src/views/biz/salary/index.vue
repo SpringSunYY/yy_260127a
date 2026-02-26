@@ -15,6 +15,7 @@ import {
   deleteSalaryList,
   exportSalary,
   getSalaryPage,
+  getTotalPayableAmount,
 } from '#/api/biz/salary';
 import { $t } from '#/locales';
 import ImportForm from '#/views/biz/salary/modules/import-form.vue';
@@ -31,6 +32,8 @@ const [ImportModal, importModalApi] = useVbenModal({
   connectedComponent: ImportForm,
   destroyOnClose: true,
 });
+
+const totalAmount = ref<number>(0);
 
 /** 刷新表格 */
 function onRefresh() {
@@ -113,6 +116,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
     proxyConfig: {
       ajax: {
         query: async ({ page }, formValues) => {
+          totalAmount.value = await getTotalPayableAmount(formValues);
           return await getSalaryPage({
             pageNo: page.currentPage,
             pageSize: page.pageSize,
@@ -142,6 +146,14 @@ const [Grid, gridApi] = useVbenVxeGrid({
     <FormModal @success="onRefresh" />
     <ImportModal @success="onRefresh" />
     <Grid table-title="工资信息列表">
+      <template #table-title>
+        <div class="flex items-center">
+          <span class="mr-4 text-lg font-bold">工资信息列表</span>
+          <span class="text-primary text-lg font-bold">
+            总金额: {{ totalAmount }}
+          </span>
+        </div>
+      </template>
       <template #toolbar-tools>
         <TableAction
           :actions="[

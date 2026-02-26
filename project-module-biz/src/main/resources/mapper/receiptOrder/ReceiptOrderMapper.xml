@@ -37,8 +37,11 @@
             <if test="payerName != null and payerName != ''">
                 AND payer_name LIKE CONCAT('%', #{payerName}, '%')
             </if>
-            <if test="receiptDate != null">
-                AND receipt_date BETWEEN #{receiptDate.begin} AND #{receiptDate.end}
+            <if test="receiptDate != null and receiptDate.length == 2">
+                AND receipt_date BETWEEN
+                #{receiptDate[0], javaType=java.time.LocalDateTime, jdbcType=TIMESTAMP}
+                AND
+                #{receiptDate[1], javaType=java.time.LocalDateTime, jdbcType=TIMESTAMP}
             </if>
             <if test="receiptMethod != null">
                 AND receipt_method = #{receiptMethod}
@@ -46,8 +49,9 @@
             <if test="isInvoiced != null">
                 AND is_invoiced = #{isInvoiced}
             </if>
-            <if test="createTime != null">
-                AND create_time BETWEEN #{createTime.begin} AND #{createTime.end}
+            <if test="createTime != null and createTime.length == 2">
+                AND create_time BETWEEN #{createTime[0], javaType=java.time.LocalDateTime, jdbcType=TIMESTAMP} AND
+                #{createTime[1], javaType=java.time.LocalDateTime, jdbcType=TIMESTAMP}
             </if>
             and deleted = false
         </where>

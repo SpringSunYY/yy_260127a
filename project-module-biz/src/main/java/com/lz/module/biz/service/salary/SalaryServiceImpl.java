@@ -133,6 +133,11 @@ public class SalaryServiceImpl implements SalaryService {
     }
 
     @Override
+    public BigDecimal getTotalPayableAmount(SalaryPageReqVO pageReqVO) {
+        return salaryMapper.getTotalPayableAmount(pageReqVO);
+    }
+
+    @Override
     public SalaryImportRespVO importSalaryList(List<SalaryImportExcelVO> list, Boolean isAddPayment) {
         if (ArrayUtil.isEmpty(list)) {
             throw new ServiceException(400, "导入数据不能为空");

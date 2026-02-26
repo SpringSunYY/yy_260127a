@@ -9,4 +9,26 @@
         文档可见：https://www.iocoder.cn/MyBatis/x-plugins/
      -->
 
+    <select id="getTotalPayableAmount" resultType="java.math.BigDecimal">
+        select sum(payable_amount) from biz_salary
+        <where>
+            and deleted = false
+            <if test="workerName != null and workerName != ''">
+                and worker_name like concat('%', #{workerName}, '%')
+            </if>
+            <if test="isSettlement != null and isSettlement != ''">
+                and is_settlement = #{isSettlement}
+            </if>
+            <if test="settlementTime != null and settlementTime.length == 2">
+                and settlement_time between
+                #{settlementTime[0], javaType=java.time.LocalDateTime, jdbcType=TIMESTAMP}
+                and
+                #{settlementTime[1], javaType=java.time.LocalDateTime, jdbcType=TIMESTAMP}
+            </if>
+            <if test="createTime != null and createTime.length == 2">
+                AND create_time BETWEEN #{createTime[0], javaType=java.time.LocalDateTime, jdbcType=TIMESTAMP} AND
+                #{createTime[1], javaType=java.time.LocalDateTime, jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
 </mapper>

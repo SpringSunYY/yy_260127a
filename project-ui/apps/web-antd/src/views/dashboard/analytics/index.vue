@@ -2,17 +2,19 @@
 import type { AnalysisOverviewItem } from '@vben/common-ui';
 import type { TabOption } from '@vben/types';
 
+import { ref, onMounted } from 'vue';
+import dayjs from 'dayjs';
+
 import {
   AnalysisChartCard,
   AnalysisChartsTabs,
   AnalysisOverview,
 } from '@vben/common-ui';
-import {
-  SvgBellIcon,
-  SvgCakeIcon,
-  SvgCardIcon,
-  SvgDownloadIcon,
-} from '@vben/icons';
+import { SvgCakeIcon, SvgCardIcon, SvgDownloadIcon } from '@vben/icons';
+
+import { getPaymentOrderAmount } from '#/api/biz/paymentOrder';
+import { getReceiptOrderAmount } from '#/api/biz/receiptOrder';
+import { getTotalPayableAmount } from '#/api/biz/salary';
 
 import AnalyticsTrends from './analytics-trends.vue';
 import AnalyticsVisitsData from './analytics-visits-data.vue';
@@ -20,36 +22,116 @@ import AnalyticsVisitsSales from './analytics-visits-sales.vue';
 import AnalyticsVisitsSource from './analytics-visits-source.vue';
 import AnalyticsVisits from './analytics-visits.vue';
 
-const overviewItems: AnalysisOverviewItem[] = [
+const overviewItems = ref<AnalysisOverviewItem[]>([
   {
+    key: 'payment',
     icon: SvgCardIcon,
-    title: '用户量',
-    totalTitle: '总用户量',
-    totalValue: 120_000,
-    value: 2000,
+    title: '本月付款金额',
+    totalTitle: '总付款金额',
+    totalValue: 0,
+    value: 0,
   },
   {
+    key: 'receipt',
     icon: SvgCakeIcon,
-    title: '访问量',
-    totalTitle: '总访问量',
-    totalValue: 500_000,
-    value: 20_000,
+    title: '本月收款金额',
+    totalTitle: '总收款金额',
+    totalValue: 0,
+    value: 0,
   },
   {
+    key: 'salary',
     icon: SvgDownloadIcon,
-    title: '下载量',
-    totalTitle: '总下载量',
-    totalValue: 120_000,
-    value: 8000,
+    title: '本月工资',
+    totalTitle: '总工资',
+    totalValue: 0,
+    value: 0,
   },
-  {
-    icon: SvgBellIcon,
-    title: '使用量',
-    totalTitle: '总使用量',
-    totalValue: 50_000,
-    value: 5000,
-  },
-];
+]);
+
+// 获取本月开始和结束日期
+const getMonthRange = () => {
+  const startOfMonth = dayjs().startOf('month').format('YYYY-MM-DD HH:mm:ss');
+  const endOfMonth = dayjs().endOf('month').format('YYYY-MM-DD HH:mm:ss');
+  return { startOfMonth, endOfMonth };
+};
+
+// 获取付款数据
+const fetchPaymentData = async () => {
+  const { startOfMonth, endOfMonth } = getMonthRange();
+  try {
+    // 本月付款金额
+    const monthRes = await getPaymentOrderAmount({
+      paymentTime: [startOfMonth, endOfMonth] as any,
+    } as any);
+    // 总付款金额
+    const totalRes = await getPaymentOrderAmount({} as any);
+
+    const paymentItem = overviewItems.value.find(
+      (item) => item.key === 'payment',
+    );
+    if (paymentItem) {
+      paymentItem.value = monthRes ?? 0;
+      paymentItem.totalValue = totalRes ?? 0;
+    }
+  } catch (error) {
+    console.error('获取付款数据失败:', error);
+  }
+};
+
+// 获取收款数据
+const fetchReceiptData = async () => {
+  const { startOfMonth, endOfMonth } = getMonthRange();
+  try {
+    // 本月收款金额
+    const monthRes = await getReceiptOrderAmount({
+      receiptDate: [startOfMonth, endOfMonth] as any,
+    } as any);
+    // 总收款金额
+    const totalRes = await getReceiptOrderAmount({} as any);
+
+    const receiptItem = overviewItems.value.find(
+      (item) => item.key === 'receipt',
+    );
+    if (receiptItem) {
+      // 处理可能的 PageResult 类型或直接 number 类型
+      const monthValue = (monthRes as any).data ?? monthRes ?? 0;
+      const totalValue = (totalRes as any).data ?? totalRes ?? 0;
+      receiptItem.value = typeof monthValue === 'number' ? monthValue : 0;
+      receiptItem.totalValue = typeof totalValue === 'number' ? totalValue : 0;
+    }
+  } catch (error) {
+    console.error('获取收款数据失败:', error);
+  }
+};
+
+// 获取工资数据
+const fetchSalaryData = async () => {
+  const { startOfMonth, endOfMonth } = getMonthRange();
+  try {
+    // 本月工资
+    const monthRes = await getTotalPayableAmount({
+      settlementTime: [startOfMonth, endOfMonth] as any,
+    } as any);
+    // 总工资
+    const totalRes = await getTotalPayableAmount({} as any);
+
+    const salaryItem = overviewItems.value.find(
+      (item) => item.key === 'salary',
+    );
+    if (salaryItem) {
+      salaryItem.value = monthRes ?? 0;
+      salaryItem.totalValue = totalRes ?? 0;
+    }
+  } catch (error) {
+    console.error('获取工资数据失败:', error);
+  }
+};
+
+// 组件创建时获取数据
+onMounted(async () => {
+  await Promise.all([fetchPaymentData(), fetchReceiptData(), fetchSalaryData()]);
+});
 
 const chartTabs: TabOption[] = [
   {
