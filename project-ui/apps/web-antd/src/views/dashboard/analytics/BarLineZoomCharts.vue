@@ -257,10 +257,10 @@ function init() {
 // 监听数据变化
 watch(
   () => props.chartData,
-  () => {
+  async (newVal, oldVal) => {
     init();
   },
-  { deep: true },
+  { deep: true, immediate: true },
 );
 
 onMounted(() => {

@@ -2,6 +2,8 @@
 import type { AnalysisOverviewItem } from '@vben/common-ui';
 import type { TabOption } from '@vben/types';
 
+import type { StatisticsApi } from '#/api/biz/statistics';
+
 import { markRaw, onMounted, ref } from 'vue';
 
 import { AnalysisChartsTabs, AnalysisOverview } from '@vben/common-ui';
@@ -12,6 +14,7 @@ import dayjs from 'dayjs';
 import { getPaymentOrderAmount } from '#/api/biz/paymentOrder';
 import { getReceiptOrderAmount } from '#/api/biz/receiptOrder';
 import { getTotalPayableAmount } from '#/api/biz/salary';
+import { getPaymentStatistics } from '#/api/biz/statistics';
 import BarAutoCarouselCharts from '#/views/dashboard/analytics/BarAutoCarouselCharts.vue';
 import BarLineZoomCharts from '#/views/dashboard/analytics/BarLineZoomCharts.vue';
 import BarTrendCharts from '#/views/dashboard/analytics/BarTrendCharts.vue';
@@ -131,14 +134,14 @@ onMounted(async () => {
   ]);
 });
 
-// 时间类型
-type DateType = 'date' | 'month' | 'year';
+const paymentStatisticsData = ref<StatisticsApi.StatisticsResult[]>([]);
+const paymentStatisticsName = ref<string>('付款金额');
 
 // 处理日期变化
 const handleDateChange = (value: {
   endDate: string;
   startDate: string;
-  type: DateType;
+  type: string;
 }) => {
   console.log('日期变化:', value);
   const { startDate, endDate, type } = value;
@@ -147,14 +150,29 @@ const handleDateChange = (value: {
     console.log('日期范围不完整');
     return;
   }
-  console.log('开始日期:', startDate);
-  console.log('结束日期:', endDate);
-  console.log('时间类型:', type);
+  // 获取支付数据
+  getPaymentStatisticsData(startDate, endDate, type);
+};
+const getPaymentStatisticsData = async (
+  startTime: string,
+  endTime: string,
+  type: string,
+) => {
+  const res = await getPaymentStatistics({
+    startTime,
+    endTime,
+    type,
+  });
+  // 确保数据存在后再赋值
+  if (res) {
+    // 使用展开运算符创建新数组，确保 Vue 检测到变化
+    paymentStatisticsData.value = [...res];
+  }
 };
 
 const chartTabs: TabOption[] = [
   {
-    label: '付款金额',
+    label: paymentStatisticsName.value,
     value: 'payment',
   },
   {
@@ -177,7 +195,10 @@ const chartTabs: TabOption[] = [
       @date-change="handleDateChange"
     >
       <template #payment>
-        <BarLineZoomCharts />
+        <BarLineZoomCharts
+          :chart-data="paymentStatisticsData"
+          :chart-title="paymentStatisticsName"
+        />
       </template>
       <template #receipt>
         <BarTrendCharts />

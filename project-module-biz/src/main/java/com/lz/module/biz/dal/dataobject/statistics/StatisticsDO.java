@@ -6,7 +6,7 @@ import lombok.Data;
  * 统计返回RO
  */
 @Data
-public class StatisticsDO {
+public class StatisticsDO<T> {
     private String name;
-    private Long value;
+    private T value;
 }

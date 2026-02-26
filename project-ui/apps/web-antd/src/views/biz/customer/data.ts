@@ -1,9 +1,11 @@
-import type {VbenFormSchema} from '#/adapter/form';
-import type {VxeTableGridOptions} from '#/adapter/vxe-table';
-import type {CustomerApi} from '#/api/biz/customer';
-import {DICT_TYPE, getDictOptions, getRangePickerDefaultProps} from '#/utils';
+import type { VbenFormSchema } from '#/adapter/form';
+import type { VxeTableGridOptions } from '#/adapter/vxe-table';
+import type { CustomerApi } from '#/api/biz/customer';
+
 import { z } from '#/adapter/form';
-import {getAreaTree} from "#/api/system/area";
+import { getAreaTree } from '#/api/system/area';
+import { DICT_TYPE, getDictOptions, getRangePickerDefaultProps } from '#/utils';
+
 /** 新增/修改的表单 */
 export function useFormSchema(): VbenFormSchema[] {
   return [
@@ -184,7 +186,7 @@ export function useGridFormSchema(): VbenFormSchema[] {
 /** 列表的字段 */
 export function useGridColumns(): VxeTableGridOptions<CustomerApi.Customer>['columns'] {
   return [
-  { type: 'checkbox', width: 40 },
+    { type: 'checkbox', width: 40 },
     {
       field: 'id',
       title: '编号',
@@ -253,4 +255,3 @@ export function useGridColumns(): VxeTableGridOptions<CustomerApi.Customer>['col
     },
   ];
 }
-
