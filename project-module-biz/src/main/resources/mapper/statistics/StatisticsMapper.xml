@@ -33,4 +33,17 @@
         GROUP BY name
         ORDER BY name;
     </select>
+    <select id="salaryStatistics" resultMap="StatisticsDOMap">
+        SELECT SUM(payable_amount) AS value,
+        DATE_FORMAT(settlement_time, #{format}) AS name
+        FROM biz_salary
+        <where>
+            and deleted = false
+            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                AND settlement_time BETWEEN #{startTime} AND #{endTime}
+            </if>
+        </where>
+        GROUP BY name
+        ORDER BY name;
+    </select>
 </mapper>

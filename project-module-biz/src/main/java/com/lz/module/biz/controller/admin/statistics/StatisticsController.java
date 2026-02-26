@@ -1,7 +1,6 @@
 package com.lz.module.biz.controller.admin.statistics;
 
 import com.lz.framework.common.pojo.CommonResult;
-import com.lz.module.biz.controller.admin.receiptOrder.vo.ReceiptOrderPageReqVO;
 import com.lz.module.biz.controller.admin.statistics.vo.StatisticsRequest;
 import com.lz.module.biz.controller.admin.statistics.vo.StatisticsVo;
 import com.lz.module.biz.service.statistics.StatisticsService;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import static com.lz.framework.common.pojo.CommonResult.success;
@@ -49,6 +47,14 @@ public class StatisticsController {
     @PreAuthorize("@ss.hasPermission('biz:receipt-order:query')")
     public CommonResult<List<StatisticsVo<Float>>> receiptStatistics(@Valid StatisticsRequest request) {
         List<StatisticsVo<Float>> result = statisticsService.receiptStatistics(request);
+        return success(result);
+    }
+
+    @GetMapping("/salary")
+    @Operation(summary = "获得收款信息总额")
+    @PreAuthorize("@ss.hasPermission('biz:salary:query')")
+    public CommonResult<List<StatisticsVo<Float>>> salaryStatistics(@Valid StatisticsRequest request) {
+        List<StatisticsVo<Float>> result = statisticsService.salaryStatistics(request);
         return success(result);
     }
 }

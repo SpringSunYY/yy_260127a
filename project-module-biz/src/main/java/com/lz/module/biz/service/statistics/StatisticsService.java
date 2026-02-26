@@ -19,8 +19,16 @@ public interface StatisticsService {
     /**
      * 收款信息统计
      *
-     * @param pageReqVO
+     * @param request
      * @return
      */
     List<StatisticsVo<Float>> receiptStatistics(@Valid StatisticsRequest request);
+
+    /**
+     * 薪资信息统计
+     *
+     * @param request
+     * @return
+     */
+    List<StatisticsVo<Float>> salaryStatistics(@Valid StatisticsRequest request);
 }

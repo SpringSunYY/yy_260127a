@@ -37,3 +37,10 @@ export function getReceiptStatistics(params: StatisticsApi.StatisticsParams) {
     params,
   });
 }
+
+/** 查询工资信息 */
+export function getSalaryStatistics(params: StatisticsApi.StatisticsParams) {
+  return requestClient.get<Result>('/biz/statistics/salary', {
+    params,
+  });
+}

@@ -61,4 +61,22 @@ public class StatisticsServiceImpl implements StatisticsService {
         return resultMap.entrySet().stream().map(entry -> new StatisticsVo<Float>(entry.getKey(), entry.getValue())).toList();
     }
 
+    @Override
+    public List<StatisticsVo<Float>> salaryStatistics(StatisticsRequest request) {
+        List<String> dataRange = DateUtils.getDataRange(request.getStartTime(), request.getEndTime(), request.getType());
+        //格式化时间类型为MySQL需要类型
+        String format = DateUtils.formatDateType(request.getType());
+        request.setFormat(format);
+        List<StatisticsDO<Float>> statisticsDOList = statisticsMapper.salaryStatistics(request);
+        //初始时间范围
+        Map<String, Float> resultMap = new LinkedHashMap<>();
+        for (String time : dataRange) {
+            resultMap.put(time, 0f);
+        }
+        for (StatisticsDO<Float> statisticsDO : statisticsDOList) {
+            resultMap.put(statisticsDO.getName(), statisticsDO.getValue());
+        }
+        return resultMap.entrySet().stream().map(entry -> new StatisticsVo<Float>(entry.getKey(), entry.getValue())).toList();
+    }
+
 }

@@ -15,7 +15,7 @@ interface Props {
   width?: string;
   height?: string;
   chartData?: ChartDataItem[];
-  chartName?: string;
+  chartTitle?: string;
   autoPlay?: boolean;
   colorMain?: string;
 }
@@ -32,7 +32,7 @@ const props = withDefaults(defineProps<Props>(), {
     { name: '2017年', value: 236 },
     { name: '2018年', value: 217 },
   ],
-  chartName: '项目数',
+  chartTitle: '项目数',
   autoPlay: true,
   colorMain: 'rgb(0,210,255)',
 });
@@ -56,10 +56,16 @@ const getMetrics = () => {
     if (index === 0) return null;
     const prevValue = props.chartData[index - 1]?.value ?? 0;
     const diff = item.value - prevValue;
+    // 避免除以0的情况
+    const baseValue = prevValue === 0 ? (item.value || 1) : prevValue;
+    const percent = ((diff / baseValue) * 100).toFixed(2);
     return {
       value: diff,
       isIncrease: diff > 0,
-      percent: `${((Math.abs(diff) / (prevValue || 1)) * 100).toFixed(2)}%`,
+      percent,
+      // 区分零增长和无法计算的情况
+      isZero: diff === 0,
+      isNA: prevValue === 0 && item.value === 0,
     };
   });
 
@@ -111,13 +117,13 @@ const getOptions = () => {
 
   return {
     title: {
-      text: props.chartName,
+      text: props.chartTitle,
       left: '2%',
       top: '5%',
       textStyle: { color: hexToRgba(1), fontSize: 16 },
     },
     legend: {
-      data: [props.chartName],
+      data: [props.chartTitle],
       top: '20',
       left: 'center',
       textStyle: { color: hexToRgba(0.8) },
@@ -137,17 +143,28 @@ const getOptions = () => {
 
         const diffInfo = diffData[idx];
 
-        let diffText = '上一期：-';
-        if (diffInfo) {
-          diffText = `上一期：${diffInfo.isIncrease ? '↑' : '↓'} ${Math.abs(diffInfo.value)} (${diffInfo.percent})`;
+        let diffText = '';
+        if (idx === 0) {
+          diffText = '<span style="color:#666;">环比：-</span>';
+        } else if (diffInfo?.isNA) {
+          diffText = '<span style="color:#666;">环比：无变化</span>';
+        } else if (diffInfo?.isZero) {
+          diffText = '<span style="color:#666;">环比：持平</span>';
+        } else if (diffInfo) {
+          const arrow = diffInfo.isIncrease ? '↑' : '↓';
+          const color = diffInfo.isIncrease ? '#52c41a' : '#ff4d4f';
+          const sign = diffInfo.isIncrease ? '+' : '-';
+          diffText = `<span style="color:${color};">环比：${arrow} ${sign}${Math.abs(diffInfo.value)} (${sign}${diffInfo.percent}%)</span>`;
         }
 
         let res = `
           <div style="font-weight:bold; color:${hexToRgba(1)}; margin-bottom:8px;">${item.name}</div>
-          <div>${props.chartName}：${item.value}</div>
+          <div>${props.chartTitle}：${item.value}</div>
           <div style="font-size:12px; color:#82AFC6;">${diffText}</div>
           <div style="margin-top:8px; border-top:1px solid #333; padding-top:4px; font-size:12px;">
-            总计：${total} | 平均：${average}
+            <span style="color:#82AFC6;">累计：${total}</span>
+            <span style="margin:0 8px;">|</span>
+            <span style="color:#82AFC6;">均值：${average}</span>
           </div>
         `;
 
@@ -205,7 +222,7 @@ const getOptions = () => {
     },
     series: [
       {
-        name: props.chartName,
+        name: props.chartTitle,
         type: 'bar' as const,
         barWidth: 15,
         itemStyle: {
@@ -225,7 +242,7 @@ const getOptions = () => {
         data: values,
       },
       {
-        name: props.chartName,
+        name: props.chartTitle,
         type: 'line' as const,
         smooth: true,
         symbolSize: 8,

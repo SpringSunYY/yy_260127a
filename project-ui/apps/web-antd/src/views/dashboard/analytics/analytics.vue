@@ -17,6 +17,7 @@ import { getTotalPayableAmount } from '#/api/biz/salary';
 import {
   getPaymentStatistics,
   getReceiptStatistics,
+  getSalaryStatistics,
 } from '#/api/biz/statistics';
 import BarAutoCarouselCharts from '#/views/dashboard/analytics/BarAutoCarouselCharts.vue';
 import BarLineZoomCharts from '#/views/dashboard/analytics/BarLineZoomCharts.vue';
@@ -143,6 +144,9 @@ const paymentStatisticsName = ref<string>('付款金额');
 const receiptStatisticsData = ref<StatisticsApi.StatisticsResult[]>([]);
 const receiptStatisticsName = ref<string>('收款金额');
 
+const salaryStatisticsData = ref<StatisticsApi.StatisticsResult[]>([]);
+const salaryStatisticsName = ref<string>('工资信息');
+
 // 处理日期变化
 const handleDateChange = (value: {
   endDate: string;
@@ -158,6 +162,8 @@ const handleDateChange = (value: {
   getPaymentStatisticsData(startDate, endDate, type);
   // 获取收款数据
   getReceiptStatisticsData(startDate, endDate, type);
+  // 获取工资数据
+  getSalaryStatisticsData(startDate, endDate, type);
 };
 const getPaymentStatisticsData = (
   startTime: string,
@@ -190,6 +196,24 @@ const getReceiptStatisticsData = (
     if (res) {
       // 使用展开运算符创建新数组，确保 Vue 检测到变化
       receiptStatisticsData.value = [...res];
+    }
+  });
+};
+
+const getSalaryStatisticsData = (
+  startTime: string,
+  endTime: string,
+  type: string,
+) => {
+  getSalaryStatistics({
+    startTime,
+    endTime,
+    type,
+  }).then((res) => {
+    // 确保数据存在后再赋值
+    if (res) {
+      // 使用展开运算符创建新数组，确保 Vue 检测到变化
+      salaryStatisticsData.value = [...res];
     }
   });
 };
@@ -231,7 +255,10 @@ const chartTabs: TabOption[] = [
         />
       </template>
       <template #salary>
-        <BarAutoCarouselCharts />
+        <BarAutoCarouselCharts
+          :chart-data="salaryStatisticsData"
+          :chart-title="salaryStatisticsName"
+        />
       </template>
     </AnalysisChartsTabs>
   </div>

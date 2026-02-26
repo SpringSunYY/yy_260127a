@@ -23,4 +23,12 @@ public interface StatisticsMapper {
      * @return
      */
     List<StatisticsDO<Float>> receiptStatistics(StatisticsRequest request);
+
+    /**
+     * 统计员工工资信息
+     *
+     * @param request
+     * @return
+     */
+    List<StatisticsDO<Float>> salaryStatistics(StatisticsRequest request);
 }
