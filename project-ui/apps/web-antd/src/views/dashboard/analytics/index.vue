@@ -2,8 +2,7 @@
 import type { AnalysisOverviewItem } from '@vben/common-ui';
 import type { TabOption } from '@vben/types';
 
-import { ref, onMounted } from 'vue';
-import dayjs from 'dayjs';
+import { markRaw, onMounted, ref } from 'vue';
 
 import {
   AnalysisChartCard,
@@ -11,6 +10,8 @@ import {
   AnalysisOverview,
 } from '@vben/common-ui';
 import { SvgCakeIcon, SvgCardIcon, SvgDownloadIcon } from '@vben/icons';
+
+import dayjs from 'dayjs';
 
 import { getPaymentOrderAmount } from '#/api/biz/paymentOrder';
 import { getReceiptOrderAmount } from '#/api/biz/receiptOrder';
@@ -25,7 +26,7 @@ import AnalyticsVisits from './analytics-visits.vue';
 const overviewItems = ref<AnalysisOverviewItem[]>([
   {
     key: 'payment',
-    icon: SvgCardIcon,
+    icon: markRaw(SvgCardIcon),
     title: '本月付款金额',
     totalTitle: '总付款金额',
     totalValue: 0,
@@ -33,7 +34,7 @@ const overviewItems = ref<AnalysisOverviewItem[]>([
   },
   {
     key: 'receipt',
-    icon: SvgCakeIcon,
+    icon: markRaw(SvgCakeIcon),
     title: '本月收款金额',
     totalTitle: '总收款金额',
     totalValue: 0,
@@ -41,7 +42,7 @@ const overviewItems = ref<AnalysisOverviewItem[]>([
   },
   {
     key: 'salary',
-    icon: SvgDownloadIcon,
+    icon: markRaw(SvgDownloadIcon),
     title: '本月工资',
     totalTitle: '总工资',
     totalValue: 0,
@@ -130,17 +131,46 @@ const fetchSalaryData = async () => {
 
 // 组件创建时获取数据
 onMounted(async () => {
-  await Promise.all([fetchPaymentData(), fetchReceiptData(), fetchSalaryData()]);
+  await Promise.all([
+    fetchPaymentData(),
+    fetchReceiptData(),
+    fetchSalaryData(),
+  ]);
 });
+
+// 时间类型
+type DateType = 'date' | 'month' | 'year';
+
+// 处理日期变化
+const handleDateChange = (value: {
+  endDate: string;
+  startDate: string;
+  type: DateType;
+}) => {
+  console.log('日期变化:', value);
+  const { startDate, endDate, type } = value;
+
+  if (!startDate || !endDate) {
+    console.log('日期范围不完整');
+    return;
+  }
+  console.log('开始日期:', startDate);
+  console.log('结束日期:', endDate);
+  console.log('时间类型:', type);
+};
 
 const chartTabs: TabOption[] = [
   {
-    label: '流量趋势',
+    label: '付款金额',
     value: 'trends',
   },
   {
-    label: '月访问量',
+    label: '收款金额',
     value: 'visits',
+  },
+  {
+    label: '工资信息',
+    value: 'sales',
   },
 ];
 </script>
@@ -148,7 +178,11 @@ const chartTabs: TabOption[] = [
 <template>
   <div class="p-5">
     <AnalysisOverview :items="overviewItems" />
-    <AnalysisChartsTabs :tabs="chartTabs" class="mt-5">
+    <AnalysisChartsTabs
+      :tabs="chartTabs"
+      class="mt-5"
+      @date-change="handleDateChange"
+    >
       <template #trends>
         <AnalyticsTrends />
       </template>
