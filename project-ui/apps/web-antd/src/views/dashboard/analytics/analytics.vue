@@ -14,7 +14,10 @@ import dayjs from 'dayjs';
 import { getPaymentOrderAmount } from '#/api/biz/paymentOrder';
 import { getReceiptOrderAmount } from '#/api/biz/receiptOrder';
 import { getTotalPayableAmount } from '#/api/biz/salary';
-import { getPaymentStatistics } from '#/api/biz/statistics';
+import {
+  getPaymentStatistics,
+  getReceiptStatistics,
+} from '#/api/biz/statistics';
 import BarAutoCarouselCharts from '#/views/dashboard/analytics/BarAutoCarouselCharts.vue';
 import BarLineZoomCharts from '#/views/dashboard/analytics/BarLineZoomCharts.vue';
 import BarTrendCharts from '#/views/dashboard/analytics/BarTrendCharts.vue';
@@ -137,37 +140,58 @@ onMounted(async () => {
 const paymentStatisticsData = ref<StatisticsApi.StatisticsResult[]>([]);
 const paymentStatisticsName = ref<string>('付款金额');
 
+const receiptStatisticsData = ref<StatisticsApi.StatisticsResult[]>([]);
+const receiptStatisticsName = ref<string>('收款金额');
+
 // 处理日期变化
 const handleDateChange = (value: {
   endDate: string;
   startDate: string;
   type: string;
 }) => {
-  console.log('日期变化:', value);
   const { startDate, endDate, type } = value;
 
   if (!startDate || !endDate) {
-    console.log('日期范围不完整');
     return;
   }
   // 获取支付数据
   getPaymentStatisticsData(startDate, endDate, type);
+  // 获取收款数据
+  getReceiptStatisticsData(startDate, endDate, type);
 };
-const getPaymentStatisticsData = async (
+const getPaymentStatisticsData = (
   startTime: string,
   endTime: string,
   type: string,
 ) => {
-  const res = await getPaymentStatistics({
+  getPaymentStatistics({
     startTime,
     endTime,
     type,
+  }).then((res) => {
+    // 确保数据存在后再赋值
+    if (res) {
+      // 使用展开运算符创建新数组，确保 Vue 检测到变化
+      paymentStatisticsData.value = [...res];
+    }
   });
-  // 确保数据存在后再赋值
-  if (res) {
-    // 使用展开运算符创建新数组，确保 Vue 检测到变化
-    paymentStatisticsData.value = [...res];
-  }
+};
+const getReceiptStatisticsData = (
+  startTime: string,
+  endTime: string,
+  type: string,
+) => {
+  getReceiptStatistics({
+    startTime,
+    endTime,
+    type,
+  }).then((res) => {
+    // 确保数据存在后再赋值
+    if (res) {
+      // 使用展开运算符创建新数组，确保 Vue 检测到变化
+      receiptStatisticsData.value = [...res];
+    }
+  });
 };
 
 const chartTabs: TabOption[] = [
@@ -201,7 +225,10 @@ const chartTabs: TabOption[] = [
         />
       </template>
       <template #receipt>
-        <BarTrendCharts />
+        <BarTrendCharts
+          :chart-title="receiptStatisticsName"
+          :chart-data="receiptStatisticsData"
+        />
       </template>
       <template #salary>
         <BarAutoCarouselCharts />

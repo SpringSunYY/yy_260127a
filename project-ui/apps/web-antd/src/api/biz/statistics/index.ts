@@ -24,9 +24,16 @@ interface Result {
   data: StatisticsApi.StatisticsResult[];
 }
 
-/** 查询工资信息分页 */
+/** 查询付款信息 */
 export function getPaymentStatistics(params: StatisticsApi.StatisticsParams) {
   return requestClient.get<Result>('/biz/statistics/payment', {
+    params,
+  });
+}
+
+/** 查询收款信息 */
+export function getReceiptStatistics(params: StatisticsApi.StatisticsParams) {
+  return requestClient.get<Result>('/biz/statistics/receipt', {
     params,
   });
 }

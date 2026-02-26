@@ -15,4 +15,12 @@ public interface StatisticsMapper {
      * @return
      */
     List<StatisticsDO<Float>> paymentStatistics(StatisticsRequest request);
+
+    /**
+     * 统计收款信息
+     *
+     * @param request
+     * @return
+     */
+    List<StatisticsDO<Float>> receiptStatistics(StatisticsRequest request);
 }

@@ -1,7 +1,7 @@
 package com.lz.module.biz.controller.admin.statistics;
 
 import com.lz.framework.common.pojo.CommonResult;
-import com.lz.module.biz.controller.admin.paymentOrder.vo.PaymentOrderPageReqVO;
+import com.lz.module.biz.controller.admin.receiptOrder.vo.ReceiptOrderPageReqVO;
 import com.lz.module.biz.controller.admin.statistics.vo.StatisticsRequest;
 import com.lz.module.biz.controller.admin.statistics.vo.StatisticsVo;
 import com.lz.module.biz.service.statistics.StatisticsService;
@@ -41,6 +41,14 @@ public class StatisticsController {
     @PreAuthorize("@ss.hasPermission('biz:payment-order:query')")
     public CommonResult<List<StatisticsVo<Float>>> paymentStatistics(@Valid StatisticsRequest request) {
         List<StatisticsVo<Float>> result = statisticsService.paymentStatistics(request);
+        return success(result);
+    }
+
+    @GetMapping("/receipt")
+    @Operation(summary = "获得收款信息总额")
+    @PreAuthorize("@ss.hasPermission('biz:receipt-order:query')")
+    public CommonResult<List<StatisticsVo<Float>>> receiptStatistics(@Valid StatisticsRequest request) {
+        List<StatisticsVo<Float>> result = statisticsService.receiptStatistics(request);
         return success(result);
     }
 }

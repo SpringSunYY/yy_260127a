@@ -127,9 +127,11 @@ const getOptions = () => {
         const prevItem = props.chartData[index - 1];
 
         let trendHtml = '';
-        if (prevItem) {
-          const diff = item.value - prevItem.value;
-          const percent = ((diff / prevItem.value) * 100).toFixed(1);
+        const currValue = Number(item.value) || 0;
+        const prevValue = prevItem ? Number(prevItem.value) || 0 : 0;
+        if (prevValue !== 0) {
+          const diff = currValue - prevValue;
+          const percent = ((diff / prevValue) * 100).toFixed(1);
           const color = diff >= 0 ? '#ff4d4f' : '#73d13d';
           const icon = diff >= 0 ? '▲' : '▼';
           trendHtml = `<span style="color:${color}; margin-left:10px;">${icon} ${Math.abs(diff)} (${percent}%)</span>`;

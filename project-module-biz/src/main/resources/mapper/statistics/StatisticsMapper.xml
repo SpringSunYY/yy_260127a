@@ -9,12 +9,25 @@
 
     <select id="paymentStatistics" resultMap="StatisticsDOMap">
         SELECT SUM(payment_amount) AS value,
-        DATE_FORMAT(create_time, #{format}) AS name
+        DATE_FORMAT(payment_time, #{format}) AS name
         FROM biz_payment_order
         <where>
             and deleted = false
             <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
                 AND payment_time BETWEEN #{startTime} AND #{endTime}
+            </if>
+        </where>
+        GROUP BY name
+        ORDER BY name;
+    </select>
+    <select id="receiptStatistics" resultMap="StatisticsDOMap">
+        SELECT SUM(receipt_amount) AS value,
+        DATE_FORMAT(receipt_date, #{format}) AS name
+        FROM biz_receipt_order
+        <where>
+            and deleted = false
+            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                AND receipt_date BETWEEN #{startTime} AND #{endTime}
             </if>
         </where>
         GROUP BY name
