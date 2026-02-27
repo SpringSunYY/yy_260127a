@@ -14,8 +14,6 @@ import { useVbenForm } from '@vben-core/form-ui';
 import { VbenButton, VbenCheckbox } from '@vben-core/shadcn-ui';
 
 import Title from './auth-title.vue';
-import DocLink from './doc-link.vue';
-import ThirdPartyLogin from './third-party-login.vue';
 
 interface Props extends AuthenticationProps {
   formSchema?: VbenFormSchema[];
@@ -32,9 +30,9 @@ const props = withDefaults(defineProps<Props>(), {
   loading: false,
   qrCodeLoginPath: '/auth/qrcode-login',
   registerPath: '/auth/register',
-  showCodeLogin: true,
-  showForgetPassword: true,
-  showQrcodeLogin: true,
+  showCodeLogin: false,
+  showForgetPassword: false,
+  showQrcodeLogin: false,
   showRegister: true,
   showRememberMe: true,
   showThirdPartyLogin: true,
@@ -178,12 +176,12 @@ defineExpose({
     </div>
 
     <!-- 第三方登录 -->
-<!--    <slot name="third-party-login">-->
-<!--      <ThirdPartyLogin-->
-<!--        v-if="showThirdPartyLogin"-->
-<!--        @third-login="handleThirdLogin"-->
-<!--      />-->
-<!--    </slot>-->
+    <!--    <slot name="third-party-login">-->
+    <!--      <ThirdPartyLogin-->
+    <!--        v-if="showThirdPartyLogin"-->
+    <!--        @third-login="handleThirdLogin"-->
+    <!--      />-->
+    <!--    </slot>-->
 
     <slot name="to-register">
       <div v-if="showRegister" class="mt-3 text-center text-sm">
@@ -198,6 +196,6 @@ defineExpose({
     </slot>
 
     <!-- 萌新必读 -->
-<!--    <DocLink />-->
+    <!--    <DocLink />-->
   </div>
 </template>
