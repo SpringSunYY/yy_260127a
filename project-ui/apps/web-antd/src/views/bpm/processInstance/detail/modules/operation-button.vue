@@ -658,8 +658,13 @@ async function validateNormalForm() {
 function getUpdatedProcessInstanceVariables() {
   const variables: any = {};
   props.writableFields.forEach((field: string) => {
-    if (field && variables[field])
-      variables[field] = props.normalFormApi.getValue(field);
+    if (field) {
+      const value = props.normalFormApi?.getValue(field);
+      // 检查字段值是否存在（不为 undefined 和 null）
+      if (value !== undefined && value !== null) {
+        variables[field] = value;
+      }
+    }
   });
   return variables;
 }
