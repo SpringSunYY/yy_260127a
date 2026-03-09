@@ -1,10 +1,13 @@
 package com.lz.module.system.controller.admin.notice;
 
 import cn.hutool.core.lang.Assert;
+import com.lz.framework.common.biz.system.permission.PermissionCommonApi;
+import com.lz.framework.common.enums.CommonStatusEnum;
 import com.lz.framework.common.enums.UserTypeEnum;
 import com.lz.framework.common.pojo.CommonResult;
 import com.lz.framework.common.pojo.PageResult;
 import com.lz.framework.common.util.object.BeanUtils;
+import com.lz.framework.security.core.util.SecurityFrameworkUtils;
 import com.lz.module.infra.api.websocket.WebSocketSenderApi;
 import com.lz.module.system.controller.admin.notice.vo.NoticePageReqVO;
 import com.lz.module.system.controller.admin.notice.vo.NoticeRespVO;
@@ -23,7 +26,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.lz.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static com.lz.framework.common.pojo.CommonResult.success;
+import static com.lz.module.system.enums.ErrorCodeConstants.NOTICE_DISABLE;
+import static com.lz.module.system.enums.ErrorCodeConstants.NOTICE_NOT_FOUND;
 
 @Tag(name = "管理后台 - 通知公告")
 @RestController
@@ -39,6 +45,9 @@ public class NoticeController {
 
     @Resource
     private WebSocketSenderApi webSocketSenderApi;
+
+    @Resource
+    private PermissionCommonApi permissionApi;
 
     @PostMapping("/create")
     @Operation(summary = "创建通知公告")
@@ -78,6 +87,13 @@ public class NoticeController {
     @Operation(summary = "获取通知公告列表")
     @PreAuthorize("@ss.hasPermission('system:notice:query')")
     public CommonResult<PageResult<NoticeRespVO>> getNoticePage(@Validated NoticePageReqVO pageReqVO) {
+        Long userId = SecurityFrameworkUtils.getLoginUserId();
+
+        // 检查用户是否有指定权限
+        boolean hasPermission = permissionApi.hasAnyPermissions(userId, "system:notice:create");
+        if (!hasPermission) {
+            pageReqVO.setStatus(CommonStatusEnum.ENABLE.getStatus());
+        }
         PageResult<NoticeDO> pageResult = noticeService.getNoticePage(pageReqVO);
         return success(BeanUtils.toBean(pageResult, NoticeRespVO.class));
     }
@@ -98,6 +114,11 @@ public class NoticeController {
     public CommonResult<Boolean> push(@RequestParam("id") Long id) {
         NoticeDO notice = noticeService.getNotice(id);
         Assert.notNull(notice, "公告不能为空");
+        //如果公告状态不是已发布
+        boolean equals = !notice.getStatus().equals(CommonStatusEnum.ENABLE.getStatus());
+        if (equals) {
+            throw exception(NOTICE_DISABLE);
+        }
         //发送站内信
         notifySendService.sendNoticeToAdmin(notice);
         // 通过 websocket 推送给在线的用户
