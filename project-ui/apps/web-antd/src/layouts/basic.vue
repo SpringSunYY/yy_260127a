@@ -4,14 +4,8 @@ import type { NotificationItem } from '@vben/layouts';
 import { computed, onMounted, ref, watch } from 'vue';
 
 import { AuthenticationLoginExpiredModal, useVbenModal } from '@vben/common-ui';
-import { VBEN_DOC_URL, VBEN_GITHUB_URL } from '@vben/constants';
 import { useWatermark } from '@vben/hooks';
-import {
-  AntdProfileOutlined,
-  BookOpenText,
-  CircleHelp,
-  MdiGithub,
-} from '@vben/icons';
+import { AntdProfileOutlined } from '@vben/icons';
 import {
   BasicLayout,
   LockScreen,
@@ -20,7 +14,9 @@ import {
 } from '@vben/layouts';
 import { preferences } from '@vben/preferences';
 import { useAccessStore, useUserStore } from '@vben/stores';
-import { formatDateTime, openWindow } from '@vben/utils';
+import { formatDateTime } from '@vben/utils';
+
+import { notification } from 'ant-design-vue';
 
 import {
   getUnreadNotifyMessageCount,
@@ -70,6 +66,14 @@ async function handleLogout() {
 /** 获得未读消息数 */
 async function handleNotificationGetUnreadCount() {
   unreadCount.value = await getUnreadNotifyMessageCount();
+  // 如果存在未读消息
+  if (unreadCount.value > 0) {
+    notification.success({
+      description: `${$t('authentication.noReadMessage')}`,
+      duration: 3,
+      message: $t('authentication.noReadMessage'),
+    });
+  }
 }
 
 /** 获得消息列表 */

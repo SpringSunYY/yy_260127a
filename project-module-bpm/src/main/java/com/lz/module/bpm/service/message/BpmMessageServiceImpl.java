@@ -1,13 +1,13 @@
 package com.lz.module.bpm.service.message;
 
 import com.lz.framework.web.config.WebProperties;
-import com.lz.module.bpm.convert.message.BpmMessageConvert;
 import com.lz.module.bpm.enums.message.BpmMessageEnum;
 import com.lz.module.bpm.service.message.dto.BpmMessageSendWhenProcessInstanceApproveReqDTO;
 import com.lz.module.bpm.service.message.dto.BpmMessageSendWhenProcessInstanceRejectReqDTO;
 import com.lz.module.bpm.service.message.dto.BpmMessageSendWhenTaskCreatedReqDTO;
 import com.lz.module.bpm.service.message.dto.BpmMessageSendWhenTaskTimeoutReqDTO;
-import com.lz.module.system.api.sms.SmsSendApi;
+import com.lz.module.system.api.notify.NotifyMessageSendApi;
+import com.lz.module.system.api.notify.dto.NotifySendSingleToUserReqDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -27,7 +27,7 @@ import java.util.Map;
 public class BpmMessageServiceImpl implements BpmMessageService {
 
     @Resource
-    private SmsSendApi smsSendApi;
+    private NotifyMessageSendApi messageSendApi;
 
     @Resource
     private WebProperties webProperties;
@@ -37,7 +37,7 @@ public class BpmMessageServiceImpl implements BpmMessageService {
         Map<String, Object> templateParams = new HashMap<>();
         templateParams.put("processInstanceName", reqDTO.getProcessInstanceName());
         templateParams.put("detailUrl", getProcessInstanceDetailUrl(reqDTO.getProcessInstanceId()));
-        smsSendApi.sendSingleSmsToAdmin(BpmMessageConvert.INSTANCE.convert(reqDTO.getStartUserId(),
+        messageSendApi.sendSingleMessageToAdmin(buildNotifyReqDTO(reqDTO.getStartUserId(),
                 BpmMessageEnum.PROCESS_INSTANCE_APPROVE.getSmsTemplateCode(), templateParams));
     }
 
@@ -47,7 +47,7 @@ public class BpmMessageServiceImpl implements BpmMessageService {
         templateParams.put("processInstanceName", reqDTO.getProcessInstanceName());
         templateParams.put("reason", reqDTO.getReason());
         templateParams.put("detailUrl", getProcessInstanceDetailUrl(reqDTO.getProcessInstanceId()));
-        smsSendApi.sendSingleSmsToAdmin(BpmMessageConvert.INSTANCE.convert(reqDTO.getStartUserId(),
+        messageSendApi.sendSingleMessageToAdmin(buildNotifyReqDTO(reqDTO.getStartUserId(),
                 BpmMessageEnum.PROCESS_INSTANCE_REJECT.getSmsTemplateCode(), templateParams));
     }
 
@@ -58,7 +58,7 @@ public class BpmMessageServiceImpl implements BpmMessageService {
         templateParams.put("taskName", reqDTO.getTaskName());
         templateParams.put("startUserNickname", reqDTO.getStartUserNickname());
         templateParams.put("detailUrl", getProcessInstanceDetailUrl(reqDTO.getProcessInstanceId()));
-        smsSendApi.sendSingleSmsToAdmin(BpmMessageConvert.INSTANCE.convert(reqDTO.getAssigneeUserId(),
+        messageSendApi.sendSingleMessageToAdmin(buildNotifyReqDTO(reqDTO.getAssigneeUserId(),
                 BpmMessageEnum.TASK_ASSIGNED.getSmsTemplateCode(), templateParams));
     }
 
@@ -68,12 +68,21 @@ public class BpmMessageServiceImpl implements BpmMessageService {
         templateParams.put("processInstanceName", reqDTO.getProcessInstanceName());
         templateParams.put("taskName", reqDTO.getTaskName());
         templateParams.put("detailUrl", getProcessInstanceDetailUrl(reqDTO.getProcessInstanceId()));
-        smsSendApi.sendSingleSmsToAdmin(BpmMessageConvert.INSTANCE.convert(reqDTO.getAssigneeUserId(),
+        messageSendApi.sendSingleMessageToAdmin(buildNotifyReqDTO(reqDTO.getAssigneeUserId(),
                 BpmMessageEnum.TASK_TIMEOUT.getSmsTemplateCode(), templateParams));
     }
 
     private String getProcessInstanceDetailUrl(String taskId) {
         return webProperties.getAdminUi().getUrl() + "/bpm/process-instance/detail?id=" + taskId;
+    }
+
+    private NotifySendSingleToUserReqDTO buildNotifyReqDTO(Long userId, String templateCode,
+                                                            Map<String, Object> templateParams) {
+        NotifySendSingleToUserReqDTO reqDTO = new NotifySendSingleToUserReqDTO();
+        reqDTO.setUserId(userId);
+        reqDTO.setTemplateCode(templateCode);
+        reqDTO.setTemplateParams(templateParams);
+        return reqDTO;
     }
 
 }
