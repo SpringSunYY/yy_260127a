@@ -521,7 +521,8 @@ public class SimpleModelUtils {
             } else if (approveMethodEnum == BpmUserTaskApproveMethodEnum.SEQUENTIAL) {
                 multiInstanceCharacteristics.setCompletionCondition(approveMethodEnum.getCompletionCondition());
                 multiInstanceCharacteristics.setSequential(true);
-                multiInstanceCharacteristics.setLoopCardinality("1");
+                // 多人有序审批：通过 coll_userList 变量控制审批人列表，不设置 loopCardinality
+                // multiInstanceCharacteristics.setLoopCardinality("1");
             } else if (approveMethodEnum == BpmUserTaskApproveMethodEnum.RATIO) {
                 Assert.notNull(approveRatio, "通过比例不能为空");
                 multiInstanceCharacteristics.setCompletionCondition(

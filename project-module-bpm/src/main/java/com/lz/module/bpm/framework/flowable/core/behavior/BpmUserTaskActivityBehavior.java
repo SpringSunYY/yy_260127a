@@ -4,7 +4,6 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.lz.module.bpm.framework.flowable.core.candidate.BpmTaskCandidateInvoker;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.flowable.bpmn.model.UserTask;
 import org.flowable.common.engine.impl.el.ExpressionManager;
 import org.flowable.engine.delegate.DelegateExecution;
@@ -28,7 +27,6 @@ import java.util.Set;
  *
  * @author YY
  */
-@Slf4j
 public class BpmUserTaskActivityBehavior extends UserTaskActivityBehavior {
 
     @Setter
@@ -41,8 +39,8 @@ public class BpmUserTaskActivityBehavior extends UserTaskActivityBehavior {
     @Override
     @Transactional(rollbackFor = Exception.class)
     protected void handleAssignments(TaskService taskService, String assignee, String owner,
-        List<String> candidateUsers, List<String> candidateGroups, TaskEntity task, ExpressionManager expressionManager,
-        DelegateExecution execution, ProcessEngineConfigurationImpl processEngineConfiguration) {
+                                     List<String> candidateUsers, List<String> candidateGroups, TaskEntity task, ExpressionManager expressionManager,
+                                     DelegateExecution execution, ProcessEngineConfigurationImpl processEngineConfiguration) {
         // 第一步，获得任务的候选用户
         Long assigneeUserId = calculateTaskCandidateUsers(execution);
         // 第二步，设置作为负责人
@@ -55,7 +53,8 @@ public class BpmUserTaskActivityBehavior extends UserTaskActivityBehavior {
         // 情况一，如果是多实例的任务，例如说会签、或签等情况，则从 Variable 中获取。
         // 顺序审批可见 BpmSequentialMultiInstanceBehavior，并发审批可见 BpmSequentialMultiInstanceBehavior
         if (super.multiInstanceActivityBehavior != null) {
-            return execution.getVariable(super.multiInstanceActivityBehavior.getCollectionElementVariable(), Long.class);
+            String collectionElementVariable = super.multiInstanceActivityBehavior.getCollectionElementVariable();
+            return execution.getVariable(collectionElementVariable, Long.class);
         }
 
         // 情况二，如果非多实例的任务，则计算任务处理人
@@ -77,7 +76,6 @@ public class BpmUserTaskActivityBehavior extends UserTaskActivityBehavior {
                                   TaskEntity task, DelegateExecution execution) {
         ProcessDefinitionEntity processDefinitionEntity = CommandContextUtil.getProcessDefinitionEntityManager().findById(execution.getProcessDefinitionId());
         if (processDefinitionEntity == null) {
-            log.warn("[handleCategory][任务编号({}) 找不到流程定义({})]", task.getId(), execution.getProcessDefinitionId());
             return;
         }
         task.setCategory(processDefinitionEntity.getCategory());

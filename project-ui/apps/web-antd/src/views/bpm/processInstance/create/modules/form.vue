@@ -360,8 +360,13 @@ defineExpose({ initProcessInfo });
     <template #actions>
       <template v-if="activeTab === 'form'">
         <Space wrap class="flex w-full justify-center">
-          <Button plain type="primary" @click="submitForm">
-            <IconifyIcon icon="lucide:check" />
+          <Button
+            plain
+            type="primary"
+            :loading="processInstanceStartLoading"
+            @click="submitForm"
+          >
+            <IconifyIcon v-if="!processInstanceStartLoading" icon="lucide:check" />
             发起
           </Button>
           <Button plain type="default" @click="handleCancel">

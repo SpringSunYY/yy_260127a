@@ -37,6 +37,7 @@ import com.lz.module.bpm.framework.flowable.core.util.BpmHttpRequestUtils;
 import com.lz.module.bpm.framework.flowable.core.util.BpmnModelUtils;
 import com.lz.module.bpm.framework.flowable.core.util.FlowableUtils;
 import com.lz.module.bpm.framework.flowable.core.util.SimpleModelUtils;
+import com.lz.module.bpm.service.definition.BpmModelService;
 import com.lz.module.bpm.service.definition.BpmProcessDefinitionService;
 import com.lz.module.bpm.service.message.BpmMessageService;
 import com.lz.module.system.api.dept.DeptApi;
@@ -45,7 +46,6 @@ import com.lz.module.system.api.user.AdminUserApi;
 import com.lz.module.system.api.user.dto.AdminUserRespDTO;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import org.flowable.bpmn.constants.BpmnXMLConstants;
 import org.flowable.bpmn.model.*;
 import org.flowable.engine.HistoryService;
@@ -90,7 +90,6 @@ import static org.flowable.bpmn.constants.BpmnXMLConstants.*;
  */
 @Service
 @Validated
-@Slf4j
 public class BpmProcessInstanceServiceImpl implements BpmProcessInstanceService {
 
     @Resource
@@ -119,6 +118,9 @@ public class BpmProcessInstanceServiceImpl implements BpmProcessInstanceService 
 
     @Resource
     private BpmProcessIdRedisDAO processIdRedisDAO;
+
+    @Resource
+    private BpmModelService modelService;
 
     // ========== Query 查询相关方法 ==========
 
@@ -742,7 +744,13 @@ public class BpmProcessInstanceServiceImpl implements BpmProcessInstanceService 
         if (!processDefinitionService.canUserStartProcessDefinition(processDefinitionInfo, userId)) {
             throw exception(PROCESS_INSTANCE_START_USER_CAN_START);
         }
-        // 1.3 校验发起人自选审批人
+
+        // 1.3 如果没有传递发起人自选审批人，则从 BPMN 模型中获取默认审批人
+        if (CollUtil.isEmpty(startUserSelectAssignees)) {
+            startUserSelectAssignees = getDefaultStartUserSelectAssignees(definition.getId());
+        }
+
+        // 1.4 校验发起人自选审批人
         validateStartUserSelectAssignees(userId, definition, startUserSelectAssignees, variables);
 
         // 2. 创建流程实例
@@ -758,6 +766,10 @@ public class BpmProcessInstanceServiceImpl implements BpmProcessInstanceService 
             // 设置流程变量，发起人自选审批人
             variables.put(BpmnVariableConstants.PROCESS_INSTANCE_VARIABLE_START_USER_SELECT_ASSIGNEES,
                     startUserSelectAssignees);
+
+            // 为多实例节点生成 coll_userList 变量
+            // 多人有序审批时，需要生成 coll_userList 变量供 Flowable 多实例循环使用
+            generateMultiInstanceUserListVariables(definition.getId(), startUserSelectAssignees, variables);
         }
 
         // 3. 创建流程
@@ -785,6 +797,83 @@ public class BpmProcessInstanceServiceImpl implements BpmProcessInstanceService 
         // 3.3 发起流程实例
         ProcessInstance instance = processInstanceBuilder.start();
         return instance.getId();
+    }
+
+    /**
+     * 为多实例节点生成 coll_userList 变量
+     * 多人有序审批时，需要生成 coll_userList 变量供 Flowable 多实例循环使用
+     *
+     * @param processDefinitionId      流程定义 ID
+     * @param startUserSelectAssignees 发起人自选的审批人 Map
+     * @param variables                流程变量
+     */
+    private void generateMultiInstanceUserListVariables(String processDefinitionId,
+                                                        Map<String, List<Long>> startUserSelectAssignees,
+                                                        Map<String, Object> variables) {
+        // 1. 获取流程模型
+        BpmnModel bpmnModel = processDefinitionService.getProcessDefinitionBpmnModel(processDefinitionId);
+        if (bpmnModel == null) {
+            return;
+        }
+
+        // 2. 遍历所有 UserTask，找出使用 coll_userList 的多实例节点
+        Collection<FlowElement> flowElements = bpmnModel.getProcesses().stream()
+                .flatMap(process -> process.getFlowElements().stream())
+                .toList();
+
+        for (FlowElement flowElement : flowElements) {
+            if (flowElement instanceof UserTask userTask) {
+                MultiInstanceLoopCharacteristics miCharacteristics = userTask.getLoopCharacteristics();
+
+                if (miCharacteristics != null && "${coll_userList}".equals(miCharacteristics.getInputDataItem())) {
+                    // 获取该节点的审批人列表
+                    List<Long> assignees = startUserSelectAssignees.get(userTask.getId());
+
+                    if (CollUtil.isNotEmpty(assignees)) {
+                        // 生成 coll_userList 变量，值为用户 ID 列表
+                        variables.put("coll_userList", assignees);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 获取默认的发起人自选审批人列表
+     * 当前端没有传递审批人时，从 BPMN 模型中获取默认审批人
+     *
+     * @param processDefinitionId 流程定义 ID
+     * @return 审批人 Map，key 是节点 ID，value 是审批人列表
+     */
+    private Map<String, List<Long>> getDefaultStartUserSelectAssignees(String processDefinitionId) {
+        Map<String, List<Long>> startUserSelectAssignees = new HashMap<>();
+
+        // 1. 获取 BPMN 模型
+        BpmnModel bpmnModel = modelService.getBpmnModelByDefinitionId(processDefinitionId);
+        if (bpmnModel == null) {
+            return startUserSelectAssignees;
+        }
+
+        // 2. 遍历所有 UserTask 节点
+        Collection<FlowElement> flowElements = bpmnModel.getProcesses().stream()
+                .flatMap(process -> process.getFlowElements().stream())
+                .toList();
+
+        for (FlowElement flowElement : flowElements) {
+            if (flowElement instanceof UserTask userTask) {
+                // 3. 检查是否是"发起人自选审批人"策略
+                Integer candidateStrategy = BpmnModelUtils.parseCandidateStrategy(userTask);
+                if (ObjectUtil.equals(candidateStrategy, BpmTaskCandidateStrategyEnum.START_USER_SELECT.getStrategy())) {
+                    // 4. 获取默认审批人列表
+                    List<Long> defaultAssignees = BpmnModelUtils.parseAssignEmptyHandlerUserIds(userTask);
+                    if (CollUtil.isNotEmpty(defaultAssignees)) {
+                        startUserSelectAssignees.put(userTask.getId(), defaultAssignees);
+                    }
+                }
+            }
+        }
+
+        return startUserSelectAssignees;
     }
 
     private void validateStartUserSelectAssignees(Long userId, ProcessDefinition definition,
