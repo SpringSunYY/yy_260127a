@@ -35,5 +35,7 @@ export interface FileUploadProps {
   resultField?: string;
   // 是否显示下面的描述
   showDescription?: boolean;
+  // 上传超时时间(毫秒)，0 表示不限制
+  timeout?: number;
   value?: string | string[];
 }

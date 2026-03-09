@@ -25,13 +25,14 @@ const props = withDefaults(defineProps<FileUploadProps>(), {
   directory: undefined,
   disabled: false,
   helpText: '',
-  maxSize: 100,
-  maxNumber: 5,
+  maxSize: 5000,
+  maxNumber: 100,
   accept: () => [],
   multiple: true,
   api: undefined,
   resultField: '',
-  showDescription: false,
+  showDescription: true,
+  timeout: 0,
 });
 const emit = defineEmits(['change', 'update:value', 'delete', 'returnText']);
 const { accept, helpText, maxNumber, maxSize } = toRefs(props);
@@ -101,9 +102,6 @@ async function handleRemove(file: UploadFile) {
 }
 
 async function beforeUpload(file: File) {
-  const fileContent = await file.text();
-  emit('returnText', fileContent);
-
   const { maxSize, accept } = props;
   const isAct = checkFileType(file, accept);
   if (!isAct) {
@@ -123,7 +121,7 @@ async function beforeUpload(file: File) {
 }
 
 async function customRequest(info: UploadRequestOption<any>) {
-  let { api } = props;
+  let { api, timeout } = props;
   if (!api || !isFunction(api)) {
     api = useUpload(props.directory).httpRequest;
   }
@@ -133,7 +131,21 @@ async function customRequest(info: UploadRequestOption<any>) {
       const percent = Math.trunc((e.loaded / e.total!) * 100);
       info.onProgress!({ percent });
     };
-    const res = await api?.(info.file as File, progressEvent);
+
+    // 构建上传 Promise
+    const uploadPromise = api?.(info.file as File, progressEvent);
+
+    // 处理超时
+    let res;
+    if (timeout && timeout > 0) {
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('上传超时')), timeout);
+      });
+      res = await Promise.race([uploadPromise, timeoutPromise]);
+    } else {
+      res = await uploadPromise;
+    }
+
     info.onSuccess!(res);
     message.success($t('ui.upload.uploadSuccess'));
 
@@ -146,6 +158,8 @@ async function customRequest(info: UploadRequestOption<any>) {
     emit('change', value);
   } catch (error: any) {
     console.error(error);
+    const errorMsg = error?.message || '上传失败';
+    message.error(errorMsg);
     info.onError!(error);
   }
 }
@@ -183,6 +197,7 @@ function handlePreview(file: UploadFile) {
     <Upload
       v-bind="$attrs"
       v-model:file-list="fileList"
+      action="#"
       :accept="getStringAccept"
       :before-upload="beforeUpload"
       :custom-request="customRequest"
@@ -203,9 +218,15 @@ function handlePreview(file: UploadFile) {
       <div v-if="showDescription" class="mt-2 flex flex-wrap items-center">
         请上传不超过
         <div class="text-primary mx-1 font-bold">{{ maxSize }}MB</div>
-        的
-        <div class="text-primary mx-1 font-bold">{{ getAccept.join('/') }}</div>
-        格式文件，最多
+        的文件
+        <template v-if="getAccept.length > 0">
+          ，支持
+          <div class="text-primary mx-1 font-bold">
+            {{ getAccept.join('/') }}
+          </div>
+          格式
+        </template>
+        ，最多
         <div class="text-primary mx-1 font-bold">{{ maxNumber }}</div>
         个
       </div>
