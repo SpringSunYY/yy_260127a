@@ -39,6 +39,11 @@ export function useFormSchema(): VbenFormSchema[] {
       rules: 'required',
     },
     {
+      fieldName: 'appendixUrl',
+      label: '附件',
+      component: 'FileUpload',
+    },
+    {
       fieldName: 'status',
       label: '公告状态',
       component: 'RadioGroup',

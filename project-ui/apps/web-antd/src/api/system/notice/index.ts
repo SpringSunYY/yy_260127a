@@ -9,6 +9,7 @@ export namespace SystemNoticeApi {
     title: string;
     type: number;
     content: string;
+    appendixUrl: string; // 附件
     status: number;
     remark: string;
     creator?: string;
