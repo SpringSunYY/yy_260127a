@@ -64,10 +64,10 @@ async function handleLogout() {
 }
 
 /** 获得未读消息数 */
-async function handleNotificationGetUnreadCount() {
+async function handleNotificationGetUnreadCount(isRemind = false) {
   unreadCount.value = await getUnreadNotifyMessageCount();
-  // 如果存在未读消息
-  if (unreadCount.value > 0) {
+  // 提示
+  if (isRemind && unreadCount.value > 0 && unreadCount.value > 0) {
     notification.success({
       description: `${$t('authentication.noReadMessage')}`,
       duration: 3,
@@ -130,12 +130,12 @@ function handleNotificationOpen(open: boolean) {
 // ========== 初始化 ==========
 onMounted(() => {
   // 首次加载未读数量
-  handleNotificationGetUnreadCount();
+  handleNotificationGetUnreadCount(true);
   // 轮询刷新未读数量
   setInterval(
     () => {
       if (userStore.userInfo) {
-        handleNotificationGetUnreadCount();
+        handleNotificationGetUnreadCount(true);
       }
     },
     1000 * 60 * 2,

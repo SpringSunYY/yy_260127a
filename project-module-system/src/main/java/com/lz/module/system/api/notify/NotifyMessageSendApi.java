@@ -2,6 +2,7 @@ package com.lz.module.system.api.notify;
 
 import com.lz.module.system.api.notify.dto.NotifySendSingleToUserReqDTO;
 
+import com.lz.module.system.dal.dataobject.notice.NoticeDO;
 import jakarta.validation.Valid;
 
 /**

@@ -1,12 +1,16 @@
 package com.lz.module.system.service.notice;
 
+import com.lz.framework.common.enums.CommonStatusEnum;
 import com.lz.framework.common.pojo.PageResult;
 import com.lz.framework.common.util.object.BeanUtils;
+import com.lz.module.system.api.notify.NotifyMessageSendApi;
 import com.lz.module.system.controller.admin.notice.vo.NoticePageReqVO;
 import com.lz.module.system.controller.admin.notice.vo.NoticeSaveReqVO;
 import com.lz.module.system.dal.dataobject.notice.NoticeDO;
+import com.lz.module.system.dal.dataobject.user.AdminUserDO;
 import com.lz.module.system.dal.mysql.notice.NoticeMapper;
 import com.google.common.annotations.VisibleForTesting;
+import com.lz.module.system.service.user.AdminUserService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
