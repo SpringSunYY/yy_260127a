@@ -106,7 +106,7 @@ function convertServerMenuToRouteRecordStringComponent(
       const urlMenu: RouteRecordStringComponent = {
         component: 'IFrameView',
         meta: {
-          hideInMenu: !menu.visible,
+          hideInMenu: !menu.visible || !menu.alwaysShow,
           icon: menu.icon,
           link: menu.path,
           orderNo: menu.sort,
@@ -142,7 +142,7 @@ function convertServerMenuToRouteRecordStringComponent(
     const buildMenu: RouteRecordStringComponent = {
       component: menu.component,
       meta: {
-        hideInMenu: !menu.visible,
+        hideInMenu: !menu.visible || !menu.alwaysShow,
         icon: menu.icon,
         keepAlive: menu.keepAlive,
         orderNo: menu.sort,
