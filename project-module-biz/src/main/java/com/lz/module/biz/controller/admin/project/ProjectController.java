@@ -1,5 +1,10 @@
 package com.lz.module.biz.controller.admin.project;
 
+import com.lz.framework.common.enums.CommonWhetherEnum;
+import com.lz.module.biz.controller.admin.receiptOrder.vo.ReceiptOrderImportExcelVO;
+import com.lz.module.biz.controller.admin.receiptOrder.vo.ReceiptOrderImportRespVO;
+import com.lz.module.biz.enums.*;
+import io.swagger.v3.oas.annotations.Parameters;
 import org.springframework.web.bind.annotation.*;
 import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
@@ -11,6 +16,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.*;
 import jakarta.validation.*;
 import jakarta.servlet.http.*;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.io.IOException;
 
@@ -28,6 +36,7 @@ import static com.lz.framework.apilog.core.enums.OperateTypeEnum.*;
 import com.lz.module.biz.controller.admin.project.vo.*;
 import com.lz.module.biz.dal.dataobject.project.ProjectDO;
 import com.lz.module.biz.service.project.ProjectService;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "管理后台 - 项目信息")
 @RestController
@@ -101,4 +110,41 @@ public class ProjectController {
                         BeanUtils.toBean(list, ProjectRespVO.class));
     }
 
+    @GetMapping("/get-import-template")
+    @Operation(summary = "获得导入项目信息模板")
+    public void importTemplate(HttpServletResponse response) throws IOException {
+        // 手动创建导出 demo
+        List<ProjectImportExcelVO> list = Collections.singletonList(
+                ProjectImportExcelVO.builder()
+                        .projectNo("20260110")
+                        .name("导入")
+                        .projectType(BizProjectTypeEnum.BIZ_PROJECT_TYPE_TYPE_2.getStatus())
+                        .contractNumber("12234567")
+                        .engineeringType(BizProjectEngineeringTypeEnum.BIZ_PROJECT_ENGINEERING_TYPE_1.getStatus())
+                        .isPmc(BizProjectIsPmcEnum.BIZ_PROJECT_IS_PMC_1.getStatus())
+                        .customerId(1L)
+                        .customerName("服务商名称")
+                        .deliverTime(LocalDateTime.now())
+                        .completedTime(LocalDateTime.now())
+                        .fiscalYear(2023)
+                        .projectProgress(BizProjectProgressEnum.BIZ_PROJECT_PROGRESS_2.getStatus())
+                        .isCompleted(CommonWhetherEnum.COMMON_WHETHER_1.getStatus())
+                        .verification(CommonWhetherEnum.COMMON_WHETHER_1.getStatus())
+                        .determinedQuantity(CommonWhetherEnum.COMMON_WHETHER_1.getStatus())
+                        .materialVerification(CommonWhetherEnum.COMMON_WHETHER_1.getStatus())
+                        .remark("备注").build());
+        // 输出
+        ExcelUtils.write(response, "项目信息导入模板.xls", "收款模板", ProjectImportExcelVO.class, list);
+    }
+
+    @PostMapping("/import")
+    @Operation(summary = "导入项目信息")
+    @Parameters({
+            @Parameter(name = "file", description = "Excel 文件", required = true),
+    })
+    @PreAuthorize("@ss.hasPermission('biz:project:create')")
+    public CommonResult<ProjectImportRespVO> importExcel(@RequestParam("file") MultipartFile file) throws Exception {
+        List<ProjectImportExcelVO> list = ExcelUtils.read(file, ProjectImportExcelVO.class);
+        return success(projectService.importProjectList(list));
+    }
 }

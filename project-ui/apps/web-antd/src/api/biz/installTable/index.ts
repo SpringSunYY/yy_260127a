@@ -1,5 +1,6 @@
-import type { PageParam, PageResult } from '@vben/request';
 import type { Dayjs } from 'dayjs';
+
+import type { PageParam, PageResult } from '@vben/request';
 
 import { requestClient } from '#/api/request';
 
@@ -7,7 +8,7 @@ export namespace InstallTableApi {
   /** 装表信息信息 */
   export interface InstallTable {
     id: number; // 编号
-    installDate: string | Dayjs; // 安装日期
+    installDate: Dayjs | number | string; // 安装日期
     communityName: string; // 小区名称
     houseAddress: string; // 门牌地址
     dn15PipeLength: number; // DN15镀锌钢管(m)
@@ -38,12 +39,17 @@ export namespace InstallTableApi {
 
 /** 查询装表信息分页 */
 export function getInstallTablePage(params: PageParam) {
-  return requestClient.get<PageResult<InstallTableApi.InstallTable>>('/biz/install-table/page', { params });
+  return requestClient.get<PageResult<InstallTableApi.InstallTable>>(
+    '/biz/install-table/page',
+    { params },
+  );
 }
 
 /** 查询装表信息详情 */
 export function getInstallTable(id: number) {
-  return requestClient.get<InstallTableApi.InstallTable>(`/biz/install-table/get?id=${id}`);
+  return requestClient.get<InstallTableApi.InstallTable>(
+    `/biz/install-table/get?id=${id}`,
+  );
 }
 
 /** 新增装表信息 */
@@ -63,7 +69,9 @@ export function deleteInstallTable(id: number) {
 
 /** 批量删除装表信息 */
 export function deleteInstallTableList(ids: number[]) {
-  return requestClient.delete(`/biz/install-table/delete-list?ids=${ids.join(',')}`)
+  return requestClient.delete(
+    `/biz/install-table/delete-list?ids=${ids.join(',')}`,
+  );
 }
 
 /** 导出装表信息 */

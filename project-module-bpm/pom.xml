@@ -21,6 +21,13 @@
     </description>
 
     <dependencies>
+        <!-- 基础框架依赖 -->
+        <dependency>
+            <groupId>com.lz.project</groupId>
+            <artifactId>project-common</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.lz.project</groupId>
             <artifactId>project-module-system</artifactId>

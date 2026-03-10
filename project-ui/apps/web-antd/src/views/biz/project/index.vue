@@ -18,6 +18,7 @@ import {
   getProjectPage,
 } from '#/api/biz/project';
 import { $t } from '#/locales';
+import ImportForm from '#/views/biz/project/modules/import-form.vue';
 
 import { useGridColumns, useGridFormSchema } from './data';
 import Form from './modules/form.vue';
@@ -28,6 +29,15 @@ const [FormModal, formModalApi] = useVbenModal({
 });
 
 const { push } = useRouter();
+
+const [ImportModal, importModalApi] = useVbenModal({
+  connectedComponent: ImportForm,
+  destroyOnClose: true,
+});
+
+function handleImport() {
+  importModalApi.open();
+}
 
 /** 跳转到项目签证页面 */
 function handleToProjectVisa(row: ProjectApi.Project) {
@@ -141,7 +151,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
 <template>
   <Page auto-content-height>
     <FormModal @success="onRefresh" />
-
+    <ImportModal @success="onRefresh" />
     <Grid table-title="项目信息列表">
       <template #toolbar-tools>
         <TableAction
@@ -168,6 +178,13 @@ const [Grid, gridApi] = useVbenVxeGrid({
               disabled: isEmpty(checkedIds),
               auth: ['biz:project:delete'],
               onClick: handleDeleteBatch,
+            },
+            {
+              label: $t('ui.actionTitle.import', ['项目']),
+              type: 'primary',
+              icon: ACTION_ICON.UPLOAD,
+              auth: ['biz:project:create'],
+              onClick: handleImport,
             },
           ]"
         />

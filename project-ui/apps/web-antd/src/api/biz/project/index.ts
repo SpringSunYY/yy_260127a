@@ -68,3 +68,16 @@ export function deleteProjectList(ids: number[]) {
 export function exportProject(params: any) {
   return requestClient.download('/biz/project/export-excel', params);
 }
+
+/** 导入项目信息模版 */
+export function importProjectTemplate() {
+  return requestClient.download('/biz/project/get-import-template');
+}
+
+/** 导入项目信息 */
+export function importProject(file: File, isAddPayment: boolean) {
+  return requestClient.upload('/biz/project/import', {
+    file,
+    isAddPayment,
+  });
+}

@@ -1,22 +1,26 @@
 package com.lz.module.biz.controller.admin.project.vo;
 
-import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.lz.framework.excel.core.annotations.DictFormat;
 import com.lz.framework.excel.core.convert.DictConvert;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
 
-@Schema(description = "管理后台 - 项目信息 Response VO")
-@Data
-@ExcelIgnoreUnannotated
-public class ProjectRespVO {
+import static com.lz.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY;
 
-    @Schema(description = "编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "26633")
-    @ExcelProperty("编号")
-    private Long id;
+@Schema(description = "管理后台 - 项目信息 导入 VO")
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Accessors(chain = false)
+public class ProjectImportExcelVO {
 
     @Schema(description = "项目编号", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("项目编号")
@@ -55,19 +59,17 @@ public class ProjectRespVO {
 
     @Schema(description = "交底时间")
     @ExcelProperty("交底时间")
+    @com.alibaba.excel.annotation.format.DateTimeFormat(value = FORMAT_YEAR_MONTH_DAY)
     private LocalDateTime deliverTime;
 
     @Schema(description = "完工移交时间")
     @ExcelProperty("完工移交时间")
+    @com.alibaba.excel.annotation.format.DateTimeFormat(value = FORMAT_YEAR_MONTH_DAY)
     private LocalDateTime completedTime;
 
     @Schema(description = "财年")
     @ExcelProperty("财年")
     private Integer fiscalYear;
-
-    @Schema(description = "签证数")
-    @ExcelProperty("签证数")
-    private Integer visaNum;
 
     @Schema(description = "工程阶段", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty(value = "工程阶段", converter = DictConvert.class)
@@ -94,16 +96,8 @@ public class ProjectRespVO {
     @DictFormat("common_whether")
     private String materialVerification;
 
-    @Schema(description = "附件")
-    @ExcelProperty("附件")
-    private String appendixFile;
-
     @Schema(description = "备注", example = "随便")
     @ExcelProperty("备注")
     private String remark;
-
-    @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED)
-    @ExcelProperty("创建时间")
-    private LocalDateTime createTime;
 
 }

@@ -59,4 +59,10 @@ public interface ProjectService {
      */
     PageResult<ProjectDO> getProjectPage(ProjectPageReqVO pageReqVO);
 
+    /**
+     * 导入项目信息
+     * @param list
+     * @return
+     */
+    ProjectImportRespVO importProjectList(List<ProjectImportExcelVO> list);
 }

@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
+import static com.lz.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY;
 import static com.lz.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND;
 
 @Schema(description = "管理后台 - 项目信息分页 Request VO")
@@ -35,11 +36,11 @@ public class ProjectPageReqVO extends PageParam {
     private String customerName;
 
     @Schema(description = "交底时间")
-    @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
+    @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY)
     private LocalDateTime[] deliverTime;
 
     @Schema(description = "完工移交时间")
-    @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
+    @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY)
     private LocalDateTime[] completedTime;
 
     @Schema(description = "财年")
