@@ -27,6 +27,7 @@ public interface ProjectMapper extends BaseMapperX<ProjectDO> {
                 .eqIfPresent(ProjectDO::getIsPmc, reqVO.getIsPmc())
                 .likeIfPresent(ProjectDO::getCustomerName, reqVO.getCustomerName())
                 .betweenIfPresent(ProjectDO::getDeliverTime, reqVO.getDeliverTime())
+                .betweenIfPresent(ProjectDO::getCompletedTime, reqVO.getCompletedTime())
                 .eqIfPresent(ProjectDO::getFiscalYear, reqVO.getFiscalYear())
                 .eqIfPresent(ProjectDO::getProjectProgress, reqVO.getProjectProgress())
                 .eqIfPresent(ProjectDO::getIsCompleted, reqVO.getIsCompleted())

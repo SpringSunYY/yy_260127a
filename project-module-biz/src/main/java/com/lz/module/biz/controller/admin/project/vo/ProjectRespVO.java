@@ -28,7 +28,7 @@ public class ProjectRespVO {
 
     @Schema(description = "项目类型", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     @ExcelProperty(value = "项目类型", converter = DictConvert.class)
-    @DictFormat("biz_project_type")  
+    @DictFormat("biz_project_type")
     private String projectType;
 
     @Schema(description = "合同编号")
@@ -37,12 +37,12 @@ public class ProjectRespVO {
 
     @Schema(description = "工程类型", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
     @ExcelProperty(value = "工程类型", converter = DictConvert.class)
-    @DictFormat("biz_project_project_progress")  
+    @DictFormat("biz_project_project_progress")
     private String engineeringType;
 
     @Schema(description = "属于PMC", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty(value = "属于PMC", converter = DictConvert.class)
-    @DictFormat("common_whether")  
+    @DictFormat("BIZ_PROJECT_IS_PMC")
     private String isPmc;
 
     @Schema(description = "服务商编号", example = "17881")
@@ -57,6 +57,10 @@ public class ProjectRespVO {
     @ExcelProperty("交底时间")
     private LocalDateTime deliverTime;
 
+    @Schema(description = "完工移交时间")
+    @ExcelProperty("完工移交时间")
+    private LocalDateTime completedTime;
+
     @Schema(description = "财年")
     @ExcelProperty("财年")
     private Integer fiscalYear;
@@ -67,36 +71,28 @@ public class ProjectRespVO {
 
     @Schema(description = "工程阶段", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty(value = "工程阶段", converter = DictConvert.class)
-    @DictFormat("biz_project_project_progress")  
+    @DictFormat("biz_project_project_progress")
     private String projectProgress;
 
     @Schema(description = "竣工图")
     @ExcelProperty(value = "竣工图", converter = DictConvert.class)
-    @DictFormat("common_whether")  
+    @DictFormat("common_whether")
     private String isCompleted;
-
-    @Schema(description = "竣工资料")
-    @ExcelProperty("竣工资料")
-    private String completedFile;
 
     @Schema(description = "现场核销")
     @ExcelProperty(value = "现场核销", converter = DictConvert.class)
-    @DictFormat("common_whether")  
+    @DictFormat("common_whether")
     private String verification;
 
-    @Schema(description = "竣工工程确定量")
-    @ExcelProperty(value = "竣工工程确定量", converter = DictConvert.class)
-    @DictFormat("common_whether")  
+    @Schema(description = "竣工工程量确认单")
+    @ExcelProperty(value = "竣工工程量确认单", converter = DictConvert.class)
+    @DictFormat("common_whether")
     private String determinedQuantity;
 
     @Schema(description = "材料核销")
     @ExcelProperty(value = "材料核销", converter = DictConvert.class)
-    @DictFormat("common_whether")  
+    @DictFormat("common_whether")
     private String materialVerification;
-
-    @Schema(description = "结算审定书")
-    @ExcelProperty("结算审定书")
-    private String settlementFile;
 
     @Schema(description = "附件")
     @ExcelProperty("附件")

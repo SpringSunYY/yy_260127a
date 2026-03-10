@@ -146,6 +146,7 @@ enum DICT_TYPE {
   BIZ_METER_DIRECTION = 'biz_meter_direction',
   BIZ_PAYMENT_PAYEE_TYPE = 'biz_payment_payee_type',
   BIZ_PROJECT_ENGINEERING_TYPE = 'biz_project_engineering_type',
+  BIZ_PROJECT_IS_PMC = 'biz_project_is_pmc', // 是否PMC项目
   BIZ_PROJECT_OTHER_PROJECT_PROGRESS = 'biz_project_other_project_progress',
   BIZ_PROJECT_OTHER_PROJECT_TYPE = 'biz_project_other_project_type',
   BIZ_PROJECT_PROJECT_PROGRESS = 'biz_project_project_progress', // 项目进度

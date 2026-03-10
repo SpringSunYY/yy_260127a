@@ -68,11 +68,10 @@ export function useFormSchema(): VbenFormSchema[] {
       fieldName: 'isPmc',
       label: '属于PMC',
       rules: 'required',
-      component: 'RadioGroup',
+      component: 'Select',
       componentProps: {
-        options: getDictOptions(DICT_TYPE.COMMON_WHETHER, 'string'),
-        buttonStyle: 'solid',
-        optionType: 'button',
+        options: getDictOptions(DICT_TYPE.BIZ_PROJECT_IS_PMC, 'string'),
+        placeholder: '请选择是否属于PMC',
       },
     },
     {
@@ -96,6 +95,16 @@ export function useFormSchema(): VbenFormSchema[] {
       label: '交底时间',
       component: 'DatePicker',
       componentProps: {
+        format: 'YYYY-MM-DD',
+        valueFormat: 'x',
+      },
+    },
+    {
+      fieldName: 'completedTime',
+      label: '完工移交时间',
+      component: 'DatePicker',
+      componentProps: {
+        showTime: true,
         format: 'YYYY-MM-DD',
         valueFormat: 'x',
       },
@@ -132,52 +141,38 @@ export function useFormSchema(): VbenFormSchema[] {
     {
       fieldName: 'isCompleted',
       label: '竣工图',
-      component: 'RadioGroup',
+      component: 'Select',
       componentProps: {
         options: getDictOptions(DICT_TYPE.COMMON_WHETHER, 'string'),
-        buttonStyle: 'solid',
-        optionType: 'button',
+        placeholder: '请选择竣工图',
       },
-    },
-    {
-      fieldName: 'completedFile',
-      label: '竣工资料',
-      component: 'FileUpload',
     },
     {
       fieldName: 'verification',
       label: '现场核销',
-      component: 'RadioGroup',
+      component: 'Select',
       componentProps: {
         options: getDictOptions(DICT_TYPE.COMMON_WHETHER, 'string'),
-        buttonStyle: 'solid',
-        optionType: 'button',
+        placeholder: '请选择现场核销',
       },
     },
     {
       fieldName: 'determinedQuantity',
-      label: '竣工工程确定量',
-      component: 'RadioGroup',
+      label: '竣工工程量确认单',
+      component: 'Select',
       componentProps: {
         options: getDictOptions(DICT_TYPE.COMMON_WHETHER, 'string'),
-        buttonStyle: 'solid',
-        optionType: 'button',
+        placeholder: '请选择竣工工程量确认单',
       },
     },
     {
       fieldName: 'materialVerification',
       label: '材料核销',
-      component: 'RadioGroup',
+      component: 'Select',
       componentProps: {
         options: getDictOptions(DICT_TYPE.COMMON_WHETHER, 'string'),
-        buttonStyle: 'solid',
-        optionType: 'button',
+        placeholder: '请选择材料核销',
       },
-    },
-    {
-      fieldName: 'settlementFile',
-      label: '结算审定书',
-      component: 'FileUpload',
     },
     {
       fieldName: 'appendixFile',
@@ -256,7 +251,7 @@ export function useGridFormSchema(): VbenFormSchema[] {
       component: 'Select',
       componentProps: {
         allowClear: true,
-        options: getDictOptions(DICT_TYPE.COMMON_WHETHER, 'string'),
+        options: getDictOptions(DICT_TYPE.BIZ_PROJECT_IS_PMC, 'string'),
         placeholder: '请选择属于PMC',
       },
     },
@@ -272,6 +267,15 @@ export function useGridFormSchema(): VbenFormSchema[] {
     {
       fieldName: 'deliverTime',
       label: '交底时间',
+      component: 'RangePicker',
+      componentProps: {
+        ...getRangePickerDefaultProps(),
+        allowClear: true,
+      },
+    },
+    {
+      fieldName: 'completedTime',
+      label: '完工移交时间',
       component: 'RangePicker',
       componentProps: {
         ...getRangePickerDefaultProps(),
@@ -322,12 +326,12 @@ export function useGridFormSchema(): VbenFormSchema[] {
     },
     {
       fieldName: 'determinedQuantity',
-      label: '竣工工程确定量',
+      label: '竣工工程量',
       component: 'Select',
       componentProps: {
         allowClear: true,
         options: getDictOptions(DICT_TYPE.COMMON_WHETHER, 'string'),
-        placeholder: '请选择竣工工程确定量',
+        placeholder: '请选择竣工工程量确认单',
       },
     },
     {
@@ -340,15 +344,15 @@ export function useGridFormSchema(): VbenFormSchema[] {
         placeholder: '请选择材料核销',
       },
     },
-    {
-      fieldName: 'createTime',
-      label: '创建时间',
-      component: 'RangePicker',
-      componentProps: {
-        ...getRangePickerDefaultProps(),
-        allowClear: true,
-      },
-    },
+    // {
+    //   fieldName: 'createTime',
+    //   label: '创建时间',
+    //   component: 'RangePicker',
+    //   componentProps: {
+    //     ...getRangePickerDefaultProps(),
+    //     allowClear: true,
+    //   },
+    // },
   ];
 }
 
@@ -400,7 +404,7 @@ export function useGridColumns(): VxeTableGridOptions<ProjectApi.Project>['colum
       minWidth: 120,
       cellRender: {
         name: 'CellDict',
-        props: { type: DICT_TYPE.COMMON_WHETHER },
+        props: { type: DICT_TYPE.BIZ_PROJECT_IS_PMC },
       },
     },
     {
@@ -417,6 +421,12 @@ export function useGridColumns(): VxeTableGridOptions<ProjectApi.Project>['colum
     {
       field: 'deliverTime',
       title: '交底时间',
+      minWidth: 120,
+      formatter: 'formatDate',
+    },
+    {
+      field: 'completedTime',
+      title: '完工移交时间',
       minWidth: 120,
       formatter: 'formatDate',
     },
@@ -449,12 +459,6 @@ export function useGridColumns(): VxeTableGridOptions<ProjectApi.Project>['colum
       },
     },
     {
-      field: 'completedFile',
-      title: '竣工资料',
-      visible: false,
-      minWidth: 120,
-    },
-    {
       field: 'verification',
       title: '现场核销',
       minWidth: 120,
@@ -465,7 +469,7 @@ export function useGridColumns(): VxeTableGridOptions<ProjectApi.Project>['colum
     },
     {
       field: 'determinedQuantity',
-      title: '竣工工程确定量',
+      title: '竣工工程量确认单',
       minWidth: 120,
       cellRender: {
         name: 'CellDict',
@@ -482,12 +486,6 @@ export function useGridColumns(): VxeTableGridOptions<ProjectApi.Project>['colum
       },
     },
     {
-      field: 'settlementFile',
-      title: '结算审定书',
-      visible: false,
-      minWidth: 120,
-    },
-    {
       field: 'appendixFile',
       title: '附件',
       visible: false,
@@ -501,6 +499,7 @@ export function useGridColumns(): VxeTableGridOptions<ProjectApi.Project>['colum
     {
       field: 'createTime',
       title: '创建时间',
+      visible: false,
       minWidth: 120,
       formatter: 'formatDateTime',
     },

@@ -1,10 +1,9 @@
 package com.lz.module.biz.controller.admin.project.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
-import java.util.*;
-import jakarta.validation.constraints.*;
-import org.springframework.format.annotation.DateTimeFormat;
+import jakarta.validation.constraints.NotEmpty;
+import lombok.Data;
+
 import java.time.LocalDateTime;
 
 @Schema(description = "管理后台 - 项目信息新增/修改 Request VO")
@@ -46,6 +45,9 @@ public class ProjectSaveReqVO {
     @Schema(description = "交底时间")
     private LocalDateTime deliverTime;
 
+    @Schema(description = "完工移交时间")
+    private LocalDateTime completedTime;
+
     @Schema(description = "财年")
     private Integer fiscalYear;
 
@@ -59,20 +61,15 @@ public class ProjectSaveReqVO {
     @Schema(description = "竣工图")
     private String isCompleted;
 
-    @Schema(description = "竣工资料")
-    private String completedFile;
 
     @Schema(description = "现场核销")
     private String verification;
 
-    @Schema(description = "竣工工程确定量")
+    @Schema(description = "竣工工程量确认单")
     private String determinedQuantity;
 
     @Schema(description = "材料核销")
     private String materialVerification;
-
-    @Schema(description = "结算审定书")
-    private String settlementFile;
 
     @Schema(description = "附件")
     private String appendixFile;

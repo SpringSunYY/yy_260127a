@@ -23,7 +23,7 @@ export namespace ProjectApi {
     isCompleted: string; // 竣工图
     completedFile: string; // 竣工资料
     verification: string; // 现场核销
-    determinedQuantity: string; // 竣工工程确定量
+    determinedQuantity: string; // 竣工工程量确认单
     materialVerification: string; // 材料核销
     settlementFile: string; // 结算审定书
     appendixFile: string; // 附件

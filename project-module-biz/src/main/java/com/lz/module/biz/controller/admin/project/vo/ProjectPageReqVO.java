@@ -1,10 +1,10 @@
 package com.lz.module.biz.controller.admin.project.vo;
 
-import lombok.*;
-import java.util.*;
-import io.swagger.v3.oas.annotations.media.Schema;
 import com.lz.framework.common.pojo.PageParam;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDateTime;
 
 import static com.lz.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND;
@@ -38,6 +38,10 @@ public class ProjectPageReqVO extends PageParam {
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
     private LocalDateTime[] deliverTime;
 
+    @Schema(description = "完工移交时间")
+    @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
+    private LocalDateTime[] completedTime;
+
     @Schema(description = "财年")
     private Integer fiscalYear;
 
@@ -50,7 +54,7 @@ public class ProjectPageReqVO extends PageParam {
     @Schema(description = "现场核销")
     private String verification;
 
-    @Schema(description = "竣工工程确定量")
+    @Schema(description = "竣工工程量确认单")
     private String determinedQuantity;
 
     @Schema(description = "材料核销")

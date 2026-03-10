@@ -1,12 +1,12 @@
 package com.lz.module.biz.dal.dataobject.project;
 
-import lombok.*;
-import java.util.*;
-import java.time.LocalDateTime;
-import java.time.LocalDateTime;
-import java.time.LocalDateTime;
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.KeySequence;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.lz.framework.mybatis.core.dataobject.BaseDO;
+import lombok.*;
+
+import java.time.LocalDateTime;
 
 /**
  * 项目信息 DO
@@ -38,7 +38,7 @@ public class ProjectDO extends BaseDO {
     private String name;
     /**
      * 项目类型
-     *
+     * <p>
      * 枚举 {@link TODO biz_project_type 对应的类}
      */
     private String projectType;
@@ -48,13 +48,13 @@ public class ProjectDO extends BaseDO {
     private String contractNumber;
     /**
      * 工程类型
-     *
+     * <p>
      * 枚举 {@link TODO biz_project_project_progress 对应的类}
      */
     private String engineeringType;
     /**
      * 属于PMC
-     *
+     * <p>
      * 枚举 {@link TODO common_whether 对应的类}
      */
     private String isPmc;
@@ -71,6 +71,10 @@ public class ProjectDO extends BaseDO {
      */
     private LocalDateTime deliverTime;
     /**
+     * 完工移交时间
+     */
+    private LocalDateTime completedTime;
+    /**
      * 财年
      */
     private Integer fiscalYear;
@@ -80,42 +84,34 @@ public class ProjectDO extends BaseDO {
     private Integer visaNum;
     /**
      * 工程阶段
-     *
+     * <p>
      * 枚举 {@link TODO biz_project_project_progress 对应的类}
      */
     private String projectProgress;
     /**
      * 竣工图
-     *
+     * <p>
      * 枚举 {@link TODO common_whether 对应的类}
      */
     private String isCompleted;
     /**
-     * 竣工资料
-     */
-    private String completedFile;
-    /**
      * 现场核销
-     *
+     * <p>
      * 枚举 {@link TODO common_whether 对应的类}
      */
     private String verification;
     /**
-     * 竣工工程确定量
-     *
+     * 竣工工程量确认单
+     * <p>
      * 枚举 {@link TODO common_whether 对应的类}
      */
     private String determinedQuantity;
     /**
      * 材料核销
-     *
+     * <p>
      * 枚举 {@link TODO common_whether 对应的类}
      */
     private String materialVerification;
-    /**
-     * 结算审定书
-     */
-    private String settlementFile;
     /**
      * 附件
      */
