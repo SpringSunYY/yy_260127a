@@ -183,7 +183,7 @@ public class SalaryServiceImpl implements SalaryService {
         //遍历去重所有的工人编号，查询出所有的工人，防止没有这个工人
         List<Long> workerIds = list.stream().map(SalaryImportExcelVO::getWorkerId).filter(Objects::nonNull).distinct().toList();
         List<WorkerDO> workerDOList = workerMapper.selectList(new LambdaQueryWrapperX<WorkerDO>()
-                .in(WorkerDO::getDailySalary, workerIds));
+                .in(WorkerDO::getId, workerIds));
         //因为把所有的工人编号为key的map
         Map<Long, WorkerDO> workerDOMap = workerDOList.stream().collect(Collectors.toMap(WorkerDO::getId, v -> v));
         //遍历列表，从map里面获取对应的工人信息
