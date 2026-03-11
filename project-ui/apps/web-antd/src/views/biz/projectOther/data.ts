@@ -84,7 +84,7 @@ export function useFormSchema(): VbenFormSchema[] {
     {
       fieldName: 'materialDesc',
       label: '材料说明',
-      component: 'Input',
+      component: 'Textarea',
       componentProps: {
         placeholder: '请输入材料说明',
       },
