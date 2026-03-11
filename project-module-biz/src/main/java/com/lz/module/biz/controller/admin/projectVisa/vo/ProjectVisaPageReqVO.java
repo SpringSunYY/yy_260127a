@@ -29,7 +29,7 @@ public class ProjectVisaPageReqVO extends PageParam {
     private String visaName;
 
     @Schema(description = "时间")
-    @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY)
+    @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
     private LocalDateTime[] visaTime;
 
     @Schema(description = "工程名称", example = "王五")

@@ -27,7 +27,7 @@ public class ProjectScatteredPageReqVO extends PageParam {
     private String scatteredName;
 
     @Schema(description = "时间")
-    @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY)
+    @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
     private LocalDateTime[] scatteredTime;
 
     @Schema(description = "工程阶段")

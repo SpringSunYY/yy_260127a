@@ -36,11 +36,11 @@ public class ProjectPageReqVO extends PageParam {
     private String customerName;
 
     @Schema(description = "交底时间")
-    @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY)
+    @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
     private LocalDateTime[] deliverTime;
 
     @Schema(description = "完工移交时间")
-    @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY)
+    @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
     private LocalDateTime[] completedTime;
 
     @Schema(description = "财年")
