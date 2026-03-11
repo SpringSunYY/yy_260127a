@@ -137,6 +137,15 @@ export function useGridFormSchema(): VbenFormSchema[] {
       },
     },
     {
+      fieldName: 'engineeringName',
+      label: '工程名称',
+      component: 'Input',
+      componentProps: {
+        allowClear: true,
+        placeholder: '请输入工程名称',
+      },
+    },
+    {
       fieldName: 'visaName',
       label: '签证名称',
       component: 'Input',
@@ -154,15 +163,15 @@ export function useGridFormSchema(): VbenFormSchema[] {
         allowClear: true,
       },
     },
-    {
-      fieldName: 'engineeringName',
-      label: '工程名称',
-      component: 'Input',
-      componentProps: {
-        allowClear: true,
-        placeholder: '请输入工程名称',
-      },
-    },
+    // {
+    //   fieldName: 'engineeringName',
+    //   label: '工程名称',
+    //   component: 'Input',
+    //   componentProps: {
+    //     allowClear: true,
+    //     placeholder: '请输入工程名称',
+    //   },
+    // },
     // {
     //   fieldName: 'createTime',
     //   label: '创建时间',
