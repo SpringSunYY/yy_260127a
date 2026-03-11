@@ -59,4 +59,11 @@ public interface ProjectScatteredService {
      */
     PageResult<ProjectScatteredDO> getProjectScatteredPage(ProjectScatteredPageReqVO pageReqVO);
 
+    /**
+     * 导入零散工程列表
+     *
+     * @param list           导入列表
+     * @return 导入结果
+     */
+    ProjectScatteredImportRespVO importProjectScatteredList(List<ProjectScatteredImportExcelVO> list);
 }

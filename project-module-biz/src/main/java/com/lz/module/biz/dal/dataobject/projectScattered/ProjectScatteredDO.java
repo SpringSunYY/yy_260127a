@@ -31,7 +31,7 @@ public class ProjectScatteredDO extends BaseDO {
     /**
      * 项目编号
      */
-    private String projectId;
+    private Long projectId;
     /**
      * 项目编号
      */

@@ -263,7 +263,7 @@ export function useGridColumns(): VxeTableGridOptions<ProjectVisaApi.ProjectVisa
   ];
 }
 
-/** 项目信息导入的表单 */
+/** 项目信息签证导入的表单 */
 export function projectVisaImportFormSchema(): VbenFormSchema[] {
   return [
     {

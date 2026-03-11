@@ -59,12 +59,12 @@ export function exportProjectVisa(params: any) {
   return requestClient.download('/biz/project-visa/export-excel', params);
 }
 
-/** 导入项目信息模版 */
+/** 导入项目签证信息模版 */
 export function importProjectVisaTemplate() {
   return requestClient.download('/biz/project-visa/get-import-template');
 }
 
-/** 导入项目信息 */
+/** 导入项目签证信息 */
 export function importProjectVisa(file: File, isAddPayment: boolean) {
   return requestClient.upload('/biz/project-visa/import', {
     file,

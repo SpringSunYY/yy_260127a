@@ -1,5 +1,13 @@
 package com.lz.module.biz.controller.admin.projectScattered;
 
+import com.lz.framework.common.enums.CommonWhetherEnum;
+import com.lz.module.biz.controller.admin.project.vo.ProjectImportExcelVO;
+import com.lz.module.biz.controller.admin.project.vo.ProjectImportRespVO;
+import com.lz.module.biz.enums.BizProjectEngineeringTypeEnum;
+import com.lz.module.biz.enums.BizProjectIsPmcEnum;
+import com.lz.module.biz.enums.BizProjectProgressEnum;
+import com.lz.module.biz.enums.BizProjectTypeEnum;
+import io.swagger.v3.oas.annotations.Parameters;
 import org.springframework.web.bind.annotation.*;
 import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
@@ -11,6 +19,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.*;
 import jakarta.validation.*;
 import jakarta.servlet.http.*;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.io.IOException;
 
@@ -28,6 +39,7 @@ import static com.lz.framework.apilog.core.enums.OperateTypeEnum.*;
 import com.lz.module.biz.controller.admin.projectScattered.vo.*;
 import com.lz.module.biz.dal.dataobject.projectScattered.ProjectScatteredDO;
 import com.lz.module.biz.service.projectScattered.ProjectScatteredService;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "管理后台 - 零散工程")
 @RestController
@@ -101,4 +113,32 @@ public class ProjectScatteredController {
                         BeanUtils.toBean(list, ProjectScatteredRespVO.class));
     }
 
+    @GetMapping("/get-import-template")
+    @Operation(summary = "获得导入其他工程信息模板")
+    public void importTemplate(HttpServletResponse response) throws IOException {
+        // 手动创建导出 demo
+        List<ProjectScatteredImportExcelVO> list = Collections.singletonList(
+                ProjectScatteredImportExcelVO.builder()
+                        .projectId(20260110L)
+                        .projectName("项目名称")
+                        .scatteredName("工程名称")
+                        .scatteredTime(LocalDateTime.now())
+                        .projectProgress(BizProjectProgressEnum.BIZ_PROJECT_PROGRESS_1.getStatus())
+                        .completedImage(CommonWhetherEnum.COMMON_WHETHER_1.getStatus())
+                        .verification(CommonWhetherEnum.COMMON_WHETHER_1.getStatus())
+                        .remark("备注").build());
+        // 输出
+        ExcelUtils.write(response, "其他工程信息导入模板.xls", "其他工程模板", ProjectScatteredImportExcelVO.class, list);
+    }
+
+    @PostMapping("/import")
+    @Operation(summary = "导入其他工程信息")
+    @Parameters({
+            @Parameter(name = "file", description = "Excel 文件", required = true),
+    })
+    @PreAuthorize("@ss.hasPermission('biz:project:create')")
+    public CommonResult<ProjectScatteredImportRespVO> importExcel(@RequestParam("file") MultipartFile file) throws Exception {
+        List<ProjectScatteredImportExcelVO> list = ExcelUtils.read(file, ProjectScatteredImportExcelVO.class);
+        return success(projectScatteredService.importProjectScatteredList(list));
+    }
 }

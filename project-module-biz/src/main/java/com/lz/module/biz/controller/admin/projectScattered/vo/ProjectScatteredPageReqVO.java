@@ -15,7 +15,7 @@ import static com.lz.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY_
 public class ProjectScatteredPageReqVO extends PageParam {
 
     @Schema(description = "项目ID", example = "2392")
-    private String projectId;
+    private Long projectId;
 
     @Schema(description = "项目编号")
     private String projectNo;

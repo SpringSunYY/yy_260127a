@@ -291,3 +291,16 @@ export function useGridColumns(): VxeTableGridOptions<ProjectScatteredApi.Projec
     },
   ];
 }
+
+/** 零散工程信息导入的表单 */
+export function projectScatteredImportFormSchema(): VbenFormSchema[] {
+  return [
+    {
+      fieldName: 'file',
+      label: '零散工程信息',
+      component: 'Upload',
+      rules: 'required',
+      help: '仅允许导入 xls、xlsx 格式文件',
+    },
+  ];
+}
