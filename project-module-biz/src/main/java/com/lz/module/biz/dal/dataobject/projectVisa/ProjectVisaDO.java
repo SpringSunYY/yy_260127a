@@ -1,12 +1,13 @@
 package com.lz.module.biz.dal.dataobject.projectVisa;
 
+import com.baomidou.mybatisplus.annotation.KeySequence;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.lz.framework.mybatis.core.dataobject.BaseDO;
 import lombok.*;
-import java.util.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.LocalDateTime;
-import com.baomidou.mybatisplus.annotation.*;
-import com.lz.framework.mybatis.core.dataobject.BaseDO;
 
 /**
  * 项目签证 DO
@@ -39,11 +40,19 @@ public class ProjectVisaDO extends BaseDO {
     /**
      * 项目名称
      */
-    private String name;
+    private String projectName;
+    /**
+     * 签证名称
+     */
+    private String visaName;
+    /**
+     * 时间
+     */
+    private LocalDateTime visaTime;
     /**
      * 工程名称
      */
-    private String visaName;
+    private String engineeringName;
     /**
      * 签证内容
      */

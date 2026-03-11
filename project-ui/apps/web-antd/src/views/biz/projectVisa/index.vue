@@ -114,9 +114,6 @@ const [Grid, gridApi] = useVbenVxeGrid({
       autoLoad: true,
       ajax: {
         query: async ({ page }, formValues) => {
-          if (!projectId.value) {
-            return { total: 0, list: [] };
-          }
           return await getProjectVisaPage({
             pageNo: page.currentPage,
             pageSize: page.pageSize,

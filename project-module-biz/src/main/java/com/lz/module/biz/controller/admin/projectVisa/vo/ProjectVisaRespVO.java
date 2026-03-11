@@ -25,13 +25,21 @@ public class ProjectVisaRespVO {
     @ExcelProperty("项目编号")
     private String projectNo;
 
-    @Schema(description = "项目名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "李四")
+    @Schema(description = "项目名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "芋艿")
     @ExcelProperty("项目名称")
-    private String name;
+    private String projectName;
 
-    @Schema(description = "工程名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "李四")
-    @ExcelProperty("工程名称")
+    @Schema(description = "签证名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "李四")
+    @ExcelProperty("签证名称")
     private String visaName;
+
+    @Schema(description = "时间")
+    @ExcelProperty("时间")
+    private LocalDateTime visaTime;
+
+    @Schema(description = "工程名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "王五")
+    @ExcelProperty("工程名称")
+    private String engineeringName;
 
     @Schema(description = "签证内容")
     @ExcelProperty("签证内容")

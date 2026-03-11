@@ -64,7 +64,7 @@ public class ProjectVisaServiceImpl implements ProjectVisaService {
             throw exception(PROJECT_NOT_EXISTS);
         }
         projectVisa.setProjectNo(project.getProjectNo());
-        projectVisa.setName(project.getName());
+        projectVisa.setProjectName(project.getName());
         return project;
     }
 

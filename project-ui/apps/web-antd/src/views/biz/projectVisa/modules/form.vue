@@ -1,13 +1,15 @@
 <script lang="ts" setup>
 import type { ProjectVisaApi } from '#/api/biz/projectVisa';
 
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 
-import { message } from 'ant-design-vue';
+import { useDebounceFn } from '@vueuse/core';
+import { message, Select } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
+import { getProjectPage } from '#/api/biz/project';
 import {
   createProjectVisa,
   getProjectVisa,
@@ -18,6 +20,48 @@ import { $t } from '#/locales';
 import { useFormSchema } from '../data';
 
 const emit = defineEmits(['success']);
+
+onMounted(() => {
+  loadProjects();
+});
+// 项目搜索状态
+const projectKeyword = ref('');
+const projectOptions = ref<any[]>([]);
+const projectLoading = ref(false);
+
+// 加载项目列表
+const loadProjects = async (keyword?: string) => {
+  projectLoading.value = true;
+  try {
+    const res = await getProjectPage({
+      pageNo: 1,
+      pageSize: 50,
+      name: keyword || '',
+    });
+    projectOptions.value = res.list || [];
+  } finally {
+    projectLoading.value = false;
+  }
+};
+
+// 项目搜索
+const handleProjectSearch = useDebounceFn((_value: string) => {
+  projectKeyword.value = _value;
+  loadProjects(_value);
+}, 300);
+
+// 项目选择
+const handleProjectChange = (_value: any, option: any) => {
+  formApi.setFieldValue('projectName', option?.name || option?.label || '');
+};
+
+// 项目下拉打开时加载数据
+const handleProjectOpenChange = (open: boolean) => {
+  if (open) {
+    loadProjects();
+  }
+};
+
 const formData = ref<ProjectVisaApi.ProjectVisa>();
 // 存储从路由传递过来的 projectId
 const parentProjectId = ref<number>();
@@ -98,6 +142,24 @@ const [Modal, modalApi] = useVbenModal({
 
 <template>
   <Modal :title="getTitle">
-    <Form class="mx-4" />
+    <Form class="mx-4">
+      <!-- 项目自定义插槽 -->
+      <template #projectId="slotProps">
+        <Select
+          v-bind="slotProps"
+          show-search
+          allow-clear
+          placeholder="请选择项目"
+          :loading="projectLoading"
+          :options="projectOptions"
+          :field-names="{ label: 'name', value: 'id' }"
+          :filter-option="false"
+          class="w-full"
+          @search="handleProjectSearch"
+          @change="handleProjectChange"
+          @dropdown-open-change="handleProjectOpenChange"
+        />
+      </template>
+    </Form>
   </Modal>
 </template>

@@ -2,6 +2,8 @@ package com.lz.module.biz.controller.admin.projectVisa.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
+
+import java.time.LocalDateTime;
 import java.util.*;
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
@@ -17,9 +19,19 @@ public class ProjectVisaSaveReqVO {
     @NotNull(message = "项目ID不能为空")
     private Long projectId;
 
-    @Schema(description = "工程名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "李四")
-    @NotEmpty(message = "工程名称不能为空")
+    @Schema(description = "项目名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "芋艿")
+    private String projectName;
+
+    @Schema(description = "签证名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "李四")
+    @NotEmpty(message = "签证名称不能为空")
     private String visaName;
+
+    @Schema(description = "时间")
+    private LocalDateTime visaTime;
+
+    @Schema(description = "工程名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "王五")
+    @NotEmpty(message = "工程名称不能为空")
+    private String engineeringName;
 
     @Schema(description = "签证内容")
     private String visaContent;

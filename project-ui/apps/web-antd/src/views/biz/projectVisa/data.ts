@@ -19,9 +19,9 @@ export function useFormSchema(): VbenFormSchema[] {
     {
       fieldName: 'projectId',
       component: 'Input',
+      label: '项目ID',
       dependencies: {
         triggerFields: [''],
-        show: () => false,
       },
     },
     // {
@@ -33,22 +33,40 @@ export function useFormSchema(): VbenFormSchema[] {
     //     placeholder: '请输入项目编号',
     //   },
     // },
-    // {
-    //   fieldName: 'name',
-    //   label: '项目名称',
-    //   rules: 'required',
-    //   component: 'Input',
-    //   componentProps: {
-    //     placeholder: '请输入项目名称',
-    //   },
-    // },
+    {
+      fieldName: 'projectName',
+      label: '项目名称',
+      component: 'Input',
+      componentProps: {
+        placeholder: '请输入项目名称',
+      },
+    },
     {
       fieldName: 'visaName',
+      label: '签证名称',
+      rules: 'required',
+      component: 'Input',
+      componentProps: {
+        placeholder: '请输入签证名称',
+      },
+    },
+    {
+      fieldName: 'engineeringName',
       label: '工程名称',
       rules: 'required',
       component: 'Input',
       componentProps: {
         placeholder: '请输入工程名称',
+      },
+    },
+    {
+      fieldName: 'visaTime',
+      label: '时间',
+      component: 'DatePicker',
+      componentProps: {
+        showTime: true,
+        format: 'YYYY-MM-DD',
+        valueFormat: 'x',
       },
     },
     {
@@ -91,7 +109,15 @@ export function useFormSchema(): VbenFormSchema[] {
 /** 列表的搜索表单 */
 export function useGridFormSchema(): VbenFormSchema[] {
   return [
-    // projectId 从路由获取，不再显示在搜索表单中
+    {
+      fieldName: 'projectId',
+      label: '项目ID',
+      component: 'Input',
+      componentProps: {
+        allowClear: true,
+        placeholder: '请输入项目ID',
+      },
+    },
     {
       fieldName: 'projectNo',
       label: '项目编号',
@@ -102,7 +128,7 @@ export function useGridFormSchema(): VbenFormSchema[] {
       },
     },
     {
-      fieldName: 'name',
+      fieldName: 'projectName',
       label: '项目名称',
       component: 'Input',
       componentProps: {
@@ -112,6 +138,24 @@ export function useGridFormSchema(): VbenFormSchema[] {
     },
     {
       fieldName: 'visaName',
+      label: '签证名称',
+      component: 'Input',
+      componentProps: {
+        allowClear: true,
+        placeholder: '请输入签证名称',
+      },
+    },
+    {
+      fieldName: 'visaTime',
+      label: '时间',
+      component: 'RangePicker',
+      componentProps: {
+        ...getRangePickerDefaultProps(),
+        allowClear: true,
+      },
+    },
+    {
+      fieldName: 'engineeringName',
       label: '工程名称',
       component: 'Input',
       componentProps: {
@@ -119,15 +163,15 @@ export function useGridFormSchema(): VbenFormSchema[] {
         placeholder: '请输入工程名称',
       },
     },
-    {
-      fieldName: 'createTime',
-      label: '创建时间',
-      component: 'RangePicker',
-      componentProps: {
-        ...getRangePickerDefaultProps(),
-        allowClear: true,
-      },
-    },
+    // {
+    //   fieldName: 'createTime',
+    //   label: '创建时间',
+    //   component: 'RangePicker',
+    //   componentProps: {
+    //     ...getRangePickerDefaultProps(),
+    //     allowClear: true,
+    //   },
+    // },
   ];
 }
 
@@ -152,12 +196,23 @@ export function useGridColumns(): VxeTableGridOptions<ProjectVisaApi.ProjectVisa
       minWidth: 120,
     },
     {
-      field: 'name',
+      field: 'projectName',
       title: '项目名称',
       minWidth: 120,
     },
     {
       field: 'visaName',
+      title: '签证名称',
+      minWidth: 120,
+    },
+    {
+      field: 'visaTime',
+      title: '时间',
+      minWidth: 120,
+      formatter: 'formatDate',
+    },
+    {
+      field: 'engineeringName',
       title: '工程名称',
       minWidth: 120,
     },
@@ -185,6 +240,7 @@ export function useGridColumns(): VxeTableGridOptions<ProjectVisaApi.ProjectVisa
     {
       field: 'createTime',
       title: '创建时间',
+      visible: false,
       minWidth: 120,
       formatter: 'formatDateTime',
     },
