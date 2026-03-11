@@ -25,7 +25,7 @@ public class ProjectOtherPageReqVO extends PageParam {
     private String projectAddress;
 
     @Schema(description = "时间")
-    @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY)
+    @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
     private LocalDateTime[] projectDate;
 
     @Schema(description = "已结算")
