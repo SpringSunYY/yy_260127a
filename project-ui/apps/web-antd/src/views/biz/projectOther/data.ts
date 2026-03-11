@@ -279,3 +279,16 @@ export function useGridColumns(): VxeTableGridOptions<ProjectOtherApi.ProjectOth
     },
   ];
 }
+
+/** 其他项目信息导入的表单 */
+export function projectOtherImportFormSchema(): VbenFormSchema[] {
+  return [
+    {
+      fieldName: 'file',
+      label: '其他项目信息',
+      component: 'Upload',
+      rules: 'required',
+      help: '仅允许导入 xls、xlsx 格式文件',
+    },
+  ];
+}

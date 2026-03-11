@@ -1,6 +1,10 @@
 package com.lz.module.biz.service.projectOther;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
+import com.lz.framework.common.exception.ServiceException;
+import com.lz.module.biz.controller.admin.project.vo.ProjectImportExcelVO;
+import com.lz.module.biz.dal.dataobject.project.ProjectDO;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
@@ -80,6 +84,37 @@ public class ProjectOtherServiceImpl implements ProjectOtherService {
     @Override
     public PageResult<ProjectOtherDO> getProjectOtherPage(ProjectOtherPageReqVO pageReqVO) {
         return projectOtherMapper.selectPage(pageReqVO);
+    }
+
+    @Override
+    public ProjectOtherImportRespVO importProjectOtherList(List<ProjectOtherImportVO> list) {
+        if (CollUtil.isEmpty(list)) {
+            throw new ServiceException(400, "导入数据不能为空");
+        }
+        List<ProjectOtherDO> dos = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            //项目名称、项目类型、已结算、进度不能为空
+            int index = i + 1;
+            ProjectOtherImportVO vo = list.get(i);
+            if (StrUtil.isEmpty(vo.getProjectName())) {
+                throw new ServiceException(400,StrUtil.format("第{}行请填写项目名称", index));
+            }
+            if (StrUtil.isEmpty(vo.getProjectType())) {
+                throw new ServiceException(400,StrUtil.format("第{}行请填写项目类型", index));
+            }
+            if (StrUtil.isEmpty(vo.getIsSettled())) {
+                throw new ServiceException(400,StrUtil.format("第{}行请填写已结算", index));
+            }
+            if (StrUtil.isEmpty(vo.getProgressStatus())) {
+                throw new ServiceException(400,StrUtil.format("第{}行请填写进度", index));
+            }
+            ProjectOtherDO projectOtherDO = BeanUtils.toBean(vo, ProjectOtherDO.class);
+            dos.add(projectOtherDO);
+        }
+        projectOtherMapper.insertBatch(dos);
+        return ProjectOtherImportRespVO.builder()
+                .message(StrUtil.format("成功导入 {} 个项目信息", dos.size()))
+                .build();
     }
 
 }

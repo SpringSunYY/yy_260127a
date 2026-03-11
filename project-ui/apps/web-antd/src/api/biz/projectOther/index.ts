@@ -1,5 +1,6 @@
-import type { PageParam, PageResult } from '@vben/request';
 import type { Dayjs } from 'dayjs';
+
+import type { PageParam, PageResult } from '@vben/request';
 
 import { requestClient } from '#/api/request';
 
@@ -10,7 +11,7 @@ export namespace ProjectOtherApi {
     projectName?: string; // 项目名称
     projectType?: string; // 项目类型
     projectAddress: string; // 地址
-    projectDate: string | Dayjs; // 时间
+    projectDate: Dayjs | string; // 时间
     constructionFee: number; // 施工费
     isSettled?: string; // 已结算
     appendixFile: string; // 附件
@@ -22,12 +23,17 @@ export namespace ProjectOtherApi {
 
 /** 查询其他工程分页 */
 export function getProjectOtherPage(params: PageParam) {
-  return requestClient.get<PageResult<ProjectOtherApi.ProjectOther>>('/biz/project-other/page', { params });
+  return requestClient.get<PageResult<ProjectOtherApi.ProjectOther>>(
+    '/biz/project-other/page',
+    { params },
+  );
 }
 
 /** 查询其他工程详情 */
 export function getProjectOther(id: number) {
-  return requestClient.get<ProjectOtherApi.ProjectOther>(`/biz/project-other/get?id=${id}`);
+  return requestClient.get<ProjectOtherApi.ProjectOther>(
+    `/biz/project-other/get?id=${id}`,
+  );
 }
 
 /** 新增其他工程 */
@@ -47,10 +53,25 @@ export function deleteProjectOther(id: number) {
 
 /** 批量删除其他工程 */
 export function deleteProjectOtherList(ids: number[]) {
-  return requestClient.delete(`/biz/project-other/delete-list?ids=${ids.join(',')}`)
+  return requestClient.delete(
+    `/biz/project-other/delete-list?ids=${ids.join(',')}`,
+  );
 }
 
 /** 导出其他工程 */
 export function exportProjectOther(params: any) {
   return requestClient.download('/biz/project-other/export-excel', params);
+}
+
+/** 导入其他项目信息模版 */
+export function importProjectOtherTemplate() {
+  return requestClient.download('/biz/project-other/get-import-template');
+}
+
+/** 导入其他项目信息 */
+export function importProjectOther(file: File, isAddPayment: boolean) {
+  return requestClient.upload('/biz/project-other/import', {
+    file,
+    isAddPayment,
+  });
 }

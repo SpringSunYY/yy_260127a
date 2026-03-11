@@ -1,6 +1,9 @@
 package com.lz.module.biz.service.projectOther;
 
 import java.util.*;
+
+import com.lz.module.biz.controller.admin.project.vo.ProjectImportExcelVO;
+import com.lz.module.biz.controller.admin.project.vo.ProjectImportRespVO;
 import jakarta.validation.*;
 import com.lz.module.biz.controller.admin.projectOther.vo.*;
 import com.lz.module.biz.dal.dataobject.projectOther.ProjectOtherDO;
@@ -59,4 +62,11 @@ public interface ProjectOtherService {
      */
     PageResult<ProjectOtherDO> getProjectOtherPage(ProjectOtherPageReqVO pageReqVO);
 
+    /**
+     * 导入其他工程列表
+     *
+     * @param list 导入列表
+     * @return 导入结果
+     */
+    ProjectOtherImportRespVO importProjectOtherList(List<ProjectOtherImportVO> list);
 }

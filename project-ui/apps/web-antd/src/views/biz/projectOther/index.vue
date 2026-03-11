@@ -2,25 +2,39 @@
 import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { ProjectOtherApi } from '#/api/biz/projectOther';
 
+import { ref } from 'vue';
+
 import { Page, useVbenModal } from '@vben/common-ui';
-import { message,Tabs } from 'ant-design-vue';
-import Form from './modules/form.vue';
-
-
-import { ref, computed } from 'vue';
-import { $t } from '#/locales';
-import { ACTION_ICON, TableAction, useVbenVxeGrid } from '#/adapter/vxe-table';
-import { getProjectOtherPage, deleteProjectOther, deleteProjectOtherList, exportProjectOther } from '#/api/biz/projectOther';
 import { downloadFileFromBlobPart, isEmpty } from '@vben/utils';
 
-import { useGridColumns, useGridFormSchema } from './data';
+import { message } from 'ant-design-vue';
 
+import { ACTION_ICON, TableAction, useVbenVxeGrid } from '#/adapter/vxe-table';
+import {
+  deleteProjectOther,
+  deleteProjectOtherList,
+  exportProjectOther,
+  getProjectOtherPage,
+} from '#/api/biz/projectOther';
+import { $t } from '#/locales';
+import ImportForm from '#/views/biz/projectOther/modules/import-form.vue';
+
+import { useGridColumns, useGridFormSchema } from './data';
+import Form from './modules/form.vue';
 
 const [FormModal, formModalApi] = useVbenModal({
   connectedComponent: Form,
-  destroyOnClose: true
+  destroyOnClose: true,
 });
 
+const [ImportModal, importModalApi] = useVbenModal({
+  connectedComponent: ImportForm,
+  destroyOnClose: true,
+});
+
+function handleImport() {
+  importModalApi.open();
+}
 
 /** 刷新表格 */
 function onRefresh() {
@@ -37,12 +51,11 @@ function handleEdit(row: ProjectOtherApi.ProjectOther) {
   formModalApi.setData(row).open();
 }
 
-
 /** 删除其他工程 */
 async function handleDelete(row: ProjectOtherApi.ProjectOther) {
   const hideLoading = message.loading({
     content: $t('ui.actionMessage.deleting', [row.id]),
-    key: 'action_key_msg'
+    key: 'action_key_msg',
   });
   try {
     await deleteProjectOther(row.id as number);
@@ -60,7 +73,7 @@ async function handleDelete(row: ProjectOtherApi.ProjectOther) {
 async function handleDeleteBatch() {
   const hideLoading = message.loading({
     content: $t('ui.actionMessage.deleting'),
-    key: 'action_key_msg'
+    key: 'action_key_msg',
   });
   try {
     await deleteProjectOtherList(checkedIds.value);
@@ -74,9 +87,10 @@ async function handleDeleteBatch() {
   }
 }
 
-const checkedIds = ref<number[]>([])
+const checkedIds = ref<number[]>([]);
+
 function handleRowCheckboxChange({
-  records
+  records,
 }: {
   records: ProjectOtherApi.ProjectOther[];
 }) {
@@ -91,7 +105,7 @@ async function handleExport() {
 
 const [Grid, gridApi] = useVbenVxeGrid({
   formOptions: {
-    schema: useGridFormSchema()
+    schema: useGridFormSchema(),
   },
   gridOptions: {
     columns: useGridColumns(),
@@ -117,18 +131,19 @@ const [Grid, gridApi] = useVbenVxeGrid({
     toolbarConfig: {
       refresh: { code: 'query' },
       search: true,
-    }
+    },
   } as VxeTableGridOptions<ProjectOtherApi.ProjectOther>,
-  gridEvents:{
-      checkboxAll: handleRowCheckboxChange,
-      checkboxChange: handleRowCheckboxChange
-  }
+  gridEvents: {
+    checkboxAll: handleRowCheckboxChange,
+    checkboxChange: handleRowCheckboxChange,
+  },
 });
 </script>
 
 <template>
   <Page auto-content-height>
     <FormModal @success="onRefresh" />
+    <ImportModal @success="onRefresh" />
 
     <Grid table-title="其他工程列表">
       <template #toolbar-tools>
@@ -156,6 +171,13 @@ const [Grid, gridApi] = useVbenVxeGrid({
               disabled: isEmpty(checkedIds),
               auth: ['biz:project-other:delete'],
               onClick: handleDeleteBatch,
+            },
+            {
+              label: $t('ui.actionTitle.import', ['项目']),
+              type: 'primary',
+              icon: ACTION_ICON.UPLOAD,
+              auth: ['biz:project-other:create'],
+              onClick: handleImport,
             },
           ]"
         />
@@ -185,6 +207,5 @@ const [Grid, gridApi] = useVbenVxeGrid({
         />
       </template>
     </Grid>
-
   </Page>
 </template>
