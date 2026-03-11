@@ -59,4 +59,11 @@ public interface ProjectVisaService {
      */
     PageResult<ProjectVisaDO> getProjectVisaPage(ProjectVisaPageReqVO pageReqVO);
 
+    /**
+     * 导入项目签证列表
+     *
+     * @param list 导入项目签证列表
+     * @return 导入结果
+     */
+    ProjectVisaImportRespVO importProjectVisaList(List<ProjectVisaImportExcelVO> list);
 }

@@ -134,7 +134,7 @@ public class ProjectController {
                         .materialVerification(CommonWhetherEnum.COMMON_WHETHER_1.getStatus())
                         .remark("备注").build());
         // 输出
-        ExcelUtils.write(response, "项目信息导入模板.xls", "收款模板", ProjectImportExcelVO.class, list);
+        ExcelUtils.write(response, "项目信息导入模板.xls", "项目模板", ProjectImportExcelVO.class, list);
     }
 
     @PostMapping("/import")

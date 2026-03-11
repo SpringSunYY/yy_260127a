@@ -19,6 +19,7 @@ export function useFormSchema(): VbenFormSchema[] {
     {
       fieldName: 'projectId',
       component: 'Input',
+      rules: 'required',
       label: '项目ID',
       dependencies: {
         triggerFields: [''],
@@ -258,6 +259,19 @@ export function useGridColumns(): VxeTableGridOptions<ProjectVisaApi.ProjectVisa
       width: 200,
       fixed: 'right',
       slots: { default: 'actions' },
+    },
+  ];
+}
+
+/** 项目信息导入的表单 */
+export function projectVisaImportFormSchema(): VbenFormSchema[] {
+  return [
+    {
+      fieldName: 'file',
+      label: '项目签证信息',
+      component: 'Upload',
+      rules: 'required',
+      help: '仅允许导入 xls、xlsx 格式文件',
     },
   ];
 }

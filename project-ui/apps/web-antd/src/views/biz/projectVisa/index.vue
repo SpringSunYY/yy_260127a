@@ -18,6 +18,7 @@ import {
   getProjectVisaPage,
 } from '#/api/biz/projectVisa';
 import { $t } from '#/locales';
+import ImportForm from '#/views/biz/projectVisa/modules/import-form.vue';
 
 import { useGridColumns, useGridFormSchema } from './data';
 import Form from './modules/form.vue';
@@ -30,6 +31,15 @@ const [FormModal, formModalApi] = useVbenModal({
   connectedComponent: Form,
   destroyOnClose: true,
 });
+
+const [ImportModal, importModalApi] = useVbenModal({
+  connectedComponent: ImportForm,
+  destroyOnClose: true,
+});
+
+function handleImport() {
+  importModalApi.open();
+}
 
 /** 刷新表格 */
 function onRefresh() {
@@ -147,6 +157,7 @@ watch(projectId, () => {
 <template>
   <Page auto-content-height>
     <FormModal @success="onRefresh" />
+    <ImportModal @success="onRefresh" />
 
     <Grid table-title="项目签证列表">
       <template #toolbar-tools>
@@ -174,6 +185,13 @@ watch(projectId, () => {
               disabled: isEmpty(checkedIds),
               auth: ['biz:project-visa:delete'],
               onClick: handleDeleteBatch,
+            },
+            {
+              label: $t('ui.actionTitle.import', ['项目签证']),
+              type: 'primary',
+              icon: ACTION_ICON.UPLOAD,
+              auth: ['biz:project-visa:create'],
+              onClick: handleImport,
             },
           ]"
         />

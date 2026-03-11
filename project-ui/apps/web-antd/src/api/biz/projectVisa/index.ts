@@ -58,3 +58,16 @@ export function deleteProjectVisaList(ids: number[]) {
 export function exportProjectVisa(params: any) {
   return requestClient.download('/biz/project-visa/export-excel', params);
 }
+
+/** 导入项目信息模版 */
+export function importProjectVisaTemplate() {
+  return requestClient.download('/biz/project-visa/get-import-template');
+}
+
+/** 导入项目信息 */
+export function importProjectVisa(file: File, isAddPayment: boolean) {
+  return requestClient.upload('/biz/project-visa/import', {
+    file,
+    isAddPayment,
+  });
+}
