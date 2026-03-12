@@ -3,17 +3,39 @@ import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { SupplierApi } from '#/api/biz/supplier';
 
 import { Page, useVbenModal } from '@vben/common-ui';
-import { message,Tabs } from 'ant-design-vue';
+import { message } from 'ant-design-vue';
 import Form from './modules/form.vue';
 
 
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import { $t } from '#/locales';
 import { ACTION_ICON, TableAction, useVbenVxeGrid } from '#/adapter/vxe-table';
 import { getSupplierPage, deleteSupplier, deleteSupplierList, exportSupplier } from '#/api/biz/supplier';
 import { downloadFileFromBlobPart, isEmpty } from '@vben/utils';
 
 import { useGridColumns, useGridFormSchema } from './data';
+
+type SortOrder = 'asc' | 'desc';
+function normalizeSortOrder(order: unknown): SortOrder | undefined {
+  if (!order) return undefined;
+  const str = String(order).toLowerCase();
+  if (str === 'asc' || str === 'ascend') return 'asc';
+  if (str === 'desc' || str === 'descend') return 'desc';
+  return undefined;
+}
+
+function pickSort(ctx: any): { orderBy?: string; order?: SortOrder } {
+  // vxe-table 可能传 sort（单列）或 sorts（多列）
+  const sorts = Array.isArray(ctx?.sorts) ? ctx.sorts : undefined;
+  const first =
+    (sorts && sorts.find((s: any) => s?.order)) ||
+    (sorts && sorts[0]) ||
+    ctx?.sort ||
+    undefined;
+  const orderBy = first?.field ? String(first.field) : undefined;
+  const order = normalizeSortOrder(first?.order);
+  return { orderBy, order };
+}
 
 
 const [FormModal, formModalApi] = useVbenModal({
@@ -99,13 +121,21 @@ const [Grid, gridApi] = useVbenVxeGrid({
     pagerConfig: {
       enabled: true,
     },
+    sortConfig: {
+      remote: true,
+      // 仅允许单列排序：点新列时清除旧列排序状态
+      multiple: false,
+    },
     proxyConfig: {
       ajax: {
-        query: async ({ page }, formValues) => {
+        query: async (ctx, formValues) => {
+          const { page } = ctx || {};
+          const { orderBy, order } = pickSort(ctx);
           return await getSupplierPage({
             pageNo: page.currentPage,
             pageSize: page.pageSize,
             ...formValues,
+            ...(orderBy && order ? { orderBy, order } : {}),
           });
         },
       },
@@ -121,7 +151,8 @@ const [Grid, gridApi] = useVbenVxeGrid({
   } as VxeTableGridOptions<SupplierApi.Supplier>,
   gridEvents:{
       checkboxAll: handleRowCheckboxChange,
-      checkboxChange: handleRowCheckboxChange
+      checkboxChange: handleRowCheckboxChange,
+      sortChange: () => gridApi.query(),
   }
 });
 </script>

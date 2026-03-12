@@ -13,6 +13,9 @@ export namespace SupplierApi {
     email: string; // 邮箱
     areaId: number; // 地区编号
     detailAddress: string; // 详细地址
+    paymentAmount?: number; // 付款金额
+    debtAmount?: number; // 欠款金额
+    payableAmount?: number; // 应付金额
     remark: string; // 备注
   }
 }

@@ -18,14 +18,28 @@ import com.lz.module.biz.controller.admin.supplier.vo.*;
 public interface SupplierMapper extends BaseMapperX<SupplierDO> {
 
     default PageResult<SupplierDO> selectPage(SupplierPageReqVO reqVO) {
-        return selectPage(reqVO, new LambdaQueryWrapperX<SupplierDO>()
+        LambdaQueryWrapperX<SupplierDO> query = new LambdaQueryWrapperX<SupplierDO>()
                 .likeIfPresent(SupplierDO::getName, reqVO.getName())
                 .likeIfPresent(SupplierDO::getTelephone, reqVO.getTelephone())
                 .likeIfPresent(SupplierDO::getQq, reqVO.getQq())
                 .likeIfPresent(SupplierDO::getWeChat, reqVO.getWeChat())
                 .likeIfPresent(SupplierDO::getEmail, reqVO.getEmail())
-                .betweenIfPresent(SupplierDO::getCreateTime, reqVO.getCreateTime())
-                .orderByDesc(SupplierDO::getId));
+                .betweenIfPresent(SupplierDO::getCreateTime, reqVO.getCreateTime());
+
+        // 动态排序（白名单字段），未传则默认按 id 倒序
+        boolean asc = "asc".equalsIgnoreCase(reqVO.getOrder());
+        String orderBy = reqVO.getOrderBy();
+        if ("paymentAmount".equals(orderBy)) {
+            query.orderBy(true, asc, SupplierDO::getPaymentAmount);
+        } else if ("debtAmount".equals(orderBy)) {
+            query.orderBy(true, asc, SupplierDO::getDebtAmount);
+        } else if ("payableAmount".equals(orderBy)) {
+            query.orderBy(true, asc, SupplierDO::getPayableAmount);
+        } else {
+            query.orderByDesc(SupplierDO::getCreateTime);
+        }
+
+        return selectPage(reqVO, query);
     }
 
 }
