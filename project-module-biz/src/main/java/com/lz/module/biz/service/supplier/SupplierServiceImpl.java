@@ -1,6 +1,7 @@
 package com.lz.module.biz.service.supplier;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import com.lz.framework.common.exception.ServiceException;
 import com.lz.framework.common.pojo.PageResult;
@@ -15,6 +16,7 @@ import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,6 +99,21 @@ public class SupplierServiceImpl implements SupplierService {
         supplierMapper.insertBatch(createList);
         return CustomerImportRespVO.builder()
                 .message(StrUtil.format("成功导入 {} 个供应商信息", createList.size())).build();
+    }
+
+    @Override
+    public void updateSupplierAmount(SupplierDO supplierDO) {
+        //应付金额-已付金额=欠款金额
+        BigDecimal payableAmount = supplierDO.getPayableAmount();
+        BigDecimal paymentAmount = supplierDO.getPaymentAmount();
+        if (ObjUtil.isNotNull(payableAmount) && ObjUtil.isNotNull(paymentAmount)) {
+            BigDecimal debtAmount = payableAmount.subtract(paymentAmount);
+            if (debtAmount.compareTo(BigDecimal.ZERO) < 0) {
+                debtAmount = BigDecimal.ZERO;
+            }
+            supplierDO.setDebtAmount(debtAmount);
+        }
+        supplierMapper.updateById(supplierDO);
     }
 
 }

@@ -68,4 +68,11 @@ public interface SupplierService {
      * @return 导入结果
      */
     CustomerImportRespVO importSupplierList(List<SupplierImportVO> list);
+
+    /**
+     * 更新供应商金额
+     *
+     * @param supplierDO 供应商信息
+     */
+    void updateSupplierAmount(SupplierDO supplierDO);
 }

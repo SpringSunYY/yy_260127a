@@ -56,18 +56,21 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     public Long createPurchaseOrder(PurchaseOrderSaveReqVO createReqVO) {
         createReqVO.setOrderNo(IdUtils.generateTimeRandomId());
         //初始化数据
-        initPurchaseOrderData(createReqVO);
+        SupplierDO supplierDO = initPurchaseOrderData(createReqVO);
         // 插入
         PurchaseOrderDO purchaseOrder = BeanUtils.toBean(createReqVO, PurchaseOrderDO.class);
         purchaseOrderMapper.insert(purchaseOrder);
 
         // 插入子表
         createPurchaseOrderDetailList(purchaseOrder.getId(), createReqVO.getPurchaseOrderDetails());
+        //更新应付金额
+        supplierDO.setPayableAmount(supplierDO.getPayableAmount().add(purchaseOrder.getTotalAmount()));
+        supplierService.updateSupplierAmount(supplierDO);
         // 返回
         return purchaseOrder.getId();
     }
 
-    private void initPurchaseOrderData(PurchaseOrderSaveReqVO createReqVO) {
+    private SupplierDO initPurchaseOrderData(PurchaseOrderSaveReqVO createReqVO) {
         //校验供应商和采购人
         SupplierDO supplier = supplierService.getSupplier(createReqVO.getSupplierId());
         if (ObjUtil.isNull(supplier)) {
@@ -88,7 +91,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         if (ArrayUtil.isEmpty(purchaseOrderDetails)) {
             createReqVO.setTotalAmount(totalAmount);
             createReqVO.setTotalQuantity(totalQuantity);
-            return;
+            return supplier;
         }
         for (PurchaseOrderDetailDO detail : purchaseOrderDetails) {
 
@@ -105,6 +108,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         }
         createReqVO.setTotalAmount(totalAmount);
         createReqVO.setTotalQuantity(totalQuantity);
+        return supplier;
     }
 
     @Override
