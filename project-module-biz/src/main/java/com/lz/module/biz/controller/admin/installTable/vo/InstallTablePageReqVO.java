@@ -16,7 +16,7 @@ import static com.lz.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY_
 public class InstallTablePageReqVO extends PageParam {
 
     @Schema(description = "安装日期")
-    @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY)
+    @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
     private LocalDateTime[] installDate;
 
     @Schema(description = "小区名称", example = "张三")

@@ -344,15 +344,15 @@ export function useGridFormSchema(): VbenFormSchema[] {
         placeholder: '请选择开T',
       },
     },
-    {
-      fieldName: 'createTime',
-      label: '创建时间',
-      component: 'RangePicker',
-      componentProps: {
-        ...getRangePickerDefaultProps(),
-        allowClear: true,
-      },
-    },
+    // {
+    //   fieldName: 'createTime',
+    //   label: '创建时间',
+    //   component: 'RangePicker',
+    //   componentProps: {
+    //     ...getRangePickerDefaultProps(),
+    //     allowClear: true,
+    //   },
+    // },
   ];
 }
 
@@ -515,6 +515,7 @@ export function useGridColumns(): VxeTableGridOptions<InstallTableApi.InstallTab
     {
       field: 'createTime',
       title: '创建时间',
+      visible: false,
       minWidth: 120,
       formatter: 'formatDateTime',
     },
