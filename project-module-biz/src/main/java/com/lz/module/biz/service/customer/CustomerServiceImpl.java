@@ -1,24 +1,25 @@
 package com.lz.module.biz.service.customer;
 
 import cn.hutool.core.collection.CollUtil;
-import org.springframework.stereotype.Service;
-import jakarta.annotation.Resource;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
-import com.lz.module.biz.controller.admin.customer.vo.*;
-import com.lz.module.biz.dal.dataobject.customer.CustomerDO;
+import cn.hutool.core.util.StrUtil;
+import com.lz.framework.common.exception.ServiceException;
 import com.lz.framework.common.pojo.PageResult;
-import com.lz.framework.common.pojo.PageParam;
 import com.lz.framework.common.util.object.BeanUtils;
-
+import com.lz.module.biz.controller.admin.customer.vo.CustomerImportRespVO;
+import com.lz.module.biz.controller.admin.customer.vo.CustomerImportVO;
+import com.lz.module.biz.controller.admin.customer.vo.CustomerPageReqVO;
+import com.lz.module.biz.controller.admin.customer.vo.CustomerSaveReqVO;
+import com.lz.module.biz.dal.dataobject.customer.CustomerDO;
 import com.lz.module.biz.dal.mysql.customer.CustomerMapper;
+import jakarta.annotation.Resource;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.lz.framework.common.exception.util.ServiceExceptionUtil.exception;
-import static com.lz.framework.common.util.collection.CollectionUtils.convertList;
-import static com.lz.framework.common.util.collection.CollectionUtils.diffList;
-import static com.lz.module.biz.enums.ErrorCodeConstants.*;
+import static com.lz.module.biz.enums.ErrorCodeConstants.CUSTOMER_NOT_EXISTS;
 
 /**
  * 客户信息 Service 实现类
@@ -60,10 +61,10 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-        public void deleteCustomerListByIds(List<Long> ids) {
+    public void deleteCustomerListByIds(List<Long> ids) {
         // 删除
         customerMapper.deleteByIds(ids);
-        }
+    }
 
 
     private void validateCustomerExists(Long id) {
@@ -82,4 +83,19 @@ public class CustomerServiceImpl implements CustomerService {
         return customerMapper.selectPage(pageReqVO);
     }
 
+    @Override
+    public CustomerImportRespVO importCustomerList(List<CustomerImportVO> list) {
+        if (CollUtil.isEmpty(list)) {
+            throw new ServiceException(400, "导入数据不能为空");
+        }
+        List<CustomerDO> createList = new ArrayList<>(list.size());
+        for (int i = 0; i < list.size(); i++) {
+            CustomerImportVO customerImportVO = list.get(i);
+            CustomerDO customer = BeanUtils.toBean(customerImportVO, CustomerDO.class);
+            createList.add(customer);
+        }
+        customerMapper.insertBatch(createList);
+        return CustomerImportRespVO.builder()
+                .message(StrUtil.format("成功导入 {} 个客户信息", createList.size())).build();
+    }
 }

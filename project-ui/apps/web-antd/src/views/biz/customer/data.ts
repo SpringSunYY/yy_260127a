@@ -255,3 +255,16 @@ export function useGridColumns(): VxeTableGridOptions<CustomerApi.Customer>['col
     },
   ];
 }
+
+/** 客户信息导入的表单 */
+export function customerImportFormSchema(): VbenFormSchema[] {
+  return [
+    {
+      fieldName: 'file',
+      label: '客户信息',
+      component: 'Upload',
+      rules: 'required',
+      help: '仅允许导入 xls、xlsx 格式文件',
+    },
+  ];
+}

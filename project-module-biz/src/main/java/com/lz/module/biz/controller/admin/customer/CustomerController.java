@@ -1,5 +1,11 @@
 package com.lz.module.biz.controller.admin.customer;
 
+import com.lz.framework.common.enums.CommonWhetherEnum;
+import com.lz.module.biz.controller.admin.installTable.vo.InstallTableImportRespVO;
+import com.lz.module.biz.controller.admin.installTable.vo.InstallTableImportVO;
+import com.lz.module.biz.enums.BizCustomerIndustryEnum;
+import com.lz.module.biz.enums.BizMeterDirectionPmcEnum;
+import io.swagger.v3.oas.annotations.Parameters;
 import org.springframework.web.bind.annotation.*;
 import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
@@ -11,6 +17,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.*;
 import jakarta.validation.*;
 import jakarta.servlet.http.*;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.io.IOException;
 
@@ -28,6 +37,7 @@ import static com.lz.framework.apilog.core.enums.OperateTypeEnum.*;
 import com.lz.module.biz.controller.admin.customer.vo.*;
 import com.lz.module.biz.dal.dataobject.customer.CustomerDO;
 import com.lz.module.biz.service.customer.CustomerService;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "管理后台 - 客户信息")
 @RestController
@@ -99,6 +109,35 @@ public class CustomerController {
         // 导出 Excel
         ExcelUtils.write(response, "客户信息.xls", "数据", CustomerRespVO.class,
                         BeanUtils.toBean(list, CustomerRespVO.class));
+    }
+
+    @GetMapping("/get-import-template")
+    @Operation(summary = "获得客户信息模板")
+    public void importTemplate(HttpServletResponse response) throws IOException {
+        // 手动创建导出 demo
+        List<CustomerImportVO> list = Collections.singletonList(
+                CustomerImportVO.builder()
+                        .name("张三")
+                        .telephone("13888888888")
+                        .qq("123456789")
+                        .weChat("123456789")
+                        .email("test@test.com")
+                        .detailAddress("详细地址")
+                        .industry(BizCustomerIndustryEnum.BIZ_CUSTOMER_INDUSTRY_1.getStatus())
+                        .remark("备注").build());
+        // 输出
+        ExcelUtils.write(response, "客户信息导入模板.xls", "客户信息模板", CustomerImportVO.class, list);
+    }
+
+    @PostMapping("/import")
+    @Operation(summary = "导入客户信息")
+    @Parameters({
+            @Parameter(name = "file", description = "Excel 文件", required = true),
+    })
+    @PreAuthorize("@ss.hasPermission('biz:customer:create')")
+    public CommonResult<CustomerImportRespVO> importExcel(@RequestParam("file") MultipartFile file) throws Exception {
+        List<CustomerImportVO> list = ExcelUtils.read(file, CustomerImportVO.class);
+        return success(customerService.importCustomerList(list));
     }
 
 }

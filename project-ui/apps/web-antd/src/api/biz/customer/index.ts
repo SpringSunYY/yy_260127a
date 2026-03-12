@@ -1,6 +1,6 @@
-import type {PageParam, PageResult} from '@vben/request';
+import type { PageParam, PageResult } from '@vben/request';
 
-import {requestClient} from '#/api/request';
+import { requestClient } from '#/api/request';
 
 export namespace CustomerApi {
   /** 客户信息信息 */
@@ -21,7 +21,10 @@ export namespace CustomerApi {
 
 /** 查询客户信息分页 */
 export function getCustomerPage(params: PageParam) {
-  return requestClient.get<PageResult<CustomerApi.Customer>>('/biz/customer/page', { params });
+  return requestClient.get<PageResult<CustomerApi.Customer>>(
+    '/biz/customer/page',
+    { params },
+  );
 }
 
 /** 查询客户信息详情 */
@@ -46,10 +49,22 @@ export function deleteCustomer(id: number) {
 
 /** 批量删除客户信息 */
 export function deleteCustomerList(ids: number[]) {
-  return requestClient.delete(`/biz/customer/delete-list?ids=${ids.join(',')}`)
+  return requestClient.delete(`/biz/customer/delete-list?ids=${ids.join(',')}`);
 }
 
 /** 导出客户信息 */
 export function exportCustomer(params: any) {
   return requestClient.download('/biz/customer/export-excel', params);
+}
+
+/** 导入客户信息模版 */
+export function importCustomerTemplate() {
+  return requestClient.download('/biz/customer/get-import-template');
+}
+
+/** 导入客户信息 */
+export function importCustomer(file: File) {
+  return requestClient.upload('/biz/customer/import', {
+    file,
+  });
 }

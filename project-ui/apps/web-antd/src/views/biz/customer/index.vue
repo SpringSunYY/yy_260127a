@@ -1,31 +1,40 @@
 <script lang="ts" setup>
-import type {VxeTableGridOptions} from '#/adapter/vxe-table';
-import {ACTION_ICON, TableAction, useVbenVxeGrid} from '#/adapter/vxe-table';
-import type {CustomerApi} from '#/api/biz/customer';
+import type { VxeTableGridOptions } from '#/adapter/vxe-table';
+import type { CustomerApi } from '#/api/biz/customer';
+
+import { ref } from 'vue';
+
+import { Page, useVbenModal } from '@vben/common-ui';
+import { downloadFileFromBlobPart, isEmpty } from '@vben/utils';
+
+import { message } from 'ant-design-vue';
+
+import { ACTION_ICON, TableAction, useVbenVxeGrid } from '#/adapter/vxe-table';
 import {
   deleteCustomer,
   deleteCustomerList,
   exportCustomer,
-  getCustomerPage
+  getCustomerPage,
 } from '#/api/biz/customer';
+import { $t } from '#/locales';
+import ImportForm from '#/views/biz/customer/modules/import-form.vue';
 
-import {Page, useVbenModal} from '@vben/common-ui';
-import {message} from 'ant-design-vue';
+import { useGridColumns, useGridFormSchema } from './data';
 import Form from './modules/form.vue';
-
-
-import {ref} from 'vue';
-import {$t} from '#/locales';
-import {downloadFileFromBlobPart, isEmpty} from '@vben/utils';
-
-import {useGridColumns, useGridFormSchema} from './data';
-
 
 const [FormModal, formModalApi] = useVbenModal({
   connectedComponent: Form,
-  destroyOnClose: true
+  destroyOnClose: true,
 });
 
+const [ImportModal, importModalApi] = useVbenModal({
+  connectedComponent: ImportForm,
+  destroyOnClose: true,
+});
+
+function handleImport() {
+  importModalApi.open();
+}
 
 /** 刷新表格 */
 function onRefresh() {
@@ -42,12 +51,11 @@ function handleEdit(row: CustomerApi.Customer) {
   formModalApi.setData(row).open();
 }
 
-
 /** 删除客户信息 */
 async function handleDelete(row: CustomerApi.Customer) {
   const hideLoading = message.loading({
     content: $t('ui.actionMessage.deleting', [row.id]),
-    key: 'action_key_msg'
+    key: 'action_key_msg',
   });
   try {
     await deleteCustomer(row.id as number);
@@ -65,7 +73,7 @@ async function handleDelete(row: CustomerApi.Customer) {
 async function handleDeleteBatch() {
   const hideLoading = message.loading({
     content: $t('ui.actionMessage.deleting'),
-    key: 'action_key_msg'
+    key: 'action_key_msg',
   });
   try {
     await deleteCustomerList(checkedIds.value);
@@ -79,11 +87,11 @@ async function handleDeleteBatch() {
   }
 }
 
-const checkedIds = ref<number[]>([])
+const checkedIds = ref<number[]>([]);
 
 function handleRowCheckboxChange({
-                                   records
-                                 }: {
+  records,
+}: {
   records: CustomerApi.Customer[];
 }) {
   checkedIds.value = records.map((item) => item.id);
@@ -92,12 +100,12 @@ function handleRowCheckboxChange({
 /** 导出表格 */
 async function handleExport() {
   const data = await exportCustomer(await gridApi.formApi.getValues());
-  downloadFileFromBlobPart({fileName: '客户信息.xls', source: data});
+  downloadFileFromBlobPart({ fileName: '客户信息.xls', source: data });
 }
 
 const [Grid, gridApi] = useVbenVxeGrid({
   formOptions: {
-    schema: useGridFormSchema()
+    schema: useGridFormSchema(),
   },
   gridOptions: {
     columns: useGridColumns(),
@@ -107,7 +115,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
     },
     proxyConfig: {
       ajax: {
-        query: async ({page}, formValues) => {
+        query: async ({ page }, formValues) => {
           return await getCustomerPage({
             pageNo: page.currentPage,
             pageSize: page.pageSize,
@@ -121,20 +129,21 @@ const [Grid, gridApi] = useVbenVxeGrid({
       isHover: true,
     },
     toolbarConfig: {
-      refresh: {code: 'query'},
+      refresh: { code: 'query' },
       search: true,
-    }
+    },
   } as VxeTableGridOptions<CustomerApi.Customer>,
   gridEvents: {
     checkboxAll: handleRowCheckboxChange,
-    checkboxChange: handleRowCheckboxChange
-  }
+    checkboxChange: handleRowCheckboxChange,
+  },
 });
 </script>
 
 <template>
   <Page auto-content-height>
-    <FormModal @success="onRefresh"/>
+    <FormModal @success="onRefresh" />
+    <ImportModal @success="onRefresh" />
 
     <Grid table-title="客户信息列表">
       <template #toolbar-tools>
@@ -162,6 +171,13 @@ const [Grid, gridApi] = useVbenVxeGrid({
               disabled: isEmpty(checkedIds),
               auth: ['biz:customer:delete'],
               onClick: handleDeleteBatch,
+            },
+            {
+              label: $t('ui.actionTitle.import', ['客户']),
+              type: 'primary',
+              icon: ACTION_ICON.UPLOAD,
+              auth: ['biz:customer:create'],
+              onClick: handleImport,
             },
           ]"
         />
@@ -191,6 +207,5 @@ const [Grid, gridApi] = useVbenVxeGrid({
         />
       </template>
     </Grid>
-
   </Page>
 </template>

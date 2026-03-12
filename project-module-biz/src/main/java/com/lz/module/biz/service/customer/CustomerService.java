@@ -59,4 +59,11 @@ public interface CustomerService {
      */
     PageResult<CustomerDO> getCustomerPage(CustomerPageReqVO pageReqVO);
 
+    /**
+     * 导入客户信息
+     *
+     * @param list 文件列表
+     * @return 导入结果
+     */
+    CustomerImportRespVO importCustomerList(List<CustomerImportVO> list);
 }
