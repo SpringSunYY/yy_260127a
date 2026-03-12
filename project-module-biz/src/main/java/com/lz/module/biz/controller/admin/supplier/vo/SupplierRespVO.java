@@ -2,6 +2,8 @@ package com.lz.module.biz.controller.admin.supplier.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
+
+import java.math.BigDecimal;
 import java.util.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDateTime;
@@ -43,6 +45,18 @@ public class SupplierRespVO {
     @Schema(description = "详细地址")
     @ExcelProperty("详细地址")
     private String detailAddress;
+
+    @Schema(description = "付款金额")
+    @ExcelProperty("付款金额")
+    private BigDecimal paymentAmount;
+
+    @Schema(description = "欠款金额")
+    @ExcelProperty("欠款金额")
+    private BigDecimal debtAmount;
+
+    @Schema(description = "应付金额")
+    @ExcelProperty("应付金额")
+    private BigDecimal payableAmount;
 
     @Schema(description = "备注", example = "随便")
     @ExcelProperty("备注")

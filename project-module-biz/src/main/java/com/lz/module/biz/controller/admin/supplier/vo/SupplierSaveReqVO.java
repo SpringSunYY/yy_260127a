@@ -4,6 +4,8 @@ import com.lz.framework.common.validation.Mobile;
 import com.mzt.logapi.starter.annotation.DiffLogField;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
+
+import java.math.BigDecimal;
 import java.util.*;
 import jakarta.validation.constraints.*;
 
@@ -40,6 +42,16 @@ public class SupplierSaveReqVO {
 
     @Schema(description = "详细地址")
     private String detailAddress;
+
+
+    @Schema(description = "付款金额")
+    private BigDecimal paymentAmount;
+
+    @Schema(description = "欠款金额")
+    private BigDecimal debtAmount;
+
+    @Schema(description = "应付金额")
+    private BigDecimal payableAmount;
 
     @Schema(description = "备注", example = "随便")
     private String remark;

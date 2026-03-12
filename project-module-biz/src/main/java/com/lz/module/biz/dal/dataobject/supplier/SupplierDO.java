@@ -1,11 +1,12 @@
 package com.lz.module.biz.dal.dataobject.supplier;
 
-import lombok.*;
-import java.util.*;
-import java.time.LocalDateTime;
-import java.time.LocalDateTime;
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.KeySequence;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.lz.framework.mybatis.core.dataobject.BaseDO;
+import lombok.*;
+
+import java.math.BigDecimal;
 
 /**
  * 供应商信息 DO
@@ -55,6 +56,19 @@ public class SupplierDO extends BaseDO {
      * 详细地址
      */
     private String detailAddress;
+
+    /**
+     * 付款金额
+     */
+    private BigDecimal paymentAmount;
+    /**
+     * 欠款金额
+     */
+    private BigDecimal debtAmount;
+    /**
+     * 应付金额
+     */
+    private BigDecimal payableAmount;
     /**
      * 备注
      */

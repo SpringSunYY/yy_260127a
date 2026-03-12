@@ -1,9 +1,9 @@
-import type {VbenFormSchema} from '#/adapter/form';
-import {z} from '#/adapter/form';
-import type {VxeTableGridOptions} from '#/adapter/vxe-table';
-import type {SupplierApi} from '#/api/biz/supplier';
-import {getRangePickerDefaultProps} from '#/utils';
-import {getAreaTree} from "#/api/system/area";
+import type { VbenFormSchema } from '#/adapter/form';
+import type { VxeTableGridOptions } from '#/adapter/vxe-table';
+import type { SupplierApi } from '#/api/biz/supplier';
+
+import { z } from '#/adapter/form';
+import { getAreaTree } from '#/api/system/area';
 
 /** 新增/修改的表单 */
 export function useFormSchema(): VbenFormSchema[] {
@@ -76,6 +76,39 @@ export function useFormSchema(): VbenFormSchema[] {
       },
     },
     {
+      fieldName: 'paymentAmount',
+      label: '付款金额',
+      help: '后台自动计算，请勿随意修改',
+      component: 'InputNumber',
+      componentProps: {
+        min: 0,
+        precision: 2,
+        placeholder: '请输入付款金额',
+      },
+    },
+    {
+      fieldName: 'debtAmount',
+      label: '欠款金额',
+      component: 'InputNumber',
+      help: '后台自动计算，请勿随意修改',
+      componentProps: {
+        min: 0,
+        precision: 2,
+        placeholder: '请输入欠款金额',
+      },
+    },
+    {
+      fieldName: 'payableAmount',
+      label: '应付金额',
+      component: 'InputNumber',
+      help: '后台自动计算，请勿随意修改',
+      componentProps: {
+        min: 0,
+        precision: 2,
+        placeholder: '请输入应付金额',
+      },
+    },
+    {
       fieldName: 'remark',
       label: '备注',
       component: 'Input',
@@ -98,58 +131,58 @@ export function useGridFormSchema(): VbenFormSchema[] {
         placeholder: '请输入供应商名称',
       },
     },
-    {
-      fieldName: 'telephone',
-      label: '电话',
-      component: 'Input',
-      componentProps: {
-        allowClear: true,
-        placeholder: '请输入电话',
-      },
-    },
-    {
-      fieldName: 'qq',
-      label: 'QQ',
-      component: 'Input',
-      componentProps: {
-        allowClear: true,
-        placeholder: '请输入QQ',
-      },
-    },
-    {
-      fieldName: 'weChat',
-      label: '微信',
-      component: 'Input',
-      componentProps: {
-        allowClear: true,
-        placeholder: '请输入微信',
-      },
-    },
-    {
-      fieldName: 'email',
-      label: '邮箱',
-      component: 'Input',
-      componentProps: {
-        allowClear: true,
-        placeholder: '请输入邮箱',
-      },
-    },
-    {
-      fieldName: 'createTime',
-      label: '创建时间',
-      component: 'RangePicker',
-      componentProps: {
-        ...getRangePickerDefaultProps(),
-        allowClear: true,
-      },
-    },
+    // {
+    //   fieldName: 'telephone',
+    //   label: '电话',
+    //   component: 'Input',
+    //   componentProps: {
+    //     allowClear: true,
+    //     placeholder: '请输入电话',
+    //   },
+    // },
+    // {
+    //   fieldName: 'qq',
+    //   label: 'QQ',
+    //   component: 'Input',
+    //   componentProps: {
+    //     allowClear: true,
+    //     placeholder: '请输入QQ',
+    //   },
+    // },
+    // {
+    //   fieldName: 'weChat',
+    //   label: '微信',
+    //   component: 'Input',
+    //   componentProps: {
+    //     allowClear: true,
+    //     placeholder: '请输入微信',
+    //   },
+    // },
+    // {
+    //   fieldName: 'email',
+    //   label: '邮箱',
+    //   component: 'Input',
+    //   componentProps: {
+    //     allowClear: true,
+    //     placeholder: '请输入邮箱',
+    //   },
+    // },
+    // {
+    //   fieldName: 'createTime',
+    //   label: '创建时间',
+    //   component: 'RangePicker',
+    //   componentProps: {
+    //     ...getRangePickerDefaultProps(),
+    //     allowClear: true,
+    //   },
+    // },
   ];
 }
 
 /** 列表的字段 */
 export function useGridColumns(): VxeTableGridOptions<SupplierApi.Supplier>['columns'] {
   return [
-  { type: 'checkbox', width: 40 },
+    { type: 'checkbox', width: 40 },
     {
       field: 'id',
       title: '编号',
@@ -158,6 +191,21 @@ export function useGridColumns(): VxeTableGridOptions<SupplierApi.Supplier>['col
     {
       field: 'name',
       title: '供应商名称',
+      minWidth: 120,
+    },
+    {
+      field: 'paymentAmount',
+      title: '付款金额',
+      minWidth: 120,
+    },
+    {
+      field: 'debtAmount',
+      title: '欠款金额',
+      minWidth: 120,
+    },
+    {
+      field: 'payableAmount',
+      title: '应付金额',
       minWidth: 120,
     },
     {
