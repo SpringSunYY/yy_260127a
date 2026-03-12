@@ -527,3 +527,16 @@ export function useGridColumns(): VxeTableGridOptions<InstallTableApi.InstallTab
     },
   ];
 }
+
+/** 装表信息导入的表单 */
+export function installTableImportFormSchema(): VbenFormSchema[] {
+  return [
+    {
+      fieldName: 'file',
+      label: '装表信息',
+      component: 'Upload',
+      rules: 'required',
+      help: '仅允许导入 xls、xlsx 格式文件',
+    },
+  ];
+}

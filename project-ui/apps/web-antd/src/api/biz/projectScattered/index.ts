@@ -73,9 +73,8 @@ export function importProjectScatteredTemplate() {
 }
 
 /** 导入项目信息 */
-export function importProjectScattered(file: File, isAddPayment: boolean) {
+export function importProjectScattered(file: File) {
   return requestClient.upload('/biz/project-scattered/import', {
     file,
-    isAddPayment,
   });
 }

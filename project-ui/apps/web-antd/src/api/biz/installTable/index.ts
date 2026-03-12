@@ -78,3 +78,15 @@ export function deleteInstallTableList(ids: number[]) {
 export function exportInstallTable(params: any) {
   return requestClient.download('/biz/install-table/export-excel', params);
 }
+
+/** 导入装表信息模版 */
+export function importInstallTableTemplate() {
+  return requestClient.download('/biz/install-table/get-import-template');
+}
+
+/** 导入装表信息 */
+export function importInstallTable(file: File) {
+  return requestClient.upload('/biz/install-table/import', {
+    file,
+  });
+}

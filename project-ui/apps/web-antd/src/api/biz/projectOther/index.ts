@@ -69,9 +69,8 @@ export function importProjectOtherTemplate() {
 }
 
 /** 导入其他项目信息 */
-export function importProjectOther(file: File, isAddPayment: boolean) {
+export function importProjectOther(file: File) {
   return requestClient.upload('/biz/project-other/import', {
     file,
-    isAddPayment,
   });
 }

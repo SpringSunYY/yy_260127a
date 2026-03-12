@@ -17,6 +17,7 @@ import {
   getInstallTablePage,
 } from '#/api/biz/installTable';
 import { $t } from '#/locales';
+import ImportForm from '#/views/biz/installTable/modules/import-form.vue';
 
 import { useGridColumns, useGridFormSchema } from './data';
 import Form from './modules/form.vue';
@@ -25,6 +26,15 @@ const [FormModal, formModalApi] = useVbenModal({
   connectedComponent: Form,
   destroyOnClose: true,
 });
+
+const [ImportModal, importModalApi] = useVbenModal({
+  connectedComponent: ImportForm,
+  destroyOnClose: true,
+});
+
+function handleImport() {
+  importModalApi.open();
+}
 
 /** 刷新表格 */
 function onRefresh() {
@@ -78,6 +88,7 @@ async function handleDeleteBatch() {
 }
 
 const checkedIds = ref<number[]>([]);
+
 function handleRowCheckboxChange({
   records,
 }: {
@@ -132,6 +143,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
 <template>
   <Page auto-content-height>
     <FormModal @success="onRefresh" />
+    <ImportModal @success="onRefresh" />
 
     <Grid table-title="装表信息列表">
       <template #toolbar-tools>
@@ -159,6 +171,13 @@ const [Grid, gridApi] = useVbenVxeGrid({
               disabled: isEmpty(checkedIds),
               auth: ['biz:install-table:delete'],
               onClick: handleDeleteBatch,
+            },
+            {
+              label: $t('ui.actionTitle.import', ['装表']),
+              type: 'primary',
+              icon: ACTION_ICON.UPLOAD,
+              auth: ['biz:install-table:create'],
+              onClick: handleImport,
             },
           ]"
         />

@@ -59,4 +59,11 @@ public interface InstallTableService {
      */
     PageResult<InstallTableDO> getInstallTablePage(InstallTablePageReqVO pageReqVO);
 
+    /**
+     * 导入装表信息
+     *
+     * @param list 装表信息列表
+     * @return 导入结果
+     */
+    InstallTableImportRespVO importInstallTableList(List<InstallTableImportVO> list);
 }

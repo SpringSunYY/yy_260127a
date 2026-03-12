@@ -1,26 +1,31 @@
 package com.lz.module.biz.controller.admin.installTable.vo;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
-import java.util.*;
-import java.math.BigDecimal;
-import org.springframework.format.annotation.DateTimeFormat;
-import java.time.LocalDateTime;
-import com.alibaba.excel.annotation.*;
+import com.alibaba.excel.annotation.ExcelProperty;
 import com.lz.framework.excel.core.annotations.DictFormat;
 import com.lz.framework.excel.core.convert.DictConvert;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
-@Schema(description = "管理后台 - 装表信息 Response VO")
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+import static com.lz.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY;
+
+@Schema(description = "管理后台 - 装表信息 导入 VO")
 @Data
-@ExcelIgnoreUnannotated
-public class InstallTableRespVO {
-
-    @Schema(description = "编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "21499")
-    @ExcelProperty("编号")
-    private Long id;
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Accessors(chain = false)
+public class InstallTableImportVO {
 
     @Schema(description = "安装日期")
     @ExcelProperty("安装日期")
+    @com.alibaba.excel.annotation.format.DateTimeFormat(value = FORMAT_YEAR_MONTH_DAY)
     private LocalDateTime installDate;
 
     @Schema(description = "小区名称", example = "张三")
@@ -106,6 +111,7 @@ public class InstallTableRespVO {
 
     @Schema(description = "加表箱")
     @ExcelProperty(value = "加表箱", converter = DictConvert.class)
+    @DictFormat("common_whether")
     private String addMeterBox;
 
     @Schema(description = "安装人员", example = "赵六")
@@ -125,9 +131,4 @@ public class InstallTableRespVO {
     @Schema(description = "备注", example = "你猜")
     @ExcelProperty("备注")
     private String remark;
-
-    @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED)
-    @ExcelProperty("创建时间")
-    private LocalDateTime createTime;
-
 }

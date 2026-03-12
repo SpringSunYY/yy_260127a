@@ -1,5 +1,10 @@
 package com.lz.module.biz.controller.admin.installTable;
 
+import com.lz.framework.common.enums.CommonWhetherEnum;
+import com.lz.module.biz.controller.admin.project.vo.ProjectImportExcelVO;
+import com.lz.module.biz.controller.admin.project.vo.ProjectImportRespVO;
+import com.lz.module.biz.enums.*;
+import io.swagger.v3.oas.annotations.Parameters;
 import org.springframework.web.bind.annotation.*;
 import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
@@ -11,6 +16,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.*;
 import jakarta.validation.*;
 import jakarta.servlet.http.*;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.io.IOException;
 
@@ -28,6 +36,7 @@ import static com.lz.framework.apilog.core.enums.OperateTypeEnum.*;
 import com.lz.module.biz.controller.admin.installTable.vo.*;
 import com.lz.module.biz.dal.dataobject.installTable.InstallTableDO;
 import com.lz.module.biz.service.installTable.InstallTableService;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "管理后台 - 装表信息")
 @RestController
@@ -99,6 +108,53 @@ public class InstallTableController {
         // 导出 Excel
         ExcelUtils.write(response, "装表信息.xls", "数据", InstallTableRespVO.class,
                         BeanUtils.toBean(list, InstallTableRespVO.class));
+    }
+
+    @GetMapping("/get-import-template")
+    @Operation(summary = "获得导入装表信息模板")
+    public void importTemplate(HttpServletResponse response) throws IOException {
+        // 手动创建导出 demo
+        List<InstallTableImportVO> list = Collections.singletonList(
+                InstallTableImportVO.builder()
+                        .installDate(LocalDateTime.now())
+                        .communityName("小区名称")
+                        .houseAddress("门牌地址")
+                        .dn15PipeLength(BigDecimal.TEN)
+                        .dn25PipeLength(BigDecimal.TEN)
+                        .dn15ElbowQty(1)
+                        .dn15InnerConnectorQty(1)
+                        .dn15DirectQty(1)
+                        .pipeClampQty(1)
+                        .galvanizedTeeQty(1)
+                        .preMeterValveQty(1)
+                        .doubleNozzleValveQty(1)
+                        .singleNozzleValveQty(1)
+                        .meterConnectorQty(1)
+                        .meterNo("表号")
+                        .meterModel("型号")
+                        .meterDirection(BizMeterDirectionPmcEnum.BIZ_METER_DIRECTION_2.getStatus())
+                        .floorHeightStatus("层高及入住情况")
+                        .ownerName("户主")
+                        .contactPhone("联系方式")
+                        .extraLengthFee(BigDecimal.TEN)
+                        .addMeterBox(CommonWhetherEnum.COMMON_WHETHER_1.getStatus())
+                        .installerName("安装人员")
+                        .isHighAltitude(CommonWhetherEnum.COMMON_WHETHER_1.getStatus())
+                        .isOpenTee(CommonWhetherEnum.COMMON_WHETHER_1.getStatus())
+                        .remark("备注").build());
+        // 输出
+        ExcelUtils.write(response, "装表信息导入模板.xls", "装表信息模板", InstallTableImportVO.class, list);
+    }
+
+    @PostMapping("/import")
+    @Operation(summary = "导入装表信息")
+    @Parameters({
+            @Parameter(name = "file", description = "Excel 文件", required = true),
+    })
+    @PreAuthorize("@ss.hasPermission('biz:install-table:create')")
+    public CommonResult<InstallTableImportRespVO> importExcel(@RequestParam("file") MultipartFile file) throws Exception {
+        List<InstallTableImportVO> list = ExcelUtils.read(file, InstallTableImportVO.class);
+        return success(installTableService.importInstallTableList(list));
     }
 
 }

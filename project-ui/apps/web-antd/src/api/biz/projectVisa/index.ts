@@ -65,9 +65,8 @@ export function importProjectVisaTemplate() {
 }
 
 /** 导入项目签证信息 */
-export function importProjectVisa(file: File, isAddPayment: boolean) {
+export function importProjectVisa(file: File) {
   return requestClient.upload('/biz/project-visa/import', {
     file,
-    isAddPayment,
   });
 }
