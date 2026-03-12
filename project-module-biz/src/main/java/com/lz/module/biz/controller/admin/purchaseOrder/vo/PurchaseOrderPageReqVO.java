@@ -26,8 +26,11 @@ public class PurchaseOrderPageReqVO extends PageParam {
     @Schema(description = "供应商名称", example = "王五")
     private String supplierName;
 
-    @Schema(description = "采购人", example = "王五")
-    private String purchaserName;
+    @Schema(description = "采购人ID", example = "11146")
+    private Long purchaseUserId;
+
+    @Schema(description = "采购人", example = "张三")
+    private String purchaserUserName;
 
     @Schema(description = "期望到货日期")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)

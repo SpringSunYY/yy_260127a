@@ -12,9 +12,8 @@ export namespace PurchaseOrderApi {
     purchaseId?: number; // 采购单编号
     materialId: number | string; // 材料ID
     materialName?: string; // 材料名称
-    materialSpec?: string; // 规格型号
+    materialType?: string; // 材料类别
     quantity?: number | string; // 采购数量
-    unit?: string; // 计量单位
     unitPrice?: number | string; // 采购单价
     totalPrice?: number; // 小计金额
     remark?: string; // 备注

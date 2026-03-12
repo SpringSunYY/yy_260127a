@@ -48,13 +48,17 @@ public class PurchaseOrderDO extends BaseDO {
      */
     private String supplierName;
     /**
-     * 采购人
+     * 采购人ID
      */
-    private String purchaserName;
+    private Long purchaseUserId;
     /**
      * 采购金额
      */
     private BigDecimal totalAmount;
+    /**
+     * 采购人
+     */
+    private String purchaserUserName;
     /**
      * 采购数量
      */
@@ -70,7 +74,6 @@ public class PurchaseOrderDO extends BaseDO {
     /**
      * 采购状态
      *
-     * 枚举 {@link TODO biz_purchase_order_status 对应的类}
      */
     private String orderStatus;
     /**

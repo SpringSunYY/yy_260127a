@@ -18,6 +18,11 @@ import { usePurchaseOrderDetailGridEditColumns } from '../data';
 
 const props = defineProps<{
   purchaseId?: number; // 采购单编号（主表的关联字段）
+  modelValue?: number; // 采购金额（用于v-model绑定）
+}>();
+
+const emit = defineEmits<{
+  (e: 'update:modelValue', value: number): void;
 }>();
 
 // 原材料搜索相关
@@ -77,12 +82,14 @@ const [Grid, gridApi] = useVbenVxeGrid({
 
 /** 添加采购明细 */
 const onAdd = async () => {
-  await gridApi.grid.insertAt({} as PurchaseOrderApi.PurchaseOrderDetail, -1);
+  await gridApi.grid.insertAt({ totalPrice: 0 } as PurchaseOrderApi.PurchaseOrderDetail, -1);
 };
 
 /** 删除采购明细 */
 const onDelete = async (row: PurchaseOrderApi.PurchaseOrderDetail) => {
   await gridApi.grid.remove(row);
+  // 删除后更新总金额
+  updateTotalAmount();
 };
 
 /** 计算小计金额 */
@@ -95,6 +102,22 @@ const calculateTotalPrice = (row: PurchaseOrderApi.PurchaseOrderDetail) => {
 /** 数量或单价变化时更新小计 */
 const onQuantityOrPriceChange = (row: PurchaseOrderApi.PurchaseOrderDetail) => {
   row.totalPrice = Number(calculateTotalPrice(row));
+  // 触发总金额更新
+  updateTotalAmount();
+};
+
+/** 更新主表的采购金额 */
+const updateTotalAmount = () => {
+  console.log('updateTotalAmount called');
+  // getData返回空数组，需要用getTableData().fullData获取所有数据
+  const tableData = gridApi.grid.getTableData();
+  const fullData = tableData ? tableData.fullData : [];
+  console.log('fullData:', fullData);
+  const total = fullData.reduce((sum, item) => {
+    return sum + (Number(item.totalPrice) || 0);
+  }, 0);
+  console.log('calculated total:', total);
+  emit('update:modelValue', total);
 };
 
 /** 原材料选择变化时联动填充其他字段 */
@@ -109,9 +132,9 @@ const onMaterialChange = (
       // 自动填充材料名称、规格型号、计量单位、采购单价
       row.materialId = value;
       row.materialName = option.materialName || '';
-      row.materialSpec = option.materialSpec || '';
-      row.unit = option.unit || '';
+      row.materialType = option.materialType || '';
       row.unitPrice = option.unitPrice || 0;
+      row.quantity = 1;
       // 计算小计
       row.totalPrice = Number(calculateTotalPrice(row));
     }
@@ -119,11 +142,12 @@ const onMaterialChange = (
     // 清空时重置字段
     row.materialId = undefined;
     row.materialName = '';
-    row.materialSpec = '';
-    row.unit = '';
+    row.materialType = '';
     row.unitPrice = 0;
     row.totalPrice = 0;
   }
+  // 更新总金额
+  updateTotalAmount();
 };
 
 /** 搜索原材料 */
@@ -158,6 +182,8 @@ watch(
     await gridApi.grid.loadData(
       await getPurchaseOrderDetailListByPurchaseId(props.purchaseId!),
     );
+    // 加载数据后更新总金额
+    updateTotalAmount();
   },
   { immediate: true },
 );
@@ -179,7 +205,9 @@ watch(
         :options="rawMaterialsOptions"
         :field-names="{ label: 'materialName', value: 'id' }"
         @search="onSearchRawMaterials"
-        @change="(value: string | number) => onMaterialChange(row, value as number)"
+        @change="
+          (value: string | number) => onMaterialChange(row, value as number)
+        "
       >
         <template #notFoundContent>
           <Spin v-if="rawMaterialsLoading" size="small" />
@@ -190,18 +218,8 @@ watch(
     <template #materialName="{ row }">
       <Input v-model:value="row.materialName" />
     </template>
-    <template #materialSpec="{ row }">
-      <Input v-model:value="row.materialSpec" />
-    </template>
-    <template #quantity="{ row }">
-      <Input
-        v-model:value="row.quantity"
-        type="number"
-        @change="() => onQuantityOrPriceChange(row)"
-      />
-    </template>
-    <template #unit="{ row, column }">
-      <Select v-model:value="row.unit" class="w-full">
+    <template #materialType="{ row, column }">
+      <Select v-model:value="row.materialType" class="w-full">
         <Select.Option
           v-for="option in column.params.options"
           :key="option.value"
@@ -210,6 +228,13 @@ watch(
           {{ option.label }}
         </Select.Option>
       </Select>
+    </template>
+    <template #quantity="{ row }">
+      <Input
+        v-model:value="row.quantity"
+        type="number"
+        @change="() => onQuantityOrPriceChange(row)"
+      />
     </template>
     <template #unitPrice="{ row }">
       <Input

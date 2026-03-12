@@ -15,6 +15,7 @@ import {
   updatePurchaseOrder,
 } from '#/api/biz/purchaseOrder';
 import { getSupplierPage } from '#/api/biz/supplier';
+import { getSimpleUserList } from '#/api/system/user';
 import { $t } from '#/locales';
 
 import { useFormSchema } from '../data';
@@ -25,7 +26,31 @@ const emit = defineEmits(['success']);
 // 初始化加载供应商列表
 onMounted(() => {
   loadSuppliers();
+  loadUsers();
 });
+
+// 用户列表
+const userOptions = ref<any[]>([]);
+const userLoading = ref(false);
+
+// 加载用户列表
+const loadUsers = async () => {
+  userLoading.value = true;
+  try {
+    const res = await getSimpleUserList();
+    userOptions.value = res || [];
+  } finally {
+    userLoading.value = false;
+  }
+};
+
+// 用户选择
+const handleUserChange = (_value: any, option: any) => {
+  formApi.setFieldValue(
+    'purchaserUserName',
+    option?.nickname || option?.label || '',
+  );
+};
 
 // 供应商搜索状态
 const supplierKeyword = ref('');
@@ -63,6 +88,11 @@ const handleSupplierOpenChange = (open: boolean) => {
   if (open) {
     loadSuppliers();
   }
+};
+
+/** 子表采购金额变化时更新主表 */
+const onTotalAmountChange = (value: number) => {
+  formApi.setFieldValue('totalAmount', value);
 };
 
 const formData = ref<PurchaseOrderApi.PurchaseOrder>();
@@ -125,8 +155,13 @@ const [Modal, modalApi] = useVbenModal({
         modalApi.unlock();
       }
     }
-    formData.value = data;
+    formData.value = {
+      ...data,
+      totalAmount: data.totalAmount || 0,
+    };
     await formApi.setValues(formData.value);
+    // 设置初始采购金额
+    formApi.setFieldValue('totalAmount', formData.value.totalAmount);
   },
 });
 
@@ -153,13 +188,28 @@ defineExpose({});
           @dropdown-open-change="handleSupplierOpenChange"
         />
       </template>
+      <template #purchaseUserId="slotProps">
+        <Select
+          v-bind="slotProps"
+          show-search
+          allow-clear
+          placeholder="请选择采购人"
+          :loading="userLoading"
+          :options="userOptions"
+          :field-names="{ label: 'nickname', value: 'id' }"
+          :filter-option="true"
+          class="w-full"
+          @change="handleUserChange"
+        />
+      </template>
     </Form>
     <!-- 子表的表单 -->
-    <Tabs v-model:active-key="subTabsName">
+    <Tabs v-if="formData" v-model:active-key="subTabsName">
       <Tabs.TabPane key="purchaseOrderDetail" tab="采购明细" force-render>
         <PurchaseOrderDetailForm
           ref="purchaseOrderDetailFormRef"
-          :purchase-id="formData?.id"
+          :purchase-id="formData.id"
+          @update:model-value="onTotalAmountChange"
         />
       </Tabs.TabPane>
     </Tabs>

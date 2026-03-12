@@ -35,13 +35,18 @@ public class PurchaseOrderRespVO {
     @ExcelProperty("供应商名称")
     private String supplierName;
 
-    @Schema(description = "采购人", requiredMode = Schema.RequiredMode.REQUIRED, example = "王五")
-    @ExcelProperty("采购人")
-    private String purchaserName;
+    @Schema(description = "采购人ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "11146")
+    @ExcelProperty("采购人ID")
+    private Long purchaseUserId;
 
     @Schema(description = "采购金额", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("采购金额")
     private BigDecimal totalAmount;
+
+    @Schema(description = "采购人", requiredMode = Schema.RequiredMode.REQUIRED, example = "张三")
+    @ExcelProperty("采购人")
+    private String purchaserUserName;
+
 
     @Schema(description = "采购数量", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("采购数量")
@@ -57,7 +62,7 @@ public class PurchaseOrderRespVO {
 
     @Schema(description = "采购状态", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     @ExcelProperty(value = "采购状态", converter = DictConvert.class)
-    @DictFormat("biz_purchase_order_status")  
+    @DictFormat("biz_purchase_order_status")
     private String orderStatus;
 
     @Schema(description = "备注", example = "你猜")

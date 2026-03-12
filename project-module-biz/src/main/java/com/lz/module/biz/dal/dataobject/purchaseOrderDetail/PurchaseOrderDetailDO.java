@@ -46,19 +46,13 @@ public class PurchaseOrderDetailDO extends BaseDO {
     private String materialName;
 
     /**
-     * 规格型号
+     * 材料类别
      */
-    private String materialSpec;
+    private String materialType;
     /**
      * 采购数量
      */
     private BigDecimal quantity;
-    /**
-     * 计量单位
-     * <p>
-     * 枚举 {@link TODO biz_raw_materials_unit 对应的类}
-     */
-    private String unit;
     /**
      * 采购单价
      */

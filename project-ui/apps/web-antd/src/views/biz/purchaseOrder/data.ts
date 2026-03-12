@@ -23,6 +23,11 @@ export function useFormSchema(): VbenFormSchema[] {
       componentProps: {
         placeholder: '请输入采购单号',
       },
+      dependencies: {
+        triggerFields: ['id'],
+        disabled: (values) => !!values.id,
+        show: (values) => !!values.id,
+      },
     },
     {
       fieldName: 'name',
@@ -36,6 +41,7 @@ export function useFormSchema(): VbenFormSchema[] {
     {
       fieldName: 'supplierId',
       label: '供应商',
+      rules: 'required',
       component: 'Input',
       componentProps: {
         placeholder: '请选择供应商',
@@ -44,13 +50,23 @@ export function useFormSchema(): VbenFormSchema[] {
     {
       fieldName: 'supplierName',
       label: '供应商名称',
+      rules: 'required',
       component: 'Input',
       componentProps: {
         placeholder: '请输入供应商名称',
       },
     },
     {
-      fieldName: 'purchaserName',
+      fieldName: 'purchaseUserId',
+      label: '采购人ID',
+      rules: 'required',
+      component: 'Input',
+      componentProps: {
+        placeholder: '请输入采购人ID',
+      },
+    },
+    {
+      fieldName: 'purchaserUserName',
       label: '采购人',
       rules: 'required',
       component: 'Input',
@@ -88,6 +104,15 @@ export function useFormSchema(): VbenFormSchema[] {
       },
     },
     {
+      fieldName: 'totalAmount',
+      label: '采购金额',
+      component: 'InputNumber',
+      disabled: true,
+      componentProps: {
+        placeholder: '请输入采购金额',
+      },
+    },
+    {
       fieldName: 'remark',
       label: '备注',
       component: 'Textarea',
@@ -121,15 +146,15 @@ export function useGridFormSchema(): VbenFormSchema[] {
         placeholder: '请输入采购名称',
       },
     },
-    // {
-    //   fieldName: 'supplierId',
-    //   label: '供应商',
-    //   component: 'Input',
-    //   componentProps: {
-    //     allowClear: true,
-    //     placeholder: '请选择供应商',
-    //   },
-    // },
+    {
+      fieldName: 'supplierId',
+      label: '供应商ID',
+      component: 'Input',
+      componentProps: {
+        allowClear: true,
+        placeholder: '请选择供应商',
+      },
+    },
     {
       fieldName: 'supplierName',
       label: '供应商名称',
@@ -140,7 +165,16 @@ export function useGridFormSchema(): VbenFormSchema[] {
       },
     },
     {
-      fieldName: 'purchaserName',
+      fieldName: 'purchaseUserId',
+      label: '采购人ID',
+      component: 'Input',
+      componentProps: {
+        allowClear: true,
+        placeholder: '请输入采购人ID',
+      },
+    },
+    {
+      fieldName: 'purchaserUserName',
       label: '采购人',
       component: 'Input',
       componentProps: {
@@ -179,11 +213,11 @@ export function useGridColumns(): VxeTableGridOptions<PurchaseOrderApi.PurchaseO
       title: '编号',
       minWidth: 120,
     },
-    // {
-    //   field: 'orderNo',
-    //   title: '采购单号',
-    //   minWidth: 120,
-    // },
+    {
+      field: 'orderNo',
+      title: '采购单号',
+      minWidth: 120,
+    },
     {
       field: 'name',
       title: '采购名称',
@@ -201,7 +235,13 @@ export function useGridColumns(): VxeTableGridOptions<PurchaseOrderApi.PurchaseO
       minWidth: 120,
     },
     {
-      field: 'purchaserName',
+      field: 'purchaseUserId',
+      title: '采购人ID',
+      visible: false,
+      minWidth: 120,
+    },
+    {
+      field: 'purchaserUserName',
       title: '采购人',
       minWidth: 120,
     },
@@ -280,25 +320,19 @@ export function usePurchaseOrderDetailGridEditColumns(): VxeTableGridOptions<Pur
       slots: { default: 'materialName' },
     },
     {
-      field: 'materialSpec',
+      field: 'materialType',
       title: '规格型号',
       minWidth: 120,
-      slots: { default: 'materialSpec' },
+      slots: { default: 'materialType' },
+      params: {
+        options: getDictOptions(DICT_TYPE.BIZ_MATERIAL_TYPE, 'string'),
+      },
     },
     {
       field: 'quantity',
       title: '采购数量',
       minWidth: 120,
       slots: { default: 'quantity' },
-    },
-    {
-      field: 'unit',
-      title: '计量单位',
-      minWidth: 120,
-      slots: { default: 'unit' },
-      params: {
-        options: getDictOptions(DICT_TYPE.BIZ_RAW_MATERIALS_UNIT, 'string'),
-      },
     },
     {
       field: 'unitPrice',

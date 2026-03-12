@@ -5,15 +5,18 @@ import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.lz.framework.common.pojo.PageResult;
+import com.lz.framework.common.util.id.IdUtils;
 import com.lz.framework.common.util.object.BeanUtils;
 import com.lz.module.biz.controller.admin.purchaseOrder.vo.PurchaseOrderPageReqVO;
 import com.lz.module.biz.controller.admin.purchaseOrder.vo.PurchaseOrderSaveReqVO;
 import com.lz.module.biz.dal.dataobject.purchaseOrder.PurchaseOrderDO;
 import com.lz.module.biz.dal.dataobject.purchaseOrderDetail.PurchaseOrderDetailDO;
+import com.lz.module.biz.dal.dataobject.supplier.SupplierDO;
 import com.lz.module.biz.dal.mysql.purchaseOrder.PurchaseOrderMapper;
 import com.lz.module.biz.dal.mysql.purchaseOrderDetail.PurchaseOrderDetailMapper;
-import com.lz.module.biz.service.rawMaterials.RawMaterialsService;
 import com.lz.module.biz.service.supplier.SupplierService;
+import com.lz.module.system.dal.dataobject.user.AdminUserDO;
+import com.lz.module.system.service.user.AdminUserService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,11 +49,12 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     private SupplierService supplierService;
 
     @Resource
-    private RawMaterialsService rawMaterialsService;
+    private AdminUserService adminUserService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long createPurchaseOrder(PurchaseOrderSaveReqVO createReqVO) {
+        createReqVO.setOrderNo(IdUtils.generateTimeRandomId());
         //初始化数据
         initPurchaseOrderData(createReqVO);
         // 插入
@@ -64,6 +68,17 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
     private void initPurchaseOrderData(PurchaseOrderSaveReqVO createReqVO) {
+        //校验供应商和采购人
+        SupplierDO supplier = supplierService.getSupplier(createReqVO.getSupplierId());
+        if (ObjUtil.isNull(supplier)) {
+            throw exception(PURCHASE_ORDER_NOT_EXISTS);
+        }
+        createReqVO.setSupplierName(supplier.getName());
+        AdminUserDO user = adminUserService.getUser(createReqVO.getPurchaseUserId());
+        if (ObjUtil.isNull(user)) {
+            throw exception(PURCHASE_ORDER_NOT_EXISTS);
+        }
+        createReqVO.setPurchaserUserName(user.getNickname());
         //计算总金额和数量
         BigDecimal totalAmount = new BigDecimal(0);
         BigDecimal totalQuantity = new BigDecimal(0);
@@ -100,6 +115,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         validatePurchaseOrderExists(updateReqVO.getId());
         // 更新
         PurchaseOrderDO updateObj = BeanUtils.toBean(updateReqVO, PurchaseOrderDO.class);
+        updateObj.setOrderNo(null);
         purchaseOrderMapper.updateById(updateObj);
 
         // 更新子表
