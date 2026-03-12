@@ -1,11 +1,14 @@
 package com.lz.module.biz.service.rawMaterials;
 
-import java.util.*;
-import jakarta.validation.*;
-import com.lz.module.biz.controller.admin.rawMaterials.vo.*;
-import com.lz.module.biz.dal.dataobject.rawMaterials.RawMaterialsDO;
 import com.lz.framework.common.pojo.PageResult;
-import com.lz.framework.common.pojo.PageParam;
+import com.lz.module.biz.controller.admin.rawMaterials.vo.RawMaterialsImportRespVO;
+import com.lz.module.biz.controller.admin.rawMaterials.vo.RawMaterialsImportVO;
+import com.lz.module.biz.controller.admin.rawMaterials.vo.RawMaterialsPageReqVO;
+import com.lz.module.biz.controller.admin.rawMaterials.vo.RawMaterialsSaveReqVO;
+import com.lz.module.biz.dal.dataobject.rawMaterials.RawMaterialsDO;
+import jakarta.validation.Valid;
+
+import java.util.List;
 
 /**
  * 原材料信息 Service 接口
@@ -37,10 +40,10 @@ public interface RawMaterialsService {
     void deleteRawMaterials(Long id);
 
     /**
-    * 批量删除原材料信息
-    *
-    * @param ids 编号
-    */
+     * 批量删除原材料信息
+     *
+     * @param ids 编号
+     */
     void deleteRawMaterialsListByIds(List<Long> ids);
 
     /**
@@ -59,4 +62,11 @@ public interface RawMaterialsService {
      */
     PageResult<RawMaterialsDO> getRawMaterialsPage(RawMaterialsPageReqVO pageReqVO);
 
+    /**
+     * 导原材料信息列表
+     *
+     * @param list 原材料信息列表
+     * @return 导出数量
+     */
+    RawMaterialsImportRespVO importRawMaterialsList(List<RawMaterialsImportVO> list);
 }

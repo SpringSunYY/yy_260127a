@@ -2,25 +2,39 @@
 import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { RawMaterialsApi } from '#/api/biz/rawMaterials';
 
+import { ref } from 'vue';
+
 import { Page, useVbenModal } from '@vben/common-ui';
-import { message,Tabs } from 'ant-design-vue';
-import Form from './modules/form.vue';
-
-
-import { ref, computed } from 'vue';
-import { $t } from '#/locales';
-import { ACTION_ICON, TableAction, useVbenVxeGrid } from '#/adapter/vxe-table';
-import { getRawMaterialsPage, deleteRawMaterials, deleteRawMaterialsList, exportRawMaterials } from '#/api/biz/rawMaterials';
 import { downloadFileFromBlobPart, isEmpty } from '@vben/utils';
 
-import { useGridColumns, useGridFormSchema } from './data';
+import { message } from 'ant-design-vue';
 
+import { ACTION_ICON, TableAction, useVbenVxeGrid } from '#/adapter/vxe-table';
+import {
+  deleteRawMaterials,
+  deleteRawMaterialsList,
+  exportRawMaterials,
+  getRawMaterialsPage,
+} from '#/api/biz/rawMaterials';
+import { $t } from '#/locales';
+import ImportForm from '#/views/biz/rawMaterials/modules/import-form.vue';
+
+import { useGridColumns, useGridFormSchema } from './data';
+import Form from './modules/form.vue';
 
 const [FormModal, formModalApi] = useVbenModal({
   connectedComponent: Form,
-  destroyOnClose: true
+  destroyOnClose: true,
 });
 
+const [ImportModal, importModalApi] = useVbenModal({
+  connectedComponent: ImportForm,
+  destroyOnClose: true,
+});
+
+function handleImport() {
+  importModalApi.open();
+}
 
 /** 刷新表格 */
 function onRefresh() {
@@ -37,12 +51,11 @@ function handleEdit(row: RawMaterialsApi.RawMaterials) {
   formModalApi.setData(row).open();
 }
 
-
 /** 删除原材料信息 */
 async function handleDelete(row: RawMaterialsApi.RawMaterials) {
   const hideLoading = message.loading({
     content: $t('ui.actionMessage.deleting', [row.id]),
-    key: 'action_key_msg'
+    key: 'action_key_msg',
   });
   try {
     await deleteRawMaterials(row.id as number);
@@ -60,7 +73,7 @@ async function handleDelete(row: RawMaterialsApi.RawMaterials) {
 async function handleDeleteBatch() {
   const hideLoading = message.loading({
     content: $t('ui.actionMessage.deleting'),
-    key: 'action_key_msg'
+    key: 'action_key_msg',
   });
   try {
     await deleteRawMaterialsList(checkedIds.value);
@@ -74,9 +87,9 @@ async function handleDeleteBatch() {
   }
 }
 
-const checkedIds = ref<number[]>([])
+const checkedIds = ref<number[]>([]);
 function handleRowCheckboxChange({
-  records
+  records,
 }: {
   records: RawMaterialsApi.RawMaterials[];
 }) {
@@ -91,7 +104,7 @@ async function handleExport() {
 
 const [Grid, gridApi] = useVbenVxeGrid({
   formOptions: {
-    schema: useGridFormSchema()
+    schema: useGridFormSchema(),
   },
   gridOptions: {
     columns: useGridColumns(),
@@ -117,18 +130,19 @@ const [Grid, gridApi] = useVbenVxeGrid({
     toolbarConfig: {
       refresh: { code: 'query' },
       search: true,
-    }
+    },
   } as VxeTableGridOptions<RawMaterialsApi.RawMaterials>,
-  gridEvents:{
-      checkboxAll: handleRowCheckboxChange,
-      checkboxChange: handleRowCheckboxChange
-  }
+  gridEvents: {
+    checkboxAll: handleRowCheckboxChange,
+    checkboxChange: handleRowCheckboxChange,
+  },
 });
 </script>
 
 <template>
   <Page auto-content-height>
     <FormModal @success="onRefresh" />
+    <ImportModal @success="onRefresh" />
 
     <Grid table-title="原材料信息列表">
       <template #toolbar-tools>
@@ -156,6 +170,13 @@ const [Grid, gridApi] = useVbenVxeGrid({
               disabled: isEmpty(checkedIds),
               auth: ['biz:raw-materials:delete'],
               onClick: handleDeleteBatch,
+            },
+            {
+              label: $t('ui.actionTitle.import', ['原材料']),
+              type: 'primary',
+              icon: ACTION_ICON.UPLOAD,
+              auth: ['biz:raw-materials:create'],
+              onClick: handleImport,
             },
           ]"
         />
@@ -185,6 +206,5 @@ const [Grid, gridApi] = useVbenVxeGrid({
         />
       </template>
     </Grid>
-
   </Page>
 </template>

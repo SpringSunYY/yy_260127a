@@ -1,5 +1,10 @@
 package com.lz.module.biz.controller.admin.rawMaterials;
 
+import com.lz.framework.common.enums.CommonWhetherEnum;
+import com.lz.module.biz.controller.admin.project.vo.ProjectImportExcelVO;
+import com.lz.module.biz.controller.admin.project.vo.ProjectImportRespVO;
+import com.lz.module.biz.enums.*;
+import io.swagger.v3.oas.annotations.Parameters;
 import org.springframework.web.bind.annotation.*;
 import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
@@ -11,6 +16,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.*;
 import jakarta.validation.*;
 import jakarta.servlet.http.*;
+
+import java.time.LocalDateTime;
 import java.util.*;
 import java.io.IOException;
 
@@ -28,6 +35,7 @@ import static com.lz.framework.apilog.core.enums.OperateTypeEnum.*;
 import com.lz.module.biz.controller.admin.rawMaterials.vo.*;
 import com.lz.module.biz.dal.dataobject.rawMaterials.RawMaterialsDO;
 import com.lz.module.biz.service.rawMaterials.RawMaterialsService;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "管理后台 - 原材料信息")
 @RestController
@@ -99,6 +107,30 @@ public class RawMaterialsController {
         // 导出 Excel
         ExcelUtils.write(response, "原材料信息.xls", "数据", RawMaterialsRespVO.class,
                         BeanUtils.toBean(list, RawMaterialsRespVO.class));
+    }
+
+    @GetMapping("/get-import-template")
+    @Operation(summary = "获得导入项目信息模板")
+    public void importTemplate(HttpServletResponse response) throws IOException {
+        // 手动创建导出 demo
+        List<RawMaterialsImportVO> list = Collections.singletonList(
+                RawMaterialsImportVO.builder()
+                        .materialName("材料名称")
+                        .materialType(BizMaterialTypeEnum.BIZ_MATERIAL_TYPE_0.getStatus())
+                        .remark("备注").build());
+        // 输出
+        ExcelUtils.write(response, "原材料信息导入模板.xls", "原材料信息模板", RawMaterialsImportVO.class, list);
+    }
+
+    @PostMapping("/import")
+    @Operation(summary = "导入项目信息")
+    @Parameters({
+            @Parameter(name = "file", description = "Excel 文件", required = true),
+    })
+    @PreAuthorize("@ss.hasPermission('biz:raw-materials:create')")
+    public CommonResult<RawMaterialsImportRespVO> importExcel(@RequestParam("file") MultipartFile file) throws Exception {
+        List<RawMaterialsImportVO> list = ExcelUtils.read(file, RawMaterialsImportVO.class);
+        return success(rawMaterialsService.importRawMaterialsList(list));
     }
 
 }

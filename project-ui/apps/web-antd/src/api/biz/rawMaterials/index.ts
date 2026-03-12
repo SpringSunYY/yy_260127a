@@ -1,6 +1,6 @@
-import type {PageParam, PageResult} from '@vben/request';
+import type { PageParam, PageResult } from '@vben/request';
 
-import {requestClient} from '#/api/request';
+import { requestClient } from '#/api/request';
 
 export namespace RawMaterialsApi {
   /** 原材料信息信息 */
@@ -16,12 +16,17 @@ export namespace RawMaterialsApi {
 
 /** 查询原材料信息分页 */
 export function getRawMaterialsPage(params: PageParam) {
-  return requestClient.get<PageResult<RawMaterialsApi.RawMaterials>>('/biz/raw-materials/page', { params });
+  return requestClient.get<PageResult<RawMaterialsApi.RawMaterials>>(
+    '/biz/raw-materials/page',
+    { params },
+  );
 }
 
 /** 查询原材料信息详情 */
 export function getRawMaterials(id: number) {
-  return requestClient.get<RawMaterialsApi.RawMaterials>(`/biz/raw-materials/get?id=${id}`);
+  return requestClient.get<RawMaterialsApi.RawMaterials>(
+    `/biz/raw-materials/get?id=${id}`,
+  );
 }
 
 /** 新增原材料信息 */
@@ -41,10 +46,24 @@ export function deleteRawMaterials(id: number) {
 
 /** 批量删除原材料信息 */
 export function deleteRawMaterialsList(ids: number[]) {
-  return requestClient.delete(`/biz/raw-materials/delete-list?ids=${ids.join(',')}`)
+  return requestClient.delete(
+    `/biz/raw-materials/delete-list?ids=${ids.join(',')}`,
+  );
 }
 
 /** 导出原材料信息 */
 export function exportRawMaterials(params: any) {
   return requestClient.download('/biz/raw-materials/export-excel', params);
+}
+
+/** 导入原材料信息模版 */
+export function importRawMaterialsTemplate() {
+  return requestClient.download('/biz/raw-materials/get-import-template');
+}
+
+/** 导入原材料信息 */
+export function importRawMaterials(file: File) {
+  return requestClient.upload('/biz/raw-materials/import', {
+    file,
+  });
 }

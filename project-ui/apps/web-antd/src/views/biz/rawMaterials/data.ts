@@ -121,3 +121,16 @@ export function useGridColumns(): VxeTableGridOptions<RawMaterialsApi.RawMateria
     },
   ];
 }
+
+/** 客户信息导入的表单 */
+export function rawMaterialsImportFormSchema(): VbenFormSchema[] {
+  return [
+    {
+      fieldName: 'file',
+      label: '原材料信息',
+      component: 'Upload',
+      rules: 'required',
+      help: '仅允许导入 xls、xlsx 格式文件',
+    },
+  ];
+}
