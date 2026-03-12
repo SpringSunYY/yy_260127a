@@ -8,7 +8,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import static com.lz.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY;
 import static com.lz.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND;
 
 @Schema(description = "管理后台 - 装表信息分页 Request VO")
@@ -31,6 +30,12 @@ public class InstallTablePageReqVO extends PageParam {
     @Schema(description = "表向")
     private String meterDirection;
 
+    @Schema(description = "层高及入住情况", example = "2")
+    private String floorHeightStatus;
+
+    @Schema(description = "户主", example = "张三")
+    private String ownerName;
+
     @Schema(description = "超长费用(元)")
     private BigDecimal extraLengthFee;
 
@@ -42,6 +47,9 @@ public class InstallTablePageReqVO extends PageParam {
 
     @Schema(description = "开T")
     private String isOpenTee;
+
+    @Schema(description = "备注", example = "你猜")
+    private String remark;
 
     @Schema(description = "创建时间")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)

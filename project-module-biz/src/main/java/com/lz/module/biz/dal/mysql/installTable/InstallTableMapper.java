@@ -1,13 +1,11 @@
 package com.lz.module.biz.dal.mysql.installTable;
 
-import java.util.*;
-
 import com.lz.framework.common.pojo.PageResult;
-import com.lz.framework.mybatis.core.query.LambdaQueryWrapperX;
 import com.lz.framework.mybatis.core.mapper.BaseMapperX;
+import com.lz.framework.mybatis.core.query.LambdaQueryWrapperX;
+import com.lz.module.biz.controller.admin.installTable.vo.InstallTablePageReqVO;
 import com.lz.module.biz.dal.dataobject.installTable.InstallTableDO;
 import org.apache.ibatis.annotations.Mapper;
-import com.lz.module.biz.controller.admin.installTable.vo.*;
 
 /**
  * 装表信息 Mapper
@@ -24,10 +22,13 @@ public interface InstallTableMapper extends BaseMapperX<InstallTableDO> {
                 .likeIfPresent(InstallTableDO::getMeterNo, reqVO.getMeterNo())
                 .likeIfPresent(InstallTableDO::getMeterModel, reqVO.getMeterModel())
                 .eqIfPresent(InstallTableDO::getMeterDirection, reqVO.getMeterDirection())
+                .likeIfPresent(InstallTableDO::getFloorHeightStatus, reqVO.getFloorHeightStatus())
+                .likeIfPresent(InstallTableDO::getOwnerName, reqVO.getOwnerName())
                 .eqIfPresent(InstallTableDO::getExtraLengthFee, reqVO.getExtraLengthFee())
                 .likeIfPresent(InstallTableDO::getInstallerName, reqVO.getInstallerName())
                 .eqIfPresent(InstallTableDO::getIsHighAltitude, reqVO.getIsHighAltitude())
                 .eqIfPresent(InstallTableDO::getIsOpenTee, reqVO.getIsOpenTee())
+                .likeIfPresent(InstallTableDO::getRemark, reqVO.getRemark())
                 .betweenIfPresent(InstallTableDO::getCreateTime, reqVO.getCreateTime())
                 .orderByDesc(InstallTableDO::getId));
     }

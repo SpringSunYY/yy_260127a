@@ -286,25 +286,43 @@ export function useGridFormSchema(): VbenFormSchema[] {
         placeholder: '请输入型号',
       },
     },
+    // {
+    //   fieldName: 'meterDirection',
+    //   label: '表向',
+    //   component: 'Select',
+    //   componentProps: {
+    //     allowClear: true,
+    //     options: getDictOptions(DICT_TYPE.BIZ_METER_DIRECTION, 'string'),
+    //     placeholder: '请选择表向',
+    //   },
+    // },
     {
-      fieldName: 'meterDirection',
-      label: '表向',
-      component: 'Select',
-      componentProps: {
-        allowClear: true,
-        options: getDictOptions(DICT_TYPE.BIZ_METER_DIRECTION, 'string'),
-        placeholder: '请选择表向',
-      },
-    },
-    {
-      fieldName: 'extraLengthFee',
-      label: '超长费用(元)',
+      fieldName: 'floorHeightStatus',
+      label: '层高及入住情况',
       component: 'Input',
       componentProps: {
         allowClear: true,
-        placeholder: '请输入超长费用(元)',
+        placeholder: '请输入层高及入住情况',
       },
     },
+    {
+      fieldName: 'ownerName',
+      label: '户主',
+      component: 'Input',
+      componentProps: {
+        allowClear: true,
+        placeholder: '请输入户主',
+      },
+    },
+    // {
+    //   fieldName: 'extraLengthFee',
+    //   label: '超长费用(元)',
+    //   component: 'Input',
+    //   componentProps: {
+    //     allowClear: true,
+    //     placeholder: '请输入超长费用(元)',
+    //   },
+    // },
     {
       fieldName: 'installerName',
       label: '安装人员',
@@ -342,6 +360,15 @@ export function useGridFormSchema(): VbenFormSchema[] {
         allowClear: true,
         options: getDictOptions(DICT_TYPE.COMMON_WHETHER, 'string'),
         placeholder: '请选择开T',
+      },
+    },
+    {
+      fieldName: 'remark',
+      label: '备注',
+      component: 'Input',
+      componentProps: {
+        allowClear: true,
+        placeholder: '请输入备注',
       },
     },
     // {
