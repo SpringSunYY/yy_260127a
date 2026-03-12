@@ -1,6 +1,8 @@
 package com.lz.module.biz.service.supplier;
 
 import java.util.*;
+
+import com.lz.module.biz.controller.admin.customer.vo.CustomerImportRespVO;
 import jakarta.validation.*;
 import com.lz.module.biz.controller.admin.supplier.vo.*;
 import com.lz.module.biz.dal.dataobject.supplier.SupplierDO;
@@ -59,4 +61,11 @@ public interface SupplierService {
      */
     PageResult<SupplierDO> getSupplierPage(SupplierPageReqVO pageReqVO);
 
+    /**
+     * 导入供应商信息
+     *
+     * @param list 导入供应商信息列表
+     * @return 导入结果
+     */
+    CustomerImportRespVO importSupplierList(List<SupplierImportVO> list);
 }

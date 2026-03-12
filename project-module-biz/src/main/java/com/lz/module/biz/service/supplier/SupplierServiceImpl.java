@@ -1,24 +1,25 @@
 package com.lz.module.biz.service.supplier;
 
 import cn.hutool.core.collection.CollUtil;
-import org.springframework.stereotype.Service;
-import jakarta.annotation.Resource;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
-import com.lz.module.biz.controller.admin.supplier.vo.*;
-import com.lz.module.biz.dal.dataobject.supplier.SupplierDO;
+import cn.hutool.core.util.StrUtil;
+import com.lz.framework.common.exception.ServiceException;
 import com.lz.framework.common.pojo.PageResult;
-import com.lz.framework.common.pojo.PageParam;
 import com.lz.framework.common.util.object.BeanUtils;
-
+import com.lz.module.biz.controller.admin.customer.vo.CustomerImportRespVO;
+import com.lz.module.biz.controller.admin.supplier.vo.SupplierImportVO;
+import com.lz.module.biz.controller.admin.supplier.vo.SupplierPageReqVO;
+import com.lz.module.biz.controller.admin.supplier.vo.SupplierSaveReqVO;
+import com.lz.module.biz.dal.dataobject.supplier.SupplierDO;
 import com.lz.module.biz.dal.mysql.supplier.SupplierMapper;
+import jakarta.annotation.Resource;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.lz.framework.common.exception.util.ServiceExceptionUtil.exception;
-import static com.lz.framework.common.util.collection.CollectionUtils.convertList;
-import static com.lz.framework.common.util.collection.CollectionUtils.diffList;
-import static com.lz.module.biz.enums.ErrorCodeConstants.*;
+import static com.lz.module.biz.enums.ErrorCodeConstants.SUPPLIER_NOT_EXISTS;
 
 /**
  * 供应商信息 Service 实现类
@@ -60,10 +61,10 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     @Override
-        public void deleteSupplierListByIds(List<Long> ids) {
+    public void deleteSupplierListByIds(List<Long> ids) {
         // 删除
         supplierMapper.deleteByIds(ids);
-        }
+    }
 
 
     private void validateSupplierExists(Long id) {
@@ -80,6 +81,22 @@ public class SupplierServiceImpl implements SupplierService {
     @Override
     public PageResult<SupplierDO> getSupplierPage(SupplierPageReqVO pageReqVO) {
         return supplierMapper.selectPage(pageReqVO);
+    }
+
+    @Override
+    public CustomerImportRespVO importSupplierList(List<SupplierImportVO> list) {
+        if (CollUtil.isEmpty(list)) {
+            throw new ServiceException(400, "导入数据不能为空");
+        }
+        List<SupplierDO> createList = new ArrayList<>(list.size());
+        for (int i = 0; i < list.size(); i++) {
+            SupplierImportVO supplierImportVO = list.get(i);
+            SupplierDO supplierDO = BeanUtils.toBean(supplierImportVO, SupplierDO.class);
+            createList.add(supplierDO);
+        }
+        supplierMapper.insertBatch(createList);
+        return CustomerImportRespVO.builder()
+                .message(StrUtil.format("成功导入 {} 个供应商信息", createList.size())).build();
     }
 
 }

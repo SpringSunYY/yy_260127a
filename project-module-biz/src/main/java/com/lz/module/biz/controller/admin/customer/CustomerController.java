@@ -122,6 +122,7 @@ public class CustomerController {
                         .qq("123456789")
                         .weChat("123456789")
                         .email("test@test.com")
+                        .areaId(510000L)
                         .detailAddress("详细地址")
                         .industry(BizCustomerIndustryEnum.BIZ_CUSTOMER_INDUSTRY_1.getStatus())
                         .remark("备注").build());

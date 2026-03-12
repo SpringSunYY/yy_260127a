@@ -1,6 +1,6 @@
-import type {PageParam, PageResult} from '@vben/request';
+import type { PageParam, PageResult } from '@vben/request';
 
-import {requestClient} from '#/api/request';
+import { requestClient } from '#/api/request';
 
 export namespace SupplierApi {
   /** 供应商信息信息 */
@@ -22,7 +22,10 @@ export namespace SupplierApi {
 
 /** 查询供应商信息分页 */
 export function getSupplierPage(params: PageParam) {
-  return requestClient.get<PageResult<SupplierApi.Supplier>>('/biz/supplier/page', { params });
+  return requestClient.get<PageResult<SupplierApi.Supplier>>(
+    '/biz/supplier/page',
+    { params },
+  );
 }
 
 /** 查询供应商信息详情 */
@@ -47,10 +50,22 @@ export function deleteSupplier(id: number) {
 
 /** 批量删除供应商信息 */
 export function deleteSupplierList(ids: number[]) {
-  return requestClient.delete(`/biz/supplier/delete-list?ids=${ids.join(',')}`)
+  return requestClient.delete(`/biz/supplier/delete-list?ids=${ids.join(',')}`);
 }
 
 /** 导出供应商信息 */
 export function exportSupplier(params: any) {
   return requestClient.download('/biz/supplier/export-excel', params);
+}
+
+/** 导入供应商信息模版 */
+export function importSupplierTemplate() {
+  return requestClient.download('/biz/supplier/get-import-template');
+}
+
+/** 导入供应商信息 */
+export function importSupplier(file: File) {
+  return requestClient.upload('/biz/supplier/import', {
+    file,
+  });
 }

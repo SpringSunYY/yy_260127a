@@ -4,6 +4,7 @@ import type { SupplierApi } from '#/api/biz/supplier';
 
 import { z } from '#/adapter/form';
 import { getAreaTree } from '#/api/system/area';
+import { getRangePickerDefaultProps } from '#/utils';
 
 /** 新增/修改的表单 */
 export function useFormSchema(): VbenFormSchema[] {
@@ -167,15 +168,15 @@ export function useGridFormSchema(): VbenFormSchema[] {
     //     placeholder: '请输入邮箱',
     //   },
     // },
-    // {
-    //   fieldName: 'createTime',
-    //   label: '创建时间',
-    //   component: 'RangePicker',
-    //   componentProps: {
-    //     ...getRangePickerDefaultProps(),
-    //     allowClear: true,
-    //   },
-    // },
+    {
+      fieldName: 'createTime',
+      label: '创建时间',
+      component: 'RangePicker',
+      componentProps: {
+        ...getRangePickerDefaultProps(),
+        allowClear: true,
+      },
+    },
   ];
 }
 
@@ -257,6 +258,19 @@ export function useGridColumns(): VxeTableGridOptions<SupplierApi.Supplier>['col
       width: 200,
       fixed: 'right',
       slots: { default: 'actions' },
+    },
+  ];
+}
+
+/** 客户信息导入的表单 */
+export function supplierImportFormSchema(): VbenFormSchema[] {
+  return [
+    {
+      fieldName: 'file',
+      label: '供应商信息',
+      component: 'Upload',
+      rules: 'required',
+      help: '仅允许导入 xls、xlsx 格式文件',
     },
   ];
 }

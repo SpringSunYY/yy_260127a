@@ -2,20 +2,28 @@
 import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { SupplierApi } from '#/api/biz/supplier';
 
-import { Page, useVbenModal } from '@vben/common-ui';
-import { message } from 'ant-design-vue';
-import Form from './modules/form.vue';
-
-
 import { ref } from 'vue';
-import { $t } from '#/locales';
-import { ACTION_ICON, TableAction, useVbenVxeGrid } from '#/adapter/vxe-table';
-import { getSupplierPage, deleteSupplier, deleteSupplierList, exportSupplier } from '#/api/biz/supplier';
+
+import { Page, useVbenModal } from '@vben/common-ui';
 import { downloadFileFromBlobPart, isEmpty } from '@vben/utils';
 
+import { message } from 'ant-design-vue';
+
+import { ACTION_ICON, TableAction, useVbenVxeGrid } from '#/adapter/vxe-table';
+import {
+  deleteSupplier,
+  deleteSupplierList,
+  exportSupplier,
+  getSupplierPage,
+} from '#/api/biz/supplier';
+import { $t } from '#/locales';
+import ImportForm from '#/views/biz/supplier/modules/import-form.vue';
+
 import { useGridColumns, useGridFormSchema } from './data';
+import Form from './modules/form.vue';
 
 type SortOrder = 'asc' | 'desc';
+
 function normalizeSortOrder(order: unknown): SortOrder | undefined {
   if (!order) return undefined;
   const str = String(order).toLowerCase();
@@ -24,7 +32,7 @@ function normalizeSortOrder(order: unknown): SortOrder | undefined {
   return undefined;
 }
 
-function pickSort(ctx: any): { orderBy?: string; order?: SortOrder } {
+function pickSort(ctx: any): { order?: SortOrder; orderBy?: string } {
   // vxe-table 可能传 sort（单列）或 sorts（多列）
   const sorts = Array.isArray(ctx?.sorts) ? ctx.sorts : undefined;
   const first =
@@ -37,12 +45,19 @@ function pickSort(ctx: any): { orderBy?: string; order?: SortOrder } {
   return { orderBy, order };
 }
 
-
 const [FormModal, formModalApi] = useVbenModal({
   connectedComponent: Form,
-  destroyOnClose: true
+  destroyOnClose: true,
 });
 
+const [ImportModal, importModalApi] = useVbenModal({
+  connectedComponent: ImportForm,
+  destroyOnClose: true,
+});
+
+function handleImport() {
+  importModalApi.open();
+}
 
 /** 刷新表格 */
 function onRefresh() {
@@ -59,12 +74,11 @@ function handleEdit(row: SupplierApi.Supplier) {
   formModalApi.setData(row).open();
 }
 
-
 /** 删除供应商信息 */
 async function handleDelete(row: SupplierApi.Supplier) {
   const hideLoading = message.loading({
     content: $t('ui.actionMessage.deleting', [row.id]),
-    key: 'action_key_msg'
+    key: 'action_key_msg',
   });
   try {
     await deleteSupplier(row.id as number);
@@ -82,7 +96,7 @@ async function handleDelete(row: SupplierApi.Supplier) {
 async function handleDeleteBatch() {
   const hideLoading = message.loading({
     content: $t('ui.actionMessage.deleting'),
-    key: 'action_key_msg'
+    key: 'action_key_msg',
   });
   try {
     await deleteSupplierList(checkedIds.value);
@@ -96,9 +110,10 @@ async function handleDeleteBatch() {
   }
 }
 
-const checkedIds = ref<number[]>([])
+const checkedIds = ref<number[]>([]);
+
 function handleRowCheckboxChange({
-  records
+  records,
 }: {
   records: SupplierApi.Supplier[];
 }) {
@@ -113,7 +128,7 @@ async function handleExport() {
 
 const [Grid, gridApi] = useVbenVxeGrid({
   formOptions: {
-    schema: useGridFormSchema()
+    schema: useGridFormSchema(),
   },
   gridOptions: {
     columns: useGridColumns(),
@@ -147,19 +162,20 @@ const [Grid, gridApi] = useVbenVxeGrid({
     toolbarConfig: {
       refresh: { code: 'query' },
       search: true,
-    }
+    },
   } as VxeTableGridOptions<SupplierApi.Supplier>,
-  gridEvents:{
-      checkboxAll: handleRowCheckboxChange,
-      checkboxChange: handleRowCheckboxChange,
-      sortChange: () => gridApi.query(),
-  }
+  gridEvents: {
+    checkboxAll: handleRowCheckboxChange,
+    checkboxChange: handleRowCheckboxChange,
+    sortChange: () => gridApi.query(),
+  },
 });
 </script>
 
 <template>
   <Page auto-content-height>
     <FormModal @success="onRefresh" />
+    <ImportModal @success="onRefresh" />
 
     <Grid table-title="供应商信息列表">
       <template #toolbar-tools>
@@ -187,6 +203,13 @@ const [Grid, gridApi] = useVbenVxeGrid({
               disabled: isEmpty(checkedIds),
               auth: ['biz:supplier:delete'],
               onClick: handleDeleteBatch,
+            },
+            {
+              label: $t('ui.actionTitle.import', ['供应商']),
+              type: 'primary',
+              icon: ACTION_ICON.UPLOAD,
+              auth: ['biz:supplier:create'],
+              onClick: handleImport,
             },
           ]"
         />
@@ -216,6 +239,5 @@ const [Grid, gridApi] = useVbenVxeGrid({
         />
       </template>
     </Grid>
-
   </Page>
 </template>
