@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.Operation;
 
 import jakarta.validation.*;
 import jakarta.servlet.http.*;
+
+import java.math.BigDecimal;
 import java.util.*;
 import java.io.IOException;
 
@@ -78,6 +80,13 @@ public class PurchaseOrderController {
     public CommonResult<PurchaseOrderRespVO> getPurchaseOrder(@RequestParam("id") Long id) {
         PurchaseOrderDO purchaseOrder = purchaseOrderService.getPurchaseOrder(id);
         return success(BeanUtils.toBean(purchaseOrder, PurchaseOrderRespVO.class));
+    }
+
+    @GetMapping("/get/amount")
+    @Operation(summary = "获得采购金额")
+    @PreAuthorize("@ss.hasPermission('biz:purchase-order:query')")
+    public CommonResult<BigDecimal> getPurchaseAmount(@Valid PurchaseOrderPageReqVO pageReqVO){
+        return success(purchaseOrderService.getPurchaseAmount(pageReqVO));
     }
 
     @GetMapping("/page")

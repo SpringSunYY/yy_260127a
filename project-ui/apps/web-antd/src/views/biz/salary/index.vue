@@ -150,7 +150,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
         <div class="flex items-center">
           <span class="mr-4 text-lg font-bold">工资信息列表</span>
           <span class="text-primary text-lg font-bold">
-            总金额: {{ totalAmount }}
+            总金额: {{ totalAmount || 0 }}
           </span>
         </div>
       </template>

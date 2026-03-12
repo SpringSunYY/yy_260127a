@@ -1,5 +1,6 @@
 package com.lz.module.biz.dal.mysql.purchaseOrder;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import com.lz.framework.common.pojo.PageResult;
@@ -32,4 +33,5 @@ public interface PurchaseOrderMapper extends BaseMapperX<PurchaseOrderDO> {
                 .orderByDesc(PurchaseOrderDO::getId));
     }
 
+    BigDecimal getPurchaseAmount(PurchaseOrderPageReqVO pageReqVO);
 }

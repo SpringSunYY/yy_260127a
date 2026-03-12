@@ -45,6 +45,13 @@ export function getPurchaseOrderPage(params: PageParam) {
   );
 }
 
+/** 查询工资信息总价*/
+export function getPurchaseAmount(params: PageParam) {
+  return requestClient.get<number>('/biz/purchase-order/get/amount', {
+    params,
+  });
+}
+
 /** 查询采购信息详情 */
 export function getPurchaseOrder(id: number) {
   return requestClient.get<PurchaseOrderApi.PurchaseOrder>(

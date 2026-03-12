@@ -1,5 +1,6 @@
 package com.lz.module.biz.service.purchaseOrder;
 
+import java.math.BigDecimal;
 import java.util.*;
 import jakarta.validation.*;
 import com.lz.module.biz.controller.admin.purchaseOrder.vo.*;
@@ -51,6 +52,13 @@ public interface PurchaseOrderService {
      * @return 采购信息
      */
     PurchaseOrderDO getPurchaseOrder(Long id);
+
+    /**
+     * 获得采购信息总金额
+     *
+     * @return 采购信息列表
+     */
+    BigDecimal getPurchaseAmount(@Valid PurchaseOrderPageReqVO pageReqVO);
 
     /**
      * 获得采购信息分页

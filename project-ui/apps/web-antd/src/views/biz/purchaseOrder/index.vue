@@ -14,6 +14,7 @@ import {
   deletePurchaseOrder,
   deletePurchaseOrderList,
   exportPurchaseOrder,
+  getPurchaseAmount,
   getPurchaseOrderPage,
 } from '#/api/biz/purchaseOrder';
 import { $t } from '#/locales';
@@ -25,6 +26,7 @@ const [FormModal, formModalApi] = useVbenModal({
   connectedComponent: Form,
   destroyOnClose: true,
 });
+const totalAmount = ref<number>(0);
 
 /** 刷新表格 */
 function onRefresh() {
@@ -105,6 +107,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
     proxyConfig: {
       ajax: {
         query: async ({ page }, formValues) => {
+          totalAmount.value = await getPurchaseAmount(formValues);
           return await getPurchaseOrderPage({
             pageNo: page.currentPage,
             pageSize: page.pageSize,
@@ -134,6 +137,14 @@ const [Grid, gridApi] = useVbenVxeGrid({
     <FormModal @success="onRefresh" />
 
     <Grid table-title="采购信息列表">
+      <template #table-title>
+        <div class="flex items-center">
+          <span class="mr-4 text-lg font-bold">采购信息列表</span>
+          <span class="text-primary text-lg font-bold">
+            总金额: {{ totalAmount }}
+          </span>
+        </div>
+      </template>
       <template #toolbar-tools>
         <TableAction
           :actions="[

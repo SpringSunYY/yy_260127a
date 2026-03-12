@@ -161,6 +161,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
     @Override
+    public BigDecimal getPurchaseAmount(PurchaseOrderPageReqVO pageReqVO) {
+        return purchaseOrderMapper.getPurchaseAmount(pageReqVO);
+    }
+
+    @Override
     public PageResult<PurchaseOrderDO> getPurchaseOrderPage(PurchaseOrderPageReqVO pageReqVO) {
         return purchaseOrderMapper.selectPage(pageReqVO);
     }

@@ -9,4 +9,47 @@
         文档可见：https://www.iocoder.cn/MyBatis/x-plugins/
      -->
 
+    <select id="getPurchaseAmount" resultType="java.math.BigDecimal">
+        select sum(total_amount) from biz_purchase_order
+        <where>
+            and deleted = false
+            <if test="orderNo != null and orderNo != ''">
+                and order_no like concat('%', #{orderNo}, '%')
+            </if>
+            <if test="name != null and name != ''">
+                and name like concat('%', #{name}, '%')
+            </if>
+            <if test="supplierId != null">
+                and supplier_id = #{supplierId}
+            </if>
+            <if test="supplierName != null and supplierName != ''">
+                and supplier_name like concat('%', #{supplierName}, '%')
+            </if>
+            <if test="purchaserUserName != null and purchaserUserName != ''">
+                and purchaser_user_name like concat('%', #{purchaserUserName}, '%')
+            </if>
+            <if test="purchaseUserId != null">
+                and purchase_user_id = #{purchaseUserId}
+            </if>
+            <if test="expectedTime != null and expectedTime.length == 2">
+                and expected_time between
+                #{expectedTime[0], javaType=java.time.LocalDateTime, jdbcType=TIMESTAMP}
+                and
+                #{expectedTime[1], javaType=java.time.LocalDateTime, jdbcType=TIMESTAMP}
+            </if>
+            <if test="actualTime != null and actualTime.length == 2">
+                and actual_time between
+                #{actualTime[0], javaType=java.time.LocalDateTime, jdbcType=TIMESTAMP}
+                and
+                #{actualTime[1], javaType=java.time.LocalDateTime, jdbcType=TIMESTAMP}
+            </if>
+            <if test="orderStatus != null and orderStatus != ''">
+                and order_status = #{orderStatus}
+            </if>
+            <if test="createTime != null and createTime.length == 2">
+                AND create_time BETWEEN #{createTime[0], javaType=java.time.LocalDateTime, jdbcType=TIMESTAMP} AND
+                #{createTime[1], javaType=java.time.LocalDateTime, jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
 </mapper>
