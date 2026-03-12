@@ -10,7 +10,6 @@ import com.lz.framework.common.util.object.BeanUtils;
 import com.lz.module.biz.controller.admin.projectScattered.vo.*;
 import com.lz.module.biz.dal.dataobject.project.ProjectDO;
 import com.lz.module.biz.dal.dataobject.projectScattered.ProjectScatteredDO;
-import com.lz.module.biz.dal.dataobject.projectVisa.ProjectVisaDO;
 import com.lz.module.biz.dal.mysql.project.ProjectMapper;
 import com.lz.module.biz.dal.mysql.projectScattered.ProjectScatteredMapper;
 import com.lz.module.biz.enums.BizProjectTypeEnum;
@@ -103,7 +102,7 @@ public class ProjectScatteredServiceImpl implements ProjectScatteredService {
     }
 
     @Override
-    public ProjectScatteredImportRespVO importProjectScatteredList(List<ProjectScatteredImportExcelVO> list) {
+    public ProjectScatteredImportRespVO importProjectScatteredList(List<ProjectScatteredImportVO> list) {
         if (CollUtil.isEmpty(list)) {
             throw new ServiceException(400, "导入数据不能为空");
         }
@@ -112,7 +111,7 @@ public class ProjectScatteredServiceImpl implements ProjectScatteredService {
         //校验数据
         for (int i = 0; i < list.size(); i++) {
             int index = i + 1;
-            ProjectScatteredImportExcelVO item = list.get(i);
+            ProjectScatteredImportVO item = list.get(i);
             //项目ID、工程名称、时间、工程阶段不能为空
             if (ObjUtil.isNull(item.getProjectId())) {
                 throw new ServiceException(400, StrUtil.format("第{}行项目ID不能为空", index));
@@ -146,7 +145,7 @@ public class ProjectScatteredServiceImpl implements ProjectScatteredService {
         List<ProjectScatteredDO> projectScatteredDOS = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             int index = i + 1;
-            ProjectScatteredImportExcelVO item = list.get(i);
+            ProjectScatteredImportVO item = list.get(i);
             ProjectDO projectDO = projectMap.get(item.getProjectId());
             if (ObjUtil.isNull(projectDO)) {
                 throw new ServiceException(400, StrUtil.format("第{}行项目不存在，或者是整体工程，请检查", index));

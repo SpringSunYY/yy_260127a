@@ -68,6 +68,14 @@ public interface PurchaseOrderService {
      */
     PageResult<PurchaseOrderDO> getPurchaseOrderPage(PurchaseOrderPageReqVO pageReqVO);
 
+    /**
+     * 批量导入采购信息
+     *
+     * @param list 采购信息列表
+     * @return 批量导入结果
+     */
+    PurchaseOrderImportRespVO importPurchaseOrderList(List<PurchaseOrderImportVO> list);
+
     // ==================== 子表（采购明细） ====================
 
     /**
@@ -77,5 +85,4 @@ public interface PurchaseOrderService {
      * @return 采购明细列表
      */
     List<PurchaseOrderDetailDO> getPurchaseOrderDetailListByPurchaseId(Long purchaseId);
-
 }

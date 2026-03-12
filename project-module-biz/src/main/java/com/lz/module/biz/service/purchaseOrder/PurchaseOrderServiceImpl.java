@@ -4,9 +4,14 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.lz.framework.common.exception.ServiceException;
 import com.lz.framework.common.pojo.PageResult;
 import com.lz.framework.common.util.id.IdUtils;
 import com.lz.framework.common.util.object.BeanUtils;
+import com.lz.module.biz.controller.admin.purchaseOrder.vo.PurchaseOrderImportRespVO;
+import com.lz.module.biz.controller.admin.purchaseOrder.vo.PurchaseOrderImportVO;
 import com.lz.module.biz.controller.admin.purchaseOrder.vo.PurchaseOrderPageReqVO;
 import com.lz.module.biz.controller.admin.purchaseOrder.vo.PurchaseOrderSaveReqVO;
 import com.lz.module.biz.dal.dataobject.purchaseOrder.PurchaseOrderDO;
@@ -14,16 +19,21 @@ import com.lz.module.biz.dal.dataobject.purchaseOrderDetail.PurchaseOrderDetailD
 import com.lz.module.biz.dal.dataobject.supplier.SupplierDO;
 import com.lz.module.biz.dal.mysql.purchaseOrder.PurchaseOrderMapper;
 import com.lz.module.biz.dal.mysql.purchaseOrderDetail.PurchaseOrderDetailMapper;
+import com.lz.module.biz.dal.mysql.supplier.SupplierMapper;
 import com.lz.module.biz.service.supplier.SupplierService;
 import com.lz.module.system.dal.dataobject.user.AdminUserDO;
-import com.lz.module.system.service.user.AdminUserService;
+import com.lz.module.system.dal.mysql.user.AdminUserMapper;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.lz.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static com.lz.framework.common.util.collection.CollectionUtils.convertList;
@@ -46,10 +56,16 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     private PurchaseOrderDetailMapper purchaseOrderDetailMapper;
 
     @Resource
+    private SupplierMapper supplierMapper;
+
+    @Resource
     private SupplierService supplierService;
 
     @Resource
-    private AdminUserService adminUserService;
+    private TransactionTemplate transactionTemplate;
+
+    @Resource
+    private AdminUserMapper adminUserMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -77,7 +93,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             throw exception(PURCHASE_ORDER_NOT_EXISTS);
         }
         createReqVO.setSupplierName(supplier.getName());
-        AdminUserDO user = adminUserService.getUser(createReqVO.getPurchaseUserId());
+        AdminUserDO user = adminUserMapper.selectById(createReqVO.getPurchaseUserId());
         if (ObjUtil.isNull(user)) {
             throw exception(PURCHASE_ORDER_NOT_EXISTS);
         }
@@ -179,6 +195,106 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     @Override
     public PageResult<PurchaseOrderDO> getPurchaseOrderPage(PurchaseOrderPageReqVO pageReqVO) {
         return purchaseOrderMapper.selectPage(pageReqVO);
+    }
+
+    @Override
+    public PurchaseOrderImportRespVO importPurchaseOrderList(List<PurchaseOrderImportVO> list) {
+        if (CollUtil.isEmpty(list)) {
+            throw new ServiceException(400, "导入数据不能为空");
+        }
+        List<Long> userIds = new ArrayList<>();
+        List<Long> supplierIds = new ArrayList<>();
+        //首先校验数据
+        checkInitData(list, userIds, supplierIds);
+        //拿到用户和供应商
+        Map<Long, AdminUserDO> userMap = new HashMap<>();
+        Map<Long, SupplierDO> supplierMap = new HashMap<>();
+        getUserAndSupplier(userIds, userMap, supplierIds, supplierMap);
+        //拿到dos
+        List<PurchaseOrderDO> purchaseOrderDOS = getPurchaseOrderDOS(list, userMap, supplierMap);
+        //创建结果并更新数据
+        transactionTemplate.executeWithoutResult(status -> {
+            purchaseOrderMapper.insertBatch(purchaseOrderDOS);
+            supplierMap.forEach((id, supplierDO) -> supplierService.updateSupplierAmount(supplierDO));
+        });
+        return PurchaseOrderImportRespVO.builder()
+                .message(StrUtil.format("成功导入 {} 个采购信息", purchaseOrderDOS.size())).build();
+    }
+
+    private List<PurchaseOrderDO> getPurchaseOrderDOS(List<PurchaseOrderImportVO> list, Map<Long, AdminUserDO> userMap, Map<Long, SupplierDO> supplierMap) {
+        ArrayList<PurchaseOrderDO> purchaseOrderDOS = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            int index = i + 1;
+            PurchaseOrderImportVO purchaseOrderImportVO = list.get(i);
+            AdminUserDO user = userMap.get(purchaseOrderImportVO.getPurchaseUserId());
+            if (ObjUtil.isNull(user)) {
+                throw new ServiceException(400, StrUtil.format("第{}行采购人ID不存在", index));
+            }
+            SupplierDO supplier = supplierMap.get(purchaseOrderImportVO.getSupplierId());
+            if (ObjUtil.isNull(supplier)) {
+                throw new ServiceException(400, StrUtil.format("第{}行供应商ID不存在", index));
+            }
+            PurchaseOrderDO orderDO = BeanUtils.toBean(purchaseOrderImportVO, PurchaseOrderDO.class);
+            orderDO.setSupplierName(supplier.getName());
+            orderDO.setPurchaserUserName(user.getNickname());
+            orderDO.setOrderNo(IdUtils.generateTimeRandomId());
+            purchaseOrderDOS.add(orderDO);
+
+            if (ObjUtil.isNotNull(purchaseOrderImportVO.getTotalAmount())) {
+                supplier.setPayableAmount(supplier.getPayableAmount().add(orderDO.getTotalAmount()));
+            }
+        }
+        return purchaseOrderDOS;
+    }
+
+    private void getUserAndSupplier(List<Long> userIds, Map<Long, AdminUserDO> userMap, List<Long> supplierIds, Map<Long, SupplierDO> supplierMap) {
+        LambdaQueryWrapper<AdminUserDO> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(AdminUserDO::getId, userIds);
+        List<AdminUserDO> adminUserDOS = adminUserMapper.selectList(queryWrapper);
+        if (ArrayUtil.isEmpty(adminUserDOS)) {
+            throw new ServiceException(400, "用户不存在");
+        }
+        for (AdminUserDO adminUserDO : adminUserDOS) {
+            userMap.put(adminUserDO.getId(), adminUserDO);
+        }
+        LambdaQueryWrapper<SupplierDO> supplierQueryWrapper = new LambdaQueryWrapper<>();
+        supplierQueryWrapper.in(SupplierDO::getId, supplierIds);
+        List<SupplierDO> supplierDOS = supplierMapper.selectList(supplierQueryWrapper);
+        if (ArrayUtil.isEmpty(supplierDOS)) {
+            throw new ServiceException(400, "供应商不存在");
+        }
+        for (SupplierDO supplierDO : supplierDOS) {
+            supplierMap.put(supplierDO.getId(), supplierDO);
+        }
+    }
+
+    /**
+     * 校验数据 初始化校验，不查询数据库
+     *
+     * @param list        数据
+     * @param userIds     用户ID
+     * @param supplierIds 供应商ID
+     */
+    private static void checkInitData(List<PurchaseOrderImportVO> list, List<Long> userIds, List<Long> supplierIds) {
+        for (int i = 0; i < list.size(); i++) {
+            int index = i + 1;
+            PurchaseOrderImportVO purchaseOrderImportVO = list.get(i);
+            //采购名称、供应商、采购人、状态不能为空
+            if (StrUtil.isEmpty(purchaseOrderImportVO.getName())) {
+                throw new ServiceException(400, StrUtil.format("第{}行采购名称不能为空", index));
+            }
+            if (ObjUtil.isNull(purchaseOrderImportVO.getSupplierId())) {
+                throw new ServiceException(400, StrUtil.format("第{}行供应商ID不能为空", index));
+            }
+            if (ObjUtil.isNull(purchaseOrderImportVO.getPurchaseUserId())) {
+                throw new ServiceException(400, StrUtil.format("第{}行采购人ID不能为空", index));
+            }
+            if (StrUtil.isEmpty(purchaseOrderImportVO.getOrderStatus())) {
+                throw new ServiceException(400, StrUtil.format("第{}行采购状态不能为空", index));
+            }
+            userIds.add(purchaseOrderImportVO.getPurchaseUserId());
+            supplierIds.add(purchaseOrderImportVO.getSupplierId());
+        }
     }
 
     // ==================== 子表（采购明细） ====================

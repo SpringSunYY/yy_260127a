@@ -6,7 +6,6 @@ import jakarta.validation.*;
 import com.lz.module.biz.controller.admin.receiptOrder.vo.*;
 import com.lz.module.biz.dal.dataobject.receiptOrder.ReceiptOrderDO;
 import com.lz.framework.common.pojo.PageResult;
-import com.lz.framework.common.pojo.PageParam;
 
 /**
  * 收款信息 Service 接口
@@ -81,5 +80,5 @@ public interface ReceiptOrderService {
      *
      * @return 收款信息列表
      */
-    ReceiptOrderImportRespVO importReceiptOrderList(List<ReceiptOrderImportExcelVO> list);
+    ReceiptOrderImportRespVO importReceiptOrderList(List<ReceiptOrderImportVO> list);
 }

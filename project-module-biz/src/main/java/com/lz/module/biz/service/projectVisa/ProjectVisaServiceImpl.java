@@ -6,7 +6,7 @@ import cn.hutool.core.util.StrUtil;
 import com.lz.framework.common.exception.ServiceException;
 import com.lz.framework.common.pojo.PageResult;
 import com.lz.framework.common.util.object.BeanUtils;
-import com.lz.module.biz.controller.admin.projectVisa.vo.ProjectVisaImportExcelVO;
+import com.lz.module.biz.controller.admin.projectVisa.vo.ProjectVisaImportVO;
 import com.lz.module.biz.controller.admin.projectVisa.vo.ProjectVisaImportRespVO;
 import com.lz.module.biz.controller.admin.projectVisa.vo.ProjectVisaPageReqVO;
 import com.lz.module.biz.controller.admin.projectVisa.vo.ProjectVisaSaveReqVO;
@@ -126,7 +126,7 @@ public class ProjectVisaServiceImpl implements ProjectVisaService {
     }
 
     @Override
-    public ProjectVisaImportRespVO importProjectVisaList(List<ProjectVisaImportExcelVO> list) {
+    public ProjectVisaImportRespVO importProjectVisaList(List<ProjectVisaImportVO> list) {
         if (CollUtil.isEmpty(list)) {
             throw new ServiceException(400, "导入数据不能为空");
         }
@@ -135,7 +135,7 @@ public class ProjectVisaServiceImpl implements ProjectVisaService {
         //校验数据
         for (int i = 0; i < list.size(); i++) {
             int index = i + 1;
-            ProjectVisaImportExcelVO item = list.get(i);
+            ProjectVisaImportVO item = list.get(i);
             //项目ID、签证名称、工程名称、金额不能为空
             if (ObjUtil.isNull(item.getProjectId())) {
                 throw new ServiceException(400, StrUtil.format("第{}行项目ID不能为空", index));
@@ -166,7 +166,7 @@ public class ProjectVisaServiceImpl implements ProjectVisaService {
         ArrayList<ProjectVisaDO> projectVisaDOS = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             int index = i + 1;
-            ProjectVisaImportExcelVO item = list.get(i);
+            ProjectVisaImportVO item = list.get(i);
             ProjectDO project = projectMap.get(item.getProjectId());
             if (ObjUtil.isNull(project)) {
                 throw new ServiceException(400, StrUtil.format("第{}行数据不能为空", index));

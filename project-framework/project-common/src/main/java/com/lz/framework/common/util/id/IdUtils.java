@@ -22,9 +22,9 @@ public class IdUtils extends IdUtil {
     /**
      * 生成基于时间戳和随机数的 ID
      * 格式：年月日时分秒 (14 位) + 6 位随机数字，共 20 位
-     * 示例：20240101111059123456
+     * 示例：2024010111105912345621
      *
-     * @return 20 位随机 ID
+     * @return 22 位随机 ID
      */
     public static String generateTimeRandomId() {
         // 获取当前时间字符串（14 位）

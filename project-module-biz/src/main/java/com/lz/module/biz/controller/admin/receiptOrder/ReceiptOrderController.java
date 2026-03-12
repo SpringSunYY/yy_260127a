@@ -8,8 +8,6 @@ import com.lz.framework.common.pojo.PageResult;
 import com.lz.framework.common.util.object.BeanUtils;
 import com.lz.framework.excel.core.util.ExcelUtils;
 import com.lz.module.biz.controller.admin.receiptOrder.vo.*;
-import com.lz.module.biz.controller.admin.salary.vo.SalaryImportExcelVO;
-import com.lz.module.biz.controller.admin.salary.vo.SalaryImportRespVO;
 import com.lz.module.biz.dal.dataobject.receiptOrder.ReceiptOrderDO;
 import com.lz.module.biz.enums.BizReceiptMethodEnum;
 import com.lz.module.biz.enums.BizReceiptProjectTypeEnum;
@@ -120,8 +118,8 @@ public class ReceiptOrderController {
     @Operation(summary = "获得导入收款信息模板")
     public void importTemplate(HttpServletResponse response) throws IOException {
         // 手动创建导出 demo
-        List<ReceiptOrderImportExcelVO> list = Collections.singletonList(
-                ReceiptOrderImportExcelVO.builder()
+        List<ReceiptOrderImportVO> list = Collections.singletonList(
+                ReceiptOrderImportVO.builder()
                         .receiptNo("20260110")
                         .receiptType(BizReceiptTypeEnum.BIZ_RECEIPT_TYPE_2.getStatus())
                         .projectType(BizReceiptProjectTypeEnum.BIZ_RECEIPT_PROJECT_TYPE_1.getStatus())
@@ -134,7 +132,7 @@ public class ReceiptOrderController {
                         .isInvoiced(CommonWhetherEnum.COMMON_WHETHER_1.getStatus())
                         .remark("备注").build());
         // 输出
-        ExcelUtils.write(response, "收款信息导入模板.xls", "收款模板", ReceiptOrderImportExcelVO.class, list);
+        ExcelUtils.write(response, "收款信息导入模板.xls", "收款模板", ReceiptOrderImportVO.class, list);
     }
 
     @PostMapping("/import")
@@ -144,7 +142,7 @@ public class ReceiptOrderController {
     })
     @PreAuthorize("@ss.hasPermission('biz:receipt-order:create')")
     public CommonResult<ReceiptOrderImportRespVO> importExcel(@RequestParam("file") MultipartFile file) throws Exception {
-        List<ReceiptOrderImportExcelVO> list = ExcelUtils.read(file, ReceiptOrderImportExcelVO.class);
+        List<ReceiptOrderImportVO> list = ExcelUtils.read(file, ReceiptOrderImportVO.class);
         return success(receiptOrderService.importReceiptOrderList(list));
     }
 

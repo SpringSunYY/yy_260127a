@@ -106,8 +106,8 @@ public class ProjectVisaController {
     @Operation(summary = "获得导入项目签证信息模板")
     public void importTemplate(HttpServletResponse response) throws IOException {
         // 手动创建导出 demo
-        List<ProjectVisaImportExcelVO> list = Collections.singletonList(
-                ProjectVisaImportExcelVO.builder()
+        List<ProjectVisaImportVO> list = Collections.singletonList(
+                ProjectVisaImportVO.builder()
                         .projectId(20260110L)
                         .projectName("项目名称")
                         .engineeringName("工程名称")
@@ -117,7 +117,7 @@ public class ProjectVisaController {
                         .amount(BigDecimal.TEN)
                         .remark("备注").build());
         // 输出
-        ExcelUtils.write(response, "项目签证信息导入模板.xls", "项目签证模板", ProjectVisaImportExcelVO.class, list);
+        ExcelUtils.write(response, "项目签证信息导入模板.xls", "项目签证模板", ProjectVisaImportVO.class, list);
     }
 
     @PostMapping("/import")
@@ -127,7 +127,7 @@ public class ProjectVisaController {
     })
     @PreAuthorize("@ss.hasPermission('biz:project-visa:create')")
     public CommonResult<ProjectVisaImportRespVO> importExcel(@RequestParam("file") MultipartFile file) throws Exception {
-        List<ProjectVisaImportExcelVO> list = ExcelUtils.read(file, ProjectVisaImportExcelVO.class);
+        List<ProjectVisaImportVO> list = ExcelUtils.read(file, ProjectVisaImportVO.class);
         return success(projectVisaService.importProjectVisaList(list));
     }
 }

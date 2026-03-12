@@ -5,7 +5,6 @@ import jakarta.validation.*;
 import com.lz.module.biz.controller.admin.projectVisa.vo.*;
 import com.lz.module.biz.dal.dataobject.projectVisa.ProjectVisaDO;
 import com.lz.framework.common.pojo.PageResult;
-import com.lz.framework.common.pojo.PageParam;
 
 /**
  * 项目签证 Service 接口
@@ -65,5 +64,5 @@ public interface ProjectVisaService {
      * @param list 导入项目签证列表
      * @return 导入结果
      */
-    ProjectVisaImportRespVO importProjectVisaList(List<ProjectVisaImportExcelVO> list);
+    ProjectVisaImportRespVO importProjectVisaList(List<ProjectVisaImportVO> list);
 }

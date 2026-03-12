@@ -18,6 +18,7 @@ import {
   getPurchaseOrderPage,
 } from '#/api/biz/purchaseOrder';
 import { $t } from '#/locales';
+import ImportForm from '#/views/biz/purchaseOrder/modules/import-form.vue';
 
 import { useGridColumns, useGridFormSchema } from './data';
 import Form from './modules/form.vue';
@@ -26,6 +27,16 @@ const [FormModal, formModalApi] = useVbenModal({
   connectedComponent: Form,
   destroyOnClose: true,
 });
+
+const [ImportModal, importModalApi] = useVbenModal({
+  connectedComponent: ImportForm,
+  destroyOnClose: true,
+});
+
+function handleImport() {
+  importModalApi.open();
+}
+
 const totalAmount = ref<number>(0);
 
 /** 刷新表格 */
@@ -135,6 +146,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
 <template>
   <Page auto-content-height>
     <FormModal @success="onRefresh" />
+    <ImportModal @success="onRefresh" />
 
     <Grid table-title="采购信息列表">
       <template #table-title>
@@ -170,6 +182,13 @@ const [Grid, gridApi] = useVbenVxeGrid({
               disabled: isEmpty(checkedIds),
               auth: ['biz:purchase-order:delete'],
               onClick: handleDeleteBatch,
+            },
+            {
+              label: $t('ui.actionTitle.import', ['采购']),
+              type: 'primary',
+              icon: ACTION_ICON.UPLOAD,
+              auth: ['biz:purchase-order:create'],
+              onClick: handleImport,
             },
           ]"
         />

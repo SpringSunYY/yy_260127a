@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.lz.framework.common.exception.ServiceException;
 import com.lz.framework.common.pojo.PageResult;
 import com.lz.framework.common.util.object.BeanUtils;
-import com.lz.module.biz.controller.admin.receiptOrder.vo.ReceiptOrderImportExcelVO;
+import com.lz.module.biz.controller.admin.receiptOrder.vo.ReceiptOrderImportVO;
 import com.lz.module.biz.controller.admin.receiptOrder.vo.ReceiptOrderImportRespVO;
 import com.lz.module.biz.controller.admin.receiptOrder.vo.ReceiptOrderPageReqVO;
 import com.lz.module.biz.controller.admin.receiptOrder.vo.ReceiptOrderSaveReqVO;
@@ -176,14 +176,14 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
     }
 
     @Override
-    public ReceiptOrderImportRespVO importReceiptOrderList(List<ReceiptOrderImportExcelVO> list) {
+    public ReceiptOrderImportRespVO importReceiptOrderList(List<ReceiptOrderImportVO> list) {
         if (ArrayUtil.isEmpty(list)) {
             throw new ServiceException(400, "导入数据不能为空");
         }
         //校验数据
         for (int i = 0; i < list.size(); i++) {
             //校验数据,收款单号、收款类型、收款方、收款金额、收款方式、是否开票
-            ReceiptOrderImportExcelVO orderImportExcelVO = list.get(i);
+            ReceiptOrderImportVO orderImportExcelVO = list.get(i);
             int index = i + 1;
             if (StrUtil.isBlank(orderImportExcelVO.getReceiptNo())) {
                 throw new ServiceException(400, "第" + index + "行收款单号不能为空");
@@ -207,7 +207,7 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
         //查询到所有的项目，其他的和工程的
         List<Long> projectIds = new ArrayList<>();
         List<Long> projectOtherIds = new ArrayList<>();
-        for (ReceiptOrderImportExcelVO item : list) {
+        for (ReceiptOrderImportVO item : list) {
             if (ObjUtil.isNull(item.getProjectId())) {
                 continue;
             }
@@ -240,7 +240,7 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
         ArrayList<ReceiptOrderDO> dos = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             ReceiptOrderDO receiptOrderDO = new ReceiptOrderDO();
-            ReceiptOrderImportExcelVO orderImportExcelVO = list.get(i);
+            ReceiptOrderImportVO orderImportExcelVO = list.get(i);
             BeanUtils.copyProperties(orderImportExcelVO, receiptOrderDO);
             //如果有项目
             if (ObjUtil.isNull(orderImportExcelVO.getProjectId())) {

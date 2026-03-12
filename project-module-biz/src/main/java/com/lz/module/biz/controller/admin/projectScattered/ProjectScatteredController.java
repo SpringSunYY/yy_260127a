@@ -1,12 +1,7 @@
 package com.lz.module.biz.controller.admin.projectScattered;
 
 import com.lz.framework.common.enums.CommonWhetherEnum;
-import com.lz.module.biz.controller.admin.project.vo.ProjectImportExcelVO;
-import com.lz.module.biz.controller.admin.project.vo.ProjectImportRespVO;
-import com.lz.module.biz.enums.BizProjectEngineeringTypeEnum;
-import com.lz.module.biz.enums.BizProjectIsPmcEnum;
 import com.lz.module.biz.enums.BizProjectProgressEnum;
-import com.lz.module.biz.enums.BizProjectTypeEnum;
 import io.swagger.v3.oas.annotations.Parameters;
 import org.springframework.web.bind.annotation.*;
 import jakarta.annotation.Resource;
@@ -16,11 +11,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Operation;
 
-import jakarta.validation.constraints.*;
 import jakarta.validation.*;
 import jakarta.servlet.http.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.io.IOException;
@@ -117,8 +110,8 @@ public class ProjectScatteredController {
     @Operation(summary = "获得导入其他工程信息模板")
     public void importTemplate(HttpServletResponse response) throws IOException {
         // 手动创建导出 demo
-        List<ProjectScatteredImportExcelVO> list = Collections.singletonList(
-                ProjectScatteredImportExcelVO.builder()
+        List<ProjectScatteredImportVO> list = Collections.singletonList(
+                ProjectScatteredImportVO.builder()
                         .projectId(20260110L)
                         .projectName("项目名称")
                         .scatteredName("工程名称")
@@ -128,7 +121,7 @@ public class ProjectScatteredController {
                         .verification(CommonWhetherEnum.COMMON_WHETHER_1.getStatus())
                         .remark("备注").build());
         // 输出
-        ExcelUtils.write(response, "其他工程信息导入模板.xls", "其他工程模板", ProjectScatteredImportExcelVO.class, list);
+        ExcelUtils.write(response, "其他工程信息导入模板.xls", "其他工程模板", ProjectScatteredImportVO.class, list);
     }
 
     @PostMapping("/import")
@@ -138,7 +131,7 @@ public class ProjectScatteredController {
     })
     @PreAuthorize("@ss.hasPermission('biz:project:create')")
     public CommonResult<ProjectScatteredImportRespVO> importExcel(@RequestParam("file") MultipartFile file) throws Exception {
-        List<ProjectScatteredImportExcelVO> list = ExcelUtils.read(file, ProjectScatteredImportExcelVO.class);
+        List<ProjectScatteredImportVO> list = ExcelUtils.read(file, ProjectScatteredImportVO.class);
         return success(projectScatteredService.importProjectScatteredList(list));
     }
 }

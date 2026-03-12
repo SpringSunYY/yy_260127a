@@ -5,7 +5,6 @@ import jakarta.validation.*;
 import com.lz.module.biz.controller.admin.projectScattered.vo.*;
 import com.lz.module.biz.dal.dataobject.projectScattered.ProjectScatteredDO;
 import com.lz.framework.common.pojo.PageResult;
-import com.lz.framework.common.pojo.PageParam;
 
 /**
  * 零散工程 Service 接口
@@ -65,5 +64,5 @@ public interface ProjectScatteredService {
      * @param list           导入列表
      * @return 导入结果
      */
-    ProjectScatteredImportRespVO importProjectScatteredList(List<ProjectScatteredImportExcelVO> list);
+    ProjectScatteredImportRespVO importProjectScatteredList(List<ProjectScatteredImportVO> list);
 }

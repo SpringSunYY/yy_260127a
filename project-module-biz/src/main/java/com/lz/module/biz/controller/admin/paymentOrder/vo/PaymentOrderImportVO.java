@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = false)
-public class PaymentOrderImportExcelVO {
+public class PaymentOrderImportVO {
 
     @Schema(description = "付款单号", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty(value = "付款单号")

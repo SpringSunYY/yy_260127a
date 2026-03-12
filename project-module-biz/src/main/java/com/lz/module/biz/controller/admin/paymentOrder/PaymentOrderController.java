@@ -118,8 +118,8 @@ public class PaymentOrderController {
     @Operation(summary = "获得导入收款信息模板")
     public void importTemplate(HttpServletResponse response) throws IOException {
         // 手动创建导出 demo
-        List<PaymentOrderImportExcelVO> list = Collections.singletonList(
-                PaymentOrderImportExcelVO.builder()
+        List<PaymentOrderImportVO> list = Collections.singletonList(
+                PaymentOrderImportVO.builder()
                         .paymentNo("20260110")
                         .projectType(BizReceiptProjectTypeEnum.BIZ_RECEIPT_PROJECT_TYPE_1.getStatus())
                         .projectId(1L)
@@ -134,7 +134,7 @@ public class PaymentOrderController {
                         .isInvoiced(CommonWhetherEnum.COMMON_WHETHER_1.getStatus())
                         .remark("备注").build());
         // 输出
-        ExcelUtils.write(response, "付款信息导入模板.xls", "付款模板", PaymentOrderImportExcelVO.class, list);
+        ExcelUtils.write(response, "付款信息导入模板.xls", "付款模板", PaymentOrderImportVO.class, list);
     }
 
     @PostMapping("/import")
@@ -144,7 +144,7 @@ public class PaymentOrderController {
     })
     @PreAuthorize("@ss.hasPermission('biz:payment-order:create')")
     public CommonResult<PaymentOrderImportRespVO> importExcel(@RequestParam("file") MultipartFile file) throws Exception {
-        List<PaymentOrderImportExcelVO> list = ExcelUtils.read(file, PaymentOrderImportExcelVO.class);
+        List<PaymentOrderImportVO> list = ExcelUtils.read(file, PaymentOrderImportVO.class);
         return success(paymentOrderService.importPaymentOrderList(list));
     }
 

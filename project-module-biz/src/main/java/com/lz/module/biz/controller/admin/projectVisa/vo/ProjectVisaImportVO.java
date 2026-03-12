@@ -1,6 +1,5 @@
 package com.lz.module.biz.controller.admin.projectVisa.vo;
 
-import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -20,7 +19,7 @@ import static com.lz.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = false)
-public class ProjectVisaImportExcelVO {
+public class ProjectVisaImportVO {
 
 
     @Schema(description = "项目ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "24280")

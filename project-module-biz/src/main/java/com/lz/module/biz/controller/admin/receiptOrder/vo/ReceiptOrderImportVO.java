@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = false) // 设置 chain = false，避免用户导入有问题
-public class ReceiptOrderImportExcelVO {
+public class ReceiptOrderImportVO {
 
     @Schema(description = "收款单号", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("收款单号")

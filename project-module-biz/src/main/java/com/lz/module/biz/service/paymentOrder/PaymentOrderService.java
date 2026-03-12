@@ -1,7 +1,7 @@
 package com.lz.module.biz.service.paymentOrder;
 
 import com.lz.framework.common.pojo.PageResult;
-import com.lz.module.biz.controller.admin.paymentOrder.vo.PaymentOrderImportExcelVO;
+import com.lz.module.biz.controller.admin.paymentOrder.vo.PaymentOrderImportVO;
 import com.lz.module.biz.controller.admin.paymentOrder.vo.PaymentOrderImportRespVO;
 import com.lz.module.biz.controller.admin.paymentOrder.vo.PaymentOrderPageReqVO;
 import com.lz.module.biz.controller.admin.paymentOrder.vo.PaymentOrderSaveReqVO;
@@ -72,5 +72,5 @@ public interface PaymentOrderService {
      */
     BigDecimal getPaymentOrderAmount(@Valid PaymentOrderPageReqVO pageReqVO);
 
-    PaymentOrderImportRespVO importPaymentOrderList(List<PaymentOrderImportExcelVO> list);
+    PaymentOrderImportRespVO importPaymentOrderList(List<PaymentOrderImportVO> list);
 }

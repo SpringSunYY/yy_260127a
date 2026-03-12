@@ -86,6 +86,18 @@ export function exportPurchaseOrder(params: any) {
   return requestClient.download('/biz/purchase-order/export-excel', params);
 }
 
+/** 导入采购信息模版 */
+export function importPurchaseOrderTemplate() {
+  return requestClient.download('/biz/purchase-order/get-import-template');
+}
+
+/** 导入采购信息 */
+export function importPurchaseOrder(file: File) {
+  return requestClient.upload('/biz/purchase-order/import', {
+    file,
+  });
+}
+
 // ==================== 子表（采购明细） ====================
 
 /** 获得采购明细列表 */

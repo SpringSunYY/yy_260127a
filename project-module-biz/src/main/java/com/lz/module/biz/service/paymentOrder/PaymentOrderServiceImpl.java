@@ -6,7 +6,7 @@ import cn.hutool.core.util.StrUtil;
 import com.lz.framework.common.exception.ServiceException;
 import com.lz.framework.common.pojo.PageResult;
 import com.lz.framework.common.util.object.BeanUtils;
-import com.lz.module.biz.controller.admin.paymentOrder.vo.PaymentOrderImportExcelVO;
+import com.lz.module.biz.controller.admin.paymentOrder.vo.PaymentOrderImportVO;
 import com.lz.module.biz.controller.admin.paymentOrder.vo.PaymentOrderImportRespVO;
 import com.lz.module.biz.controller.admin.paymentOrder.vo.PaymentOrderPageReqVO;
 import com.lz.module.biz.controller.admin.paymentOrder.vo.PaymentOrderSaveReqVO;
@@ -180,7 +180,7 @@ public class PaymentOrderServiceImpl implements PaymentOrderService {
     }
 
     @Override
-    public PaymentOrderImportRespVO importPaymentOrderList(List<PaymentOrderImportExcelVO> list) {
+    public PaymentOrderImportRespVO importPaymentOrderList(List<PaymentOrderImportVO> list) {
         //首先校验
         judgeImportData(list);
         //查询到对应的数据库数据
@@ -192,19 +192,19 @@ public class PaymentOrderServiceImpl implements PaymentOrderService {
         return PaymentOrderImportRespVO.builder().message("导入成功，成功导入" + paymentOrderDOS.size() + "条数据").build();
     }
 
-    private List<PaymentOrderDO> initImportData(List<PaymentOrderImportExcelVO> list, Map<String, ProjectCommonDto> projectMap, Map<String, PaymentOrderPayeeDto> payeeMap) {
+    private List<PaymentOrderDO> initImportData(List<PaymentOrderImportVO> list, Map<String, ProjectCommonDto> projectMap, Map<String, PaymentOrderPayeeDto> payeeMap) {
         List<PaymentOrderDO> paymentOrderDOList = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             int index = i + 1;
             PaymentOrderDO paymentOrderDO = new PaymentOrderDO();
-            PaymentOrderImportExcelVO paymentOrderImportExcelVO = list.get(i);
-            BeanUtils.copyProperties(paymentOrderImportExcelVO, paymentOrderDO);
+            PaymentOrderImportVO paymentOrderImportVO = list.get(i);
+            BeanUtils.copyProperties(paymentOrderImportVO, paymentOrderDO);
             //如果有项目
-            if (ObjUtil.isNotNull(paymentOrderImportExcelVO.getProjectId())) {
-                if (StrUtil.isEmpty(paymentOrderImportExcelVO.getProjectType())) {
+            if (ObjUtil.isNotNull(paymentOrderImportVO.getProjectId())) {
+                if (StrUtil.isEmpty(paymentOrderImportVO.getProjectType())) {
                     throw new ServiceException(400, "第" + index + "行项目类型不能为空，因为填写了项目ID");
                 }
-                ProjectCommonDto projectCommonDto = projectMap.get(paymentOrderImportExcelVO.getProjectType() + "-" + paymentOrderImportExcelVO.getProjectId());
+                ProjectCommonDto projectCommonDto = projectMap.get(paymentOrderImportVO.getProjectType() + "-" + paymentOrderImportVO.getProjectId());
                 if (ObjUtil.isNull(projectCommonDto)) {
                     throw new ServiceException(400, "第" + index + "行项目不存在,请检查项目编号与类型是否对应");
                 }
@@ -212,11 +212,11 @@ public class PaymentOrderServiceImpl implements PaymentOrderService {
                 paymentOrderDO.setProjectName(projectCommonDto.getName());
             }
             //如果有收款对象
-            if (ObjUtil.isNotNull(paymentOrderImportExcelVO.getPayeeId())) {
-                if (StrUtil.isEmpty(paymentOrderImportExcelVO.getPayeeType())) {
+            if (ObjUtil.isNotNull(paymentOrderImportVO.getPayeeId())) {
+                if (StrUtil.isEmpty(paymentOrderImportVO.getPayeeType())) {
                     throw new ServiceException(400, "第" + index + "行收款对象类型不能为空，因为填写了收款对象ID");
                 }
-                PaymentOrderPayeeDto paymentOrderPayeeDto = payeeMap.get(paymentOrderImportExcelVO.getPayeeType() + "-" + paymentOrderImportExcelVO.getPayeeId());
+                PaymentOrderPayeeDto paymentOrderPayeeDto = payeeMap.get(paymentOrderImportVO.getPayeeType() + "-" + paymentOrderImportVO.getPayeeId());
                 if (ObjUtil.isNull(paymentOrderPayeeDto)) {
                     throw new ServiceException(400, "第" + index + "行收款对象不存在,请检查收款对象编号与类型是否对应");
                 }
@@ -228,11 +228,11 @@ public class PaymentOrderServiceImpl implements PaymentOrderService {
         return paymentOrderDOList;
     }
 
-    private Map<String, PaymentOrderPayeeDto> initImportPayeeData(List<PaymentOrderImportExcelVO> list) {
+    private Map<String, PaymentOrderPayeeDto> initImportPayeeData(List<PaymentOrderImportVO> list) {
         List<Long> customerIds = new ArrayList<>();
         List<Long> supplierIds = new ArrayList<>();
         List<Long> workerIds = new ArrayList<>();
-        for (PaymentOrderImportExcelVO item : list) {
+        for (PaymentOrderImportVO item : list) {
             if (StrUtil.isEmpty(item.getPayeeType())) {
                 continue;
             }
@@ -279,11 +279,11 @@ public class PaymentOrderServiceImpl implements PaymentOrderService {
         return payeeMap;
     }
 
-    private Map<String, ProjectCommonDto> initImportProjectData(List<PaymentOrderImportExcelVO> list) {
+    private Map<String, ProjectCommonDto> initImportProjectData(List<PaymentOrderImportVO> list) {
         //查询到所有的项目，其他的和工程的
         List<Long> projectIds = new ArrayList<>();
         List<Long> projectOtherIds = new ArrayList<>();
-        for (PaymentOrderImportExcelVO item : list) {
+        for (PaymentOrderImportVO item : list) {
             if (ObjUtil.isNull(item.getProjectId())) {
                 continue;
             }
@@ -315,13 +315,13 @@ public class PaymentOrderServiceImpl implements PaymentOrderService {
         return projectMap;
     }
 
-    private static void judgeImportData(List<PaymentOrderImportExcelVO> list) {
+    private static void judgeImportData(List<PaymentOrderImportVO> list) {
         if (ArrayUtil.isEmpty(list)) {
             throw new ServiceException(400, "导入数据不能为空");
         }
         for (int i = 0; i < list.size(); i++) {
             //是否开票、付款方式、付款单号、付款金额、付款时间、收款对象、是否开票不能为空
-            PaymentOrderImportExcelVO orderImportExcelVO = list.get(i);
+            PaymentOrderImportVO orderImportExcelVO = list.get(i);
             int index = i + 1;
             if (StrUtil.isEmpty(orderImportExcelVO.getIsInvoiced())) {
                 throw new ServiceException(400, "第" + index + "行数据，是否开票不能为空");
