@@ -18,6 +18,7 @@ import {
   getPurchaseOrderPage,
 } from '#/api/biz/purchaseOrder';
 import { $t } from '#/locales';
+import ImportDetailForm from '#/views/biz/purchaseOrder/modules/import-detail-form.vue';
 import ImportForm from '#/views/biz/purchaseOrder/modules/import-form.vue';
 
 import { useGridColumns, useGridFormSchema } from './data';
@@ -35,6 +36,15 @@ const [ImportModal, importModalApi] = useVbenModal({
 
 function handleImport() {
   importModalApi.open();
+}
+
+const [ImportDetailModal, importDetailModalApi] = useVbenModal({
+  connectedComponent: ImportDetailForm,
+  destroyOnClose: true,
+});
+
+function handleImportDetail() {
+  importDetailModalApi.open();
 }
 
 const totalAmount = ref<number>(0);
@@ -91,6 +101,7 @@ async function handleDeleteBatch() {
 }
 
 const checkedIds = ref<number[]>([]);
+
 function handleRowCheckboxChange({
   records,
 }: {
@@ -147,6 +158,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
   <Page auto-content-height>
     <FormModal @success="onRefresh" />
     <ImportModal @success="onRefresh" />
+    <ImportDetailModal @success="onRefresh" />
 
     <Grid table-title="采购信息列表">
       <template #table-title>
@@ -189,6 +201,13 @@ const [Grid, gridApi] = useVbenVxeGrid({
               icon: ACTION_ICON.UPLOAD,
               auth: ['biz:purchase-order:create'],
               onClick: handleImport,
+            },
+            {
+              label: '导入明细',
+              type: 'primary',
+              icon: ACTION_ICON.UPLOAD,
+              auth: ['biz:purchase-order:create'],
+              onClick: handleImportDetail,
             },
           ]"
         />

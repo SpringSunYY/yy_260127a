@@ -361,15 +361,28 @@ export function usePurchaseOrderDetailGridEditColumns(): VxeTableGridOptions<Pur
   ];
 }
 
-/** 采购信息签证导入的表单 */
+/** 采购信息导入的表单 */
 export function purchaseOrderImportFormSchema(): VbenFormSchema[] {
   return [
     {
       fieldName: 'file',
-      label: '采购签证信息',
+      label: '采购信息',
       component: 'Upload',
       rules: 'required',
       help: '仅允许导入 xls、xlsx 格式文件，导入时如果有总金额会更新供应商应付款金额',
+    },
+  ];
+}
+
+/** 采购明细信息导入的表单 */
+export function purchaseOrderDetailImportFormSchema(): VbenFormSchema[] {
+  return [
+    {
+      fieldName: 'file',
+      label: '采购明细信息',
+      component: 'Upload',
+      rules: 'required',
+      help: '仅允许导入 xls、xlsx 格式文件，导入时会重新计算总金额并更新供应商应付款金额',
     },
   ];
 }

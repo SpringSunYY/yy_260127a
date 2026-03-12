@@ -85,4 +85,12 @@ public interface PurchaseOrderService {
      * @return 采购明细列表
      */
     List<PurchaseOrderDetailDO> getPurchaseOrderDetailListByPurchaseId(Long purchaseId);
+
+    /**
+     * 批量导入采购明细
+     *
+     * @param list 采购明细列表
+     * @return 批量导入结果
+     */
+    PurchaseOrderImportRespVO importPurchaseOrderDetailList(List<PurchaseOrderDetailImportVo> list);
 }

@@ -10,15 +10,14 @@ import com.lz.framework.common.exception.ServiceException;
 import com.lz.framework.common.pojo.PageResult;
 import com.lz.framework.common.util.id.IdUtils;
 import com.lz.framework.common.util.object.BeanUtils;
-import com.lz.module.biz.controller.admin.purchaseOrder.vo.PurchaseOrderImportRespVO;
-import com.lz.module.biz.controller.admin.purchaseOrder.vo.PurchaseOrderImportVO;
-import com.lz.module.biz.controller.admin.purchaseOrder.vo.PurchaseOrderPageReqVO;
-import com.lz.module.biz.controller.admin.purchaseOrder.vo.PurchaseOrderSaveReqVO;
+import com.lz.module.biz.controller.admin.purchaseOrder.vo.*;
 import com.lz.module.biz.dal.dataobject.purchaseOrder.PurchaseOrderDO;
 import com.lz.module.biz.dal.dataobject.purchaseOrderDetail.PurchaseOrderDetailDO;
+import com.lz.module.biz.dal.dataobject.rawMaterials.RawMaterialsDO;
 import com.lz.module.biz.dal.dataobject.supplier.SupplierDO;
 import com.lz.module.biz.dal.mysql.purchaseOrder.PurchaseOrderMapper;
 import com.lz.module.biz.dal.mysql.purchaseOrderDetail.PurchaseOrderDetailMapper;
+import com.lz.module.biz.dal.mysql.rawMaterials.RawMaterialsMapper;
 import com.lz.module.biz.dal.mysql.supplier.SupplierMapper;
 import com.lz.module.biz.service.supplier.SupplierService;
 import com.lz.module.system.dal.dataobject.user.AdminUserDO;
@@ -30,10 +29,12 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.lz.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static com.lz.framework.common.util.collection.CollectionUtils.convertList;
@@ -66,6 +67,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     @Resource
     private AdminUserMapper adminUserMapper;
+
+    @Resource
+    private RawMaterialsMapper rawMaterialsMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -110,7 +114,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             return supplier;
         }
         for (PurchaseOrderDetailDO detail : purchaseOrderDetails) {
-
             BigDecimal quantity = detail.getQuantity();
             BigDecimal unitPrice = detail.getUnitPrice();
             if (ObjUtil.isNull(quantity) || ObjUtil.isNull(unitPrice)) {
@@ -302,6 +305,151 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     @Override
     public List<PurchaseOrderDetailDO> getPurchaseOrderDetailListByPurchaseId(Long purchaseId) {
         return purchaseOrderDetailMapper.selectListByPurchaseId(purchaseId);
+    }
+
+    @Override
+    public PurchaseOrderImportRespVO importPurchaseOrderDetailList(List<PurchaseOrderDetailImportVo> list) {
+        if (CollUtil.isEmpty(list)) {
+            throw new ServiceException(400, "导入数据不能为空");
+        }
+        List<Long> purchaseIds = new ArrayList<>();
+        List<Long> materialIds = new ArrayList<>();
+        //初始化数据
+        checkInitPurchaseOrderDetail(list, purchaseIds, materialIds);
+        Map<Long, PurchaseOrderDO> purchaseOrderMap = new HashMap<>();
+        Map<Long, RawMaterialsDO> materialMap = new HashMap<>();
+        Map<Long, List<PurchaseOrderDetailDO>> detailMap = new HashMap<>();
+        List<PurchaseOrderDO> purchaseOrderDetailDos = getPurchaseOrderDetailDos(list, purchaseIds, purchaseOrderMap, materialIds, materialMap, detailMap);
+        //拿到供应商信息
+        LambdaQueryWrapper<SupplierDO> queryWrapper = new LambdaQueryWrapper<>();
+        List<Long> supplierIds = purchaseOrderDetailDos.stream()
+                .map(PurchaseOrderDO::getSupplierId)
+                .collect(Collectors.toList());
+        queryWrapper.in(SupplierDO::getId, supplierIds);
+        List<SupplierDO> supplierDOS = supplierMapper.selectList(queryWrapper);
+        Map<Long, BigDecimal> supplierAmountMap = new HashMap<>();
+        List<PurchaseOrderDetailDO> purchaseOrderDetailDOS = new ArrayList<>();
+        //遍历采购信息，拿到数据库内信息，以及当前总的金额数量
+        getSupplierAmountAndDetailDo(purchaseOrderDetailDos, detailMap, supplierAmountMap, purchaseOrderDetailDOS);
+        //执行数据库操作
+        transactionTemplate.executeWithoutResult(status->{
+            purchaseOrderDetailMapper.insertOrUpdate(purchaseOrderDetailDOS);
+            purchaseOrderMapper.insertOrUpdate(purchaseOrderDetailDos);
+            supplierDOS.forEach(supplierDO -> {
+                supplierDO.setPayableAmount(supplierDO.getPayableAmount().add(supplierAmountMap.get(supplierDO.getId())));
+                supplierService.updateSupplierAmount(supplierDO);
+            });
+        });
+        return PurchaseOrderImportRespVO.builder()
+                .message(StrUtil.format("成功导入 {} 个采购信息", list.size()))
+                .build();
+    }
+
+    private static void getSupplierAmountAndDetailDo(List<PurchaseOrderDO> purchaseOrderDetailDos, Map<Long, List<PurchaseOrderDetailDO>> detailMap,
+                                                     Map<Long, BigDecimal> supplierAmountMap,List<PurchaseOrderDetailDO> purchaseOrderDetailDOS) {
+        for (PurchaseOrderDO purchaseOrderDO : purchaseOrderDetailDos) {
+            BigDecimal totalAmountDb = purchaseOrderDO.getTotalAmount();
+            List<PurchaseOrderDetailDO> orderDetailDOS = detailMap.get(purchaseOrderDO.getId());
+            BigDecimal currentTotalAmount = new BigDecimal(BigInteger.ZERO);
+            BigDecimal currentTotalQuantity = new BigDecimal(BigInteger.ZERO);
+            for (PurchaseOrderDetailDO purchaseOrderDetailDO : orderDetailDOS) {
+                BigDecimal unitPrice = purchaseOrderDetailDO.getUnitPrice();
+                BigDecimal quantity = purchaseOrderDetailDO.getQuantity();
+                BigDecimal totalPrice = unitPrice.multiply(quantity);
+                currentTotalAmount = currentTotalAmount.add(totalPrice);
+                currentTotalQuantity = currentTotalQuantity.add(quantity);
+            }
+            purchaseOrderDO.setTotalAmount(currentTotalAmount);
+            purchaseOrderDO.setTotalQuantity(currentTotalQuantity);
+            //拿到供应商新的金额
+            BigDecimal newSupplierAmount = currentTotalAmount.subtract(totalAmountDb);
+            if (supplierAmountMap.containsKey(purchaseOrderDO.getSupplierId())) {
+                supplierAmountMap.computeIfPresent(purchaseOrderDO.getSupplierId(), (k, bigDecimal) -> bigDecimal.add(newSupplierAmount));
+            } else {
+                supplierAmountMap.put(purchaseOrderDO.getSupplierId(), newSupplierAmount);
+            }
+            purchaseOrderDetailDOS.addAll(orderDetailDOS);
+        }
+    }
+
+    private List<PurchaseOrderDO> getPurchaseOrderDetailDos(List<PurchaseOrderDetailImportVo> list,
+                                                            List<Long> purchaseIds,
+                                                            Map<Long, PurchaseOrderDO> purchaseOrderMap,
+                                                            List<Long> materialIds,
+                                                            Map<Long, RawMaterialsDO> materialMap,
+                                                            Map<Long, List<PurchaseOrderDetailDO>> detailMap) {
+        //查询材料信息
+        LambdaQueryWrapper<RawMaterialsDO> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(RawMaterialsDO::getId, materialIds);
+        List<RawMaterialsDO> rawMaterialsDOS = rawMaterialsMapper.selectList(queryWrapper);
+        if (ArrayUtil.isEmpty(rawMaterialsDOS)) {
+            throw new ServiceException(400, "材料不存在");
+        }
+        for (RawMaterialsDO rawMaterialsDO : rawMaterialsDOS) {
+            materialMap.put(rawMaterialsDO.getId(), rawMaterialsDO);
+        }
+        LambdaQueryWrapper<PurchaseOrderDO> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(PurchaseOrderDO::getId, purchaseIds);
+        List<PurchaseOrderDO> purchaseOrderDOS = purchaseOrderMapper.selectList(wrapper);
+        for (PurchaseOrderDO purchaseOrderDO : purchaseOrderDOS) {
+            purchaseOrderMap.put(purchaseOrderDO.getId(), purchaseOrderDO);
+        }
+        //查询原有数据库拥有的采购明细
+        for (PurchaseOrderDO purchaseOrderDO : purchaseOrderDOS) {
+            List<PurchaseOrderDetailDO> detailDOS = purchaseOrderDetailMapper.selectListByPurchaseId(purchaseOrderDO.getId());
+            if (ArrayUtil.isNotEmpty(detailDOS)) {
+                detailMap.put(purchaseOrderDO.getId(), detailDOS);
+            }
+        }
+        for (int i = 0; i < list.size(); i++) {
+            int index = i + 1;
+            PurchaseOrderDetailImportVo purchaseOrderDetailImportVO = list.get(i);
+            PurchaseOrderDO purchaseOrderDO = purchaseOrderMap.get(purchaseOrderDetailImportVO.getPurchaseId());
+            RawMaterialsDO rawMaterialsDO = materialMap.get(purchaseOrderDetailImportVO.getMaterialId());
+            if (ObjUtil.isNull(purchaseOrderDO)) {
+                throw new ServiceException(400, StrUtil.format("第{}行采购单ID不存在", index));
+            }
+            if (ObjUtil.isNull(rawMaterialsDO)) {
+                throw new ServiceException(400, StrUtil.format("第{}行材料ID不存在", index));
+            }
+            PurchaseOrderDetailDO detailDO = BeanUtils.toBean(purchaseOrderDetailImportVO, PurchaseOrderDetailDO.class);
+            detailDO.setOrderNo(purchaseOrderDO.getOrderNo());
+            detailDO.setMaterialName(rawMaterialsDO.getMaterialName());
+            detailDO.setMaterialType(rawMaterialsDO.getMaterialType());
+            List<PurchaseOrderDetailDO> purchaseOrderDetailDOS = detailMap.get(purchaseOrderDO.getId());
+            if (ArrayUtil.isNotEmpty(purchaseOrderDetailDOS)) {
+                purchaseOrderDetailDOS.add(detailDO);
+            } else {
+                List<PurchaseOrderDetailDO> detailDOS = new ArrayList<>();
+                detailDOS.add(detailDO);
+                detailMap.put(purchaseOrderDO.getId(), detailDOS);
+            }
+        }
+        return purchaseOrderDOS;
+
+    }
+
+    private static void checkInitPurchaseOrderDetail(List<PurchaseOrderDetailImportVo> list, List<Long> purchaseIds, List<Long> materialIds) {
+        for (int i = 0; i < list.size(); i++) {
+            int index = i + 1;
+            PurchaseOrderDetailImportVo purchaseOrderDetailImportVO = list.get(i);
+            //采购ID、材料Id、数量、单价不能为空
+            if (ObjUtil.isNull(purchaseOrderDetailImportVO.getPurchaseId())) {
+                throw new ServiceException(400, StrUtil.format("第{}行采购ID不能为空", index));
+            }
+            if (ObjUtil.isNull(purchaseOrderDetailImportVO.getMaterialId())) {
+                throw new ServiceException(400, StrUtil.format("第{}行材料ID不能为空", index));
+            }
+            if (ObjUtil.isNull(purchaseOrderDetailImportVO.getQuantity())) {
+                throw new ServiceException(400, StrUtil.format("第{}行数量不能为空", index));
+            }
+            if (ObjUtil.isNull(purchaseOrderDetailImportVO.getUnitPrice())) {
+                throw new ServiceException(400, StrUtil.format("第{}行单价不能为空", index));
+            }
+            purchaseIds.add(purchaseOrderDetailImportVO.getPurchaseId());
+            materialIds.add(purchaseOrderDetailImportVO.getMaterialId());
+            purchaseOrderDetailImportVO.setTotalPrice(purchaseOrderDetailImportVO.getQuantity().multiply(purchaseOrderDetailImportVO.getUnitPrice()));
+        }
     }
 
     private void createPurchaseOrderDetailList(Long purchaseId, List<PurchaseOrderDetailDO> list) {

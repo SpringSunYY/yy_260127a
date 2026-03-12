@@ -133,7 +133,7 @@ public class PurchaseOrderController {
     }
 
     @PostMapping("/import")
-    @Operation(summary = "导入项目信息")
+    @Operation(summary = "导入采购信息")
     @Parameters({
             @Parameter(name = "file", description = "Excel 文件", required = true),
     })
@@ -151,6 +151,34 @@ public class PurchaseOrderController {
     @PreAuthorize("@ss.hasPermission('biz:purchase-order:query')")
     public CommonResult<List<PurchaseOrderDetailDO>> getPurchaseOrderDetailListByPurchaseId(@RequestParam("purchaseId") Long purchaseId) {
         return success(purchaseOrderService.getPurchaseOrderDetailListByPurchaseId(purchaseId));
+    }
+
+    @GetMapping("/purchase-order-detail/get-import-template")
+    @Operation(summary = "获得导入采购明细信息模板")
+    public void importPurchaseOrderDetailTemplate(HttpServletResponse response) throws IOException {
+        // 手动创建导出 demo
+        List<PurchaseOrderDetailImportVo> list = Collections.singletonList(
+                PurchaseOrderDetailImportVo.builder()
+                        .purchaseId(1L)
+                        .materialId(1L)
+                        .materialName("材料名称")
+                        .quantity(BigDecimal.TEN)
+                        .unitPrice(BigDecimal.TEN)
+                        .totalPrice(BigDecimal.TEN)
+                        .remark("备注").build());
+        // 输出
+        ExcelUtils.write(response, "采购明细信息导入模板.xls", "采购明细模板", PurchaseOrderDetailImportVo.class, list);
+    }
+
+    @PostMapping("/purchase-order-detail/import")
+    @Operation(summary = "导入采购明细信息")
+    @Parameters({
+            @Parameter(name = "file", description = "Excel 文件", required = true),
+    })
+    @PreAuthorize("@ss.hasPermission('biz:purchase-order:create')")
+    public CommonResult<PurchaseOrderImportRespVO> importPurchaseOrderDetailExcel(@RequestParam("file") MultipartFile file) throws Exception {
+        List<PurchaseOrderDetailImportVo> list = ExcelUtils.read(file, PurchaseOrderDetailImportVo.class);
+        return success(purchaseOrderService.importPurchaseOrderDetailList(list));
     }
 
 }

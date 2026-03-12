@@ -106,3 +106,20 @@ export function getPurchaseOrderDetailListByPurchaseId(purchaseId: number) {
     `/biz/purchase-order/purchase-order-detail/list-by-purchase-id?purchaseId=${purchaseId}`,
   );
 }
+
+/** 导入采购信息模版 */
+export function importPurchaseOrderDetailTemplate() {
+  return requestClient.download(
+    '/biz/purchase-order/purchase-order-detail/get-import-template',
+  );
+}
+
+/** 导入采购信息 */
+export function importPurchaseOrderDetail(file: File) {
+  return requestClient.upload(
+    '/biz/purchase-order/purchase-order-detail/import',
+    {
+      file,
+    },
+  );
+}
