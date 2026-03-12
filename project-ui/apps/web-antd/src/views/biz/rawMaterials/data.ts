@@ -1,7 +1,8 @@
-import type {VbenFormSchema} from '#/adapter/form';
-import type {VxeTableGridOptions} from '#/adapter/vxe-table';
-import type {RawMaterialsApi} from '#/api/biz/rawMaterials';
-import {DICT_TYPE, getDictOptions, getRangePickerDefaultProps} from '#/utils';
+import type { VbenFormSchema } from '#/adapter/form';
+import type { VxeTableGridOptions } from '#/adapter/vxe-table';
+import type { RawMaterialsApi } from '#/api/biz/rawMaterials';
+
+import { DICT_TYPE, getDictOptions, getRangePickerDefaultProps } from '#/utils';
 
 /** 新增/修改的表单 */
 export function useFormSchema(): VbenFormSchema[] {
@@ -24,32 +25,13 @@ export function useFormSchema(): VbenFormSchema[] {
       },
     },
     {
-      fieldName: 'materialSpec',
-      label: '规格型号',
-      component: 'Input',
-      componentProps: {
-        placeholder: '请输入规格型号',
-      },
-    },
-    {
-      fieldName: 'unit',
-      label: '计量单位',
+      fieldName: 'materialType',
+      label: '规格类别',
       rules: 'required',
       component: 'Select',
       componentProps: {
-        options: getDictOptions(DICT_TYPE.BIZ_RAW_MATERIALS_UNIT, 'string'),
-        placeholder: '请选择计量单位',
-      },
-    },
-    {
-      fieldName: 'unitPrice',
-      label: '采购单价',
-      rules: 'required',
-      component: 'InputNumber',
-      componentProps: {
-        min: 0,
-        precision: 2,
-        placeholder: '请输入采购单价',
+        options: getDictOptions(DICT_TYPE.BIZ_MATERIAL_TYPE, 'string'),
+        placeholder: '请选择规格类别',
       },
     },
     {
@@ -76,40 +58,13 @@ export function useGridFormSchema(): VbenFormSchema[] {
       },
     },
     {
-      fieldName: 'materialSpec',
-      label: '规格型号',
-      component: 'Input',
-      componentProps: {
-        allowClear: true,
-        placeholder: '请输入规格型号',
-      },
-    },
-    {
-      fieldName: 'unit',
-      label: '计量单位',
+      fieldName: 'materialType',
+      label: '规格类别',
       component: 'Select',
       componentProps: {
         allowClear: true,
-        options: getDictOptions(DICT_TYPE.BIZ_RAW_MATERIALS_UNIT, 'string'),
-        placeholder: '请选择计量单位',
-      },
-    },
-    {
-      fieldName: 'unitPrice',
-      label: '采购单价',
-      component: 'Input',
-      componentProps: {
-        allowClear: true,
-        placeholder: '请输入采购单价',
-      },
-    },
-    {
-      fieldName: 'remark',
-      label: '备注',
-      component: 'Input',
-      componentProps: {
-        allowClear: true,
-        placeholder: '请输入备注',
+        options: getDictOptions(DICT_TYPE.BIZ_MATERIAL_TYPE, 'string'),
+        placeholder: '请选择规格类别',
       },
     },
     {
@@ -127,7 +82,7 @@ export function useGridFormSchema(): VbenFormSchema[] {
 /** 列表的字段 */
 export function useGridColumns(): VxeTableGridOptions<RawMaterialsApi.RawMaterials>['columns'] {
   return [
-    {type: 'checkbox', width: 40},
+    { type: 'checkbox', width: 40 },
     {
       field: 'id',
       title: '编号',
@@ -139,23 +94,13 @@ export function useGridColumns(): VxeTableGridOptions<RawMaterialsApi.RawMateria
       minWidth: 120,
     },
     {
-      field: 'materialSpec',
-      title: '规格型号',
-      minWidth: 120,
-    },
-    {
-      field: 'unit',
-      title: '计量单位',
+      field: 'materialType',
+      title: '规格类别',
       minWidth: 120,
       cellRender: {
         name: 'CellDict',
-        props: {type: DICT_TYPE.BIZ_RAW_MATERIALS_UNIT},
+        props: { type: DICT_TYPE.BIZ_MATERIAL_TYPE },
       },
-    },
-    {
-      field: 'unitPrice',
-      title: '采购单价',
-      minWidth: 120,
     },
     {
       field: 'remark',
@@ -172,8 +117,7 @@ export function useGridColumns(): VxeTableGridOptions<RawMaterialsApi.RawMateria
       title: '操作',
       width: 200,
       fixed: 'right',
-      slots: {default: 'actions'},
+      slots: { default: 'actions' },
     },
   ];
 }
-

@@ -33,21 +33,13 @@ public class RawMaterialsDO extends BaseDO {
      */
     private String materialName;
     /**
-     * 规格型号
+     * 规格类别
+     *
      */
-    private String materialSpec;
-    /**
-     * 计量单位
-     */
-    private String unit;
-    /**
-     * 采购单价
-     */
-    private BigDecimal unitPrice;
+    private String materialType;
     /**
      * 备注
      */
     private String remark;
-
 
 }

@@ -20,10 +20,7 @@ public interface RawMaterialsMapper extends BaseMapperX<RawMaterialsDO> {
     default PageResult<RawMaterialsDO> selectPage(RawMaterialsPageReqVO reqVO) {
         return selectPage(reqVO, new LambdaQueryWrapperX<RawMaterialsDO>()
                 .likeIfPresent(RawMaterialsDO::getMaterialName, reqVO.getMaterialName())
-                .likeIfPresent(RawMaterialsDO::getMaterialSpec, reqVO.getMaterialSpec())
-                .eqIfPresent(RawMaterialsDO::getUnit, reqVO.getUnit())
-                .eqIfPresent(RawMaterialsDO::getUnitPrice, reqVO.getUnitPrice())
-                .eqIfPresent(RawMaterialsDO::getRemark, reqVO.getRemark())
+                .eqIfPresent(RawMaterialsDO::getMaterialType, reqVO.getMaterialType())
                 .betweenIfPresent(RawMaterialsDO::getCreateTime, reqVO.getCreateTime())
                 .orderByDesc(RawMaterialsDO::getId));
     }

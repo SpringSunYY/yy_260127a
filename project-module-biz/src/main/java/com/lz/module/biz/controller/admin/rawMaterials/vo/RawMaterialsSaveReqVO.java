@@ -10,25 +10,18 @@ import java.math.BigDecimal;
 @Data
 public class RawMaterialsSaveReqVO {
 
-    @Schema(description = "编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "30062")
+    @Schema(description = "编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "13943")
     private Long id;
 
     @Schema(description = "材料名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "赵六")
     @NotEmpty(message = "材料名称不能为空")
     private String materialName;
 
-    @Schema(description = "规格型号")
-    private String materialSpec;
+    @Schema(description = "规格类别", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
+    @NotEmpty(message = "规格类别不能为空")
+    private String materialType;
 
-    @Schema(description = "计量单位", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "计量单位不能为空")
-    private String unit;
-
-    @Schema(description = "采购单价", requiredMode = Schema.RequiredMode.REQUIRED, example = "22053")
-    @NotNull(message = "采购单价不能为空")
-    private BigDecimal unitPrice;
-
-    @Schema(description = "备注", example = "你猜")
+    @Schema(description = "备注", example = "随便")
     private String remark;
 
 }
