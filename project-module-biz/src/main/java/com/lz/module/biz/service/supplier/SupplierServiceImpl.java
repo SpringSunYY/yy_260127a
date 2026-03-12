@@ -108,10 +108,16 @@ public class SupplierServiceImpl implements SupplierService {
         BigDecimal paymentAmount = supplierDO.getPaymentAmount();
         if (ObjUtil.isNotNull(payableAmount) && ObjUtil.isNotNull(paymentAmount)) {
             BigDecimal debtAmount = payableAmount.subtract(paymentAmount);
-            if (debtAmount.compareTo(BigDecimal.ZERO) < 0) {
+            if (debtAmount.compareTo(BigDecimal.ZERO) <= 0) {
                 debtAmount = BigDecimal.ZERO;
             }
             supplierDO.setDebtAmount(debtAmount);
+            if (paymentAmount.compareTo(BigDecimal.ZERO)<=0){
+                supplierDO.setPaymentAmount(BigDecimal.ZERO);
+            }
+            if (payableAmount.compareTo(BigDecimal.ZERO)<=0){
+                supplierDO.setPayableAmount(BigDecimal.ZERO);
+            }
         }
         supplierMapper.updateById(supplierDO);
     }

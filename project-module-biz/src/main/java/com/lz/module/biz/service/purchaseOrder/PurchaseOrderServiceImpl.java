@@ -114,28 +114,37 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updatePurchaseOrder(PurchaseOrderSaveReqVO updateReqVO) {
-        initPurchaseOrderData(updateReqVO);
+        SupplierDO supplierDO = initPurchaseOrderData(updateReqVO);
         // 校验存在
-        validatePurchaseOrderExists(updateReqVO.getId());
+        PurchaseOrderDO purchaseOrderDO = validatePurchaseOrderExists(updateReqVO.getId());
         // 更新
         PurchaseOrderDO updateObj = BeanUtils.toBean(updateReqVO, PurchaseOrderDO.class);
         updateObj.setOrderNo(null);
         purchaseOrderMapper.updateById(updateObj);
-
         // 更新子表
         updatePurchaseOrderDetailList(updateReqVO.getId(), updateReqVO.getPurchaseOrderDetails());
+        //更新应付金额:当前总金额-旧总金额+供应商金额
+        supplierDO.setPayableAmount(supplierDO.getPayableAmount().subtract(purchaseOrderDO.getTotalAmount()).add(updateReqVO.getTotalAmount()));
+        supplierService.updateSupplierAmount(supplierDO);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deletePurchaseOrder(Long id) {
         // 校验存在
-        validatePurchaseOrderExists(id);
+        PurchaseOrderDO purchaseOrderDO = validatePurchaseOrderExists(id);
         // 删除
         purchaseOrderMapper.deleteById(id);
 
         // 删除子表
         deletePurchaseOrderDetailByPurchaseId(id);
+        //查询到供应商
+        SupplierDO supplierDO = supplierService.getSupplier(purchaseOrderDO.getSupplierId());
+        if (ObjUtil.isNotNull(supplierDO)) {
+            //更新应付金额，减去当前金额
+            supplierDO.setPayableAmount(supplierDO.getPayableAmount().subtract(purchaseOrderDO.getTotalAmount()));
+            supplierService.updateSupplierAmount(supplierDO);
+        }
     }
 
     @Override
@@ -149,10 +158,12 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
 
-    private void validatePurchaseOrderExists(Long id) {
-        if (purchaseOrderMapper.selectById(id) == null) {
+    private PurchaseOrderDO validatePurchaseOrderExists(Long id) {
+        PurchaseOrderDO purchaseOrderDO = purchaseOrderMapper.selectById(id);
+        if (purchaseOrderDO == null) {
             throw exception(PURCHASE_ORDER_NOT_EXISTS);
         }
+        return purchaseOrderDO;
     }
 
     @Override
