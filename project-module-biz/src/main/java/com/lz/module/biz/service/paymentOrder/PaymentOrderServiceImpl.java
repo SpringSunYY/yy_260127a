@@ -3,6 +3,7 @@ package com.lz.module.biz.service.paymentOrder;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.lz.framework.common.exception.ServiceException;
 import com.lz.framework.common.pojo.PageResult;
 import com.lz.framework.common.util.id.IdUtils;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.lz.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static com.lz.module.biz.enums.ErrorCodeConstants.*;
@@ -117,10 +119,28 @@ public class PaymentOrderServiceImpl implements PaymentOrderService {
     }
 
     @Override
-    @Transactional
     public void deletePaymentOrderListByIds(List<Long> ids) {
-        // 删除
-        ids.forEach(this::deletePaymentOrder);
+        //查询到所有的付款单
+        LambdaQueryWrapper<PaymentOrderDO> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(PaymentOrderDO::getId, ids);
+        List<PaymentOrderDO> paymentOrderDOS = paymentOrderMapper.selectList(queryWrapper);
+        if (ArrayUtil.isEmpty(paymentOrderDOS))return;
+        //拿到所有的供应商
+        List<Long> supplierIds = paymentOrderDOS.stream().map(PaymentOrderDO::getSupplierId).collect(Collectors.toList());
+        List<SupplierDO> supplierDOS = supplierMapper.selectByIds(supplierIds);
+        Map<Long, SupplierDO> supplierDOMap = supplierDOS.stream().collect(Collectors.toMap(SupplierDO::getId, supplierDO -> supplierDO));
+        for (PaymentOrderDO paymentOrderDO : paymentOrderDOS) {
+            SupplierDO supplierDO = supplierDOMap.get(paymentOrderDO.getSupplierId());
+            if (ObjUtil.isNotNull(supplierDO)) {
+                supplierDO.setPaymentAmount(supplierDO.getPaymentAmount().subtract(paymentOrderDO.getPaymentAmount()));
+                supplierService.updateSupplierAmount(supplierDO);
+            }
+        }
+        transactionTemplate.executeWithoutResult(status -> {
+            paymentOrderMapper.deleteByIds(ids);
+            supplierDOMap.values().forEach(supplierDO -> supplierService.updateSupplierAmount(supplierDO));
+        });
+
     }
 
 

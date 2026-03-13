@@ -159,7 +159,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         deletePurchaseOrderDetailByPurchaseId(id);
         //查询到供应商
         SupplierDO supplierDO = supplierService.getSupplier(purchaseOrderDO.getSupplierId());
-        if (ObjUtil.isNotNull(supplierDO)) {
+        if (ObjUtil.isNotNull(supplierDO) && supplierDO.getPayableAmount().compareTo(BigDecimal.ZERO) != 0) {
             //更新应付金额，减去当前金额
             supplierDO.setPayableAmount(supplierDO.getPayableAmount().subtract(purchaseOrderDO.getTotalAmount()));
             supplierService.updateSupplierAmount(supplierDO);
@@ -167,9 +167,37 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void deletePurchaseOrderListByIds(List<Long> ids) {
-       ids.forEach(this::deletePurchaseOrder);
+        //查询到所有的采购单
+        LambdaQueryWrapper<PurchaseOrderDO> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(PurchaseOrderDO::getId, ids);
+        List<PurchaseOrderDO> purchaseOrderDOList = purchaseOrderMapper.selectList(queryWrapper);
+        if (ArrayUtil.isEmpty(purchaseOrderDOList)) {
+            return;
+        }
+        //查询到所有的供应商信息
+        List<Long> supplierIds = purchaseOrderDOList.stream().map(PurchaseOrderDO::getSupplierId).collect(Collectors.toList());
+        LambdaQueryWrapper<SupplierDO> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(SupplierDO::getId, supplierIds);
+        List<SupplierDO> supplierDOList = supplierMapper.selectList(wrapper);
+        HashMap<Long, SupplierDO> supplierDOHashMap = new HashMap<>();
+        if (ArrayUtil.isNotEmpty(supplierDOList)){
+            supplierDOList.forEach(item -> {
+                supplierDOHashMap.put(item.getId(), item);
+            });
+        }
+        for (PurchaseOrderDO purchaseOrderDO : purchaseOrderDOList) {
+            SupplierDO supplierDO = supplierDOHashMap.get(purchaseOrderDO.getSupplierId());
+            if (ObjUtil.isNull(supplierDO))continue;
+            supplierDO.setPayableAmount(supplierDO.getPayableAmount().subtract(purchaseOrderDO.getTotalAmount()));
+        }
+        transactionTemplate.executeWithoutResult(status->{
+            supplierDOHashMap.forEach((key, value)->{
+                supplierService.updateSupplierAmount(value);
+            });
+            purchaseOrderMapper.deleteByIds(ids);
+            deletePurchaseOrderDetailByPurchaseIds(ids);
+        });
     }
 
 
@@ -328,7 +356,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         //遍历采购信息，拿到数据库内信息，以及当前总的金额数量
         getSupplierAmountAndDetailDo(purchaseOrderDetailDos, detailMap, supplierAmountMap, purchaseOrderDetailDOS);
         //执行数据库操作
-        transactionTemplate.executeWithoutResult(status->{
+        transactionTemplate.executeWithoutResult(status -> {
             purchaseOrderDetailMapper.insertOrUpdate(purchaseOrderDetailDOS);
             purchaseOrderMapper.insertOrUpdate(purchaseOrderDetailDos);
             supplierDOS.forEach(supplierDO -> {
@@ -342,7 +370,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
     private static void getSupplierAmountAndDetailDo(List<PurchaseOrderDO> purchaseOrderDetailDos, Map<Long, List<PurchaseOrderDetailDO>> detailMap,
-                                                     Map<Long, BigDecimal> supplierAmountMap,List<PurchaseOrderDetailDO> purchaseOrderDetailDOS) {
+                                                     Map<Long, BigDecimal> supplierAmountMap, List<PurchaseOrderDetailDO> purchaseOrderDetailDOS) {
         for (PurchaseOrderDO purchaseOrderDO : purchaseOrderDetailDos) {
             BigDecimal totalAmountDb = purchaseOrderDO.getTotalAmount();
             List<PurchaseOrderDetailDO> orderDetailDOS = detailMap.get(purchaseOrderDO.getId());
