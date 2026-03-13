@@ -1,7 +1,7 @@
 package com.lz.module.biz.service.salary;
 
 import com.lz.framework.common.pojo.PageResult;
-import com.lz.module.biz.controller.admin.salary.vo.SalaryImportExcelVO;
+import com.lz.module.biz.controller.admin.salary.vo.SalaryImportVO;
 import com.lz.module.biz.controller.admin.salary.vo.SalaryImportRespVO;
 import com.lz.module.biz.controller.admin.salary.vo.SalaryPageReqVO;
 import com.lz.module.biz.controller.admin.salary.vo.SalarySaveReqVO;
@@ -77,5 +77,5 @@ public interface SalaryService {
      * @param list         文件列表
      * @return 导入结果
      */
-    SalaryImportRespVO importSalaryList(List<SalaryImportExcelVO> list);
+    SalaryImportRespVO importSalaryList(List<SalaryImportVO> list);
 }

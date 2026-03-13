@@ -245,9 +245,6 @@ public class PaymentOrderServiceImpl implements PaymentOrderService {
             if (ObjUtil.isNull(orderImportExcelVO.getSupplierId())) {
                 throw new ServiceException(400, "第" + index + "行数据，供应商ID不能为空");
             }
-            if (StrUtil.isEmpty(orderImportExcelVO.getIsInvoiced())) {
-                throw new ServiceException(400, "第" + index + "行数据，是否开票不能为空");
-            }
         }
     }
 

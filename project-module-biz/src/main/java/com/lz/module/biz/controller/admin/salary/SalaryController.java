@@ -120,7 +120,7 @@ public class SalaryController {
     @PreAuthorize("@ss.hasPermission('biz:salary:create')")
     public CommonResult<SalaryImportRespVO> importExcel(@RequestParam("file") MultipartFile file)
             throws Exception {
-        List<SalaryImportExcelVO> list = ExcelUtils.read(file, SalaryImportExcelVO.class);
+        List<SalaryImportVO> list = ExcelUtils.read(file, SalaryImportVO.class);
         return success(salaryService.importSalaryList(list));
     }
 
@@ -128,8 +128,8 @@ public class SalaryController {
     @Operation(summary = "获得导入工资模板")
     public void importTemplate(HttpServletResponse response) throws IOException {
         // 手动创建导出 demo
-        List<SalaryImportExcelVO> list = Collections.singletonList(
-                SalaryImportExcelVO.builder()
+        List<SalaryImportVO> list = Collections.singletonList(
+                SalaryImportVO.builder()
                         .name("2026年1月工资")
                         .workerId(1L)
                         .workerName("YY")
@@ -146,7 +146,7 @@ public class SalaryController {
                         .deduction(BigDecimal.ONE)
                         .remark("备注").build());
         // 输出
-        ExcelUtils.write(response, "工资导入模板.xls", "工资模板", SalaryImportExcelVO.class, list);
+        ExcelUtils.write(response, "工资导入模板.xls", "工资模板", SalaryImportVO.class, list);
     }
 
 }

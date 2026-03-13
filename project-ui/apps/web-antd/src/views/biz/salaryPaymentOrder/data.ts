@@ -310,3 +310,16 @@ export function useGridColumns(): VxeTableGridOptions<SalaryPaymentOrderApi.Sala
     },
   ];
 }
+
+/** 工资付款信息导入的表单 */
+export function salaryPaymentOrderImportFormSchema(): VbenFormSchema[] {
+  return [
+    {
+      fieldName: 'file',
+      label: '工资付款信息',
+      component: 'Upload',
+      rules: 'required',
+      help: '仅允许导入 xls、xlsx 格式文件',
+    },
+  ];
+}

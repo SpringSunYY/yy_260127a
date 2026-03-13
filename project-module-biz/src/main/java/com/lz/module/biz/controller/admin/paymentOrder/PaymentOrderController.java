@@ -115,7 +115,7 @@ public class PaymentOrderController {
     }
 
     @GetMapping("/get-import-template")
-    @Operation(summary = "获得导入收款信息模板")
+    @Operation(summary = "获得导入付款信息模板")
     public void importTemplate(HttpServletResponse response) throws IOException {
         // 手动创建导出 demo
         List<PaymentOrderImportVO> list = Collections.singletonList(
@@ -125,7 +125,7 @@ public class PaymentOrderController {
                         .paymentTime(LocalDateTime.now())
                         .paymentAmount(BigDecimal.ONE)
                         .paymentMethod(BizReceiptMethodEnum.BIZ_RECEIPT_METHOD_1.getStatus())
-                        .paymentPurpose("收款事由")
+                        .paymentPurpose("付款事由")
                         .isInvoiced(CommonWhetherEnum.COMMON_WHETHER_1.getStatus())
                         .remark("备注").build());
         // 输出
@@ -133,7 +133,7 @@ public class PaymentOrderController {
     }
 
     @PostMapping("/import")
-    @Operation(summary = "导入收款信息")
+    @Operation(summary = "导入工资付款信息")
     @Parameters({
             @Parameter(name = "file", description = "Excel 文件", required = true),
     })

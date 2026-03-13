@@ -59,4 +59,11 @@ public interface SalaryPaymentOrderService {
      */
     PageResult<SalaryPaymentOrderDO> getSalaryPaymentOrderPage(SalaryPaymentOrderPageReqVO pageReqVO);
 
+    /**
+     * 导入工资付款信息
+     *
+     * @param list 文件列表
+     * @return 导入结果
+     */
+    SalaryPaymentOrderImportRespVO importSalaryPaymentOrderList(List<SalaryPaymentOrderImportVO> list);
 }

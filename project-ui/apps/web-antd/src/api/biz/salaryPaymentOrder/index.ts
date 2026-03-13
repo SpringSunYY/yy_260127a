@@ -70,3 +70,15 @@ export function exportSalaryPaymentOrder(params: any) {
     params,
   );
 }
+
+/** 导入工资付款信息模版 */
+export function importSalaryPaymentOrderTemplate() {
+  return requestClient.download(
+    '/biz/salary-payment-order/get-import-template',
+  );
+}
+
+/** 导入工资付款信息 */
+export function importSalaryPaymentOrder(file: File) {
+  return requestClient.upload('/biz/salary-payment-order/import', { file });
+}

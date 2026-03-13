@@ -2,10 +2,14 @@ package com.lz.module.biz.service.salaryPaymentOrder;
 
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.StrUtil;
 import com.lz.framework.common.enums.CommonWhetherEnum;
+import com.lz.framework.common.exception.ServiceException;
 import com.lz.framework.common.pojo.PageResult;
 import com.lz.framework.common.util.id.IdUtils;
 import com.lz.framework.common.util.object.BeanUtils;
+import com.lz.module.biz.controller.admin.salaryPaymentOrder.vo.SalaryPaymentOrderImportRespVO;
+import com.lz.module.biz.controller.admin.salaryPaymentOrder.vo.SalaryPaymentOrderImportVO;
 import com.lz.module.biz.controller.admin.salaryPaymentOrder.vo.SalaryPaymentOrderPageReqVO;
 import com.lz.module.biz.controller.admin.salaryPaymentOrder.vo.SalaryPaymentOrderSaveReqVO;
 import com.lz.module.biz.dal.dataobject.salary.SalaryDO;
@@ -16,16 +20,13 @@ import com.lz.module.biz.dal.mysql.salaryPaymentOrder.SalaryPaymentOrderMapper;
 import com.lz.module.biz.dal.mysql.worker.WorkerMapper;
 import com.lz.module.biz.service.worker.WorkerService;
 import jakarta.annotation.Resource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.lz.framework.common.exception.util.ServiceExceptionUtil.exception;
@@ -207,6 +208,118 @@ public class SalaryPaymentOrderServiceImpl implements SalaryPaymentOrderService 
     @Override
     public PageResult<SalaryPaymentOrderDO> getSalaryPaymentOrderPage(SalaryPaymentOrderPageReqVO pageReqVO) {
         return salaryPaymentOrderMapper.selectPage(pageReqVO);
+    }
+
+    @Override
+    public SalaryPaymentOrderImportRespVO importSalaryPaymentOrderList(List<SalaryPaymentOrderImportVO> list) {
+        //首先校验数据
+        judgeImportData(list);
+        //初始化工人、供应商数据
+        Map<Long, WorkerDO> workerDOMap = new HashMap<>();
+        Map<Long, SalaryDO> salaryDOMap = new HashMap<>();
+        initImportData(list, workerDOMap, salaryDOMap);
+        //校验并更新数据
+        List<SalaryPaymentOrderDO> salaryPaymentOrderDOS = getSalaryPaymentOrderDos(list, workerDOMap, salaryDOMap);
+        List<SalaryDO> salaryDOS = salaryDOMap.values().stream().toList();
+        transactionTemplate.executeWithoutResult(status -> {
+            salaryPaymentOrderMapper.insertBatch(salaryPaymentOrderDOS);
+            if (ArrayUtil.isNotEmpty(salaryDOS)) {
+                salaryMapper.updateById(salaryDOS);
+            }
+            workerDOMap.forEach((id, workerDO) -> workerService.updateWorkerAmount(workerDO));
+        });
+        return SalaryPaymentOrderImportRespVO.builder().message("导入成功，成功导入" + salaryPaymentOrderDOS.size() + "条数据").build();
+    }
+
+    private List<SalaryPaymentOrderDO> getSalaryPaymentOrderDos(List<SalaryPaymentOrderImportVO> list,
+                                                                Map<Long, WorkerDO> workerDOMap,
+                                                                Map<Long, SalaryDO> salaryDOMap) {
+        List<SalaryPaymentOrderDO> salaryPaymentOrderDOS = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            SalaryPaymentOrderImportVO item = list.get(i);
+            SalaryPaymentOrderDO orderDO = BeanUtils.toBean(item, SalaryPaymentOrderDO.class);
+
+            int index = i + 1;
+            //工人
+            WorkerDO workerDO = workerDOMap.get(item.getWorkerId());
+            if (ObjUtil.isNull(workerDO)) {
+                throw new ServiceException(400, StrUtil.format("第{}行工人信息不存在", index));
+            }
+            orderDO.setWorkerId(workerDO.getId());
+            orderDO.setWorkerName(workerDO.getWorkerName());
+            workerDO.setPaymentAmount(workerDO.getPaymentAmount().add(orderDO.getPaymentAmount()));
+
+            //工资
+            if (ObjUtil.isNotNull(item.getSalaryId())) {
+                SalaryDO salaryDO = salaryDOMap.get(item.getSalaryId());
+                if (ObjUtil.isNull(salaryDO)) {
+                    throw new ServiceException(400, StrUtil.format("第{}行工资信息不存在", index));
+                }
+                //如果是已经支付
+                if (salaryDO.getIsSettlement().equals(CommonWhetherEnum.COMMON_WHETHER_1.getStatus())) {
+                    throw new ServiceException(400, StrUtil.format("第{}行工资信息已支付", index));
+                }
+                //如果工人和工资不匹配
+                if (!salaryDO.getWorkerId().equals(workerDO.getId())) {
+                    throw new ServiceException(400, StrUtil.format("第{}行工人和工资不匹配", index));
+                }
+                orderDO.setSalaryId(salaryDO.getId());
+                orderDO.setSalaryName(salaryDO.getName());
+            }
+            orderDO.setPaymentNo(IdUtils.generateTimeRandomId());
+            salaryPaymentOrderDOS.add(orderDO);
+        }
+        salaryDOMap.forEach((key, value) -> value.setIsSettlement(CommonWhetherEnum.COMMON_WHETHER_1.getStatus()));
+        return salaryPaymentOrderDOS;
+    }
+
+    private void initImportData(List<SalaryPaymentOrderImportVO> list, Map<Long, WorkerDO> workerDOMap, Map<Long, SalaryDO> salaryDOMap) {
+        //工人 ids
+        Set<Long> workerIds = new HashSet<>();
+        Set<Long> salaryIds = new HashSet<>();
+        for (SalaryPaymentOrderImportVO item : list) {
+            if (ObjUtil.isNotNull(item.getWorkerId())) {
+                workerIds.add(item.getWorkerId());
+            }
+            if (ObjUtil.isNotNull(item.getSalaryId())) {
+                salaryIds.add(item.getSalaryId());
+            }
+        }
+        List<WorkerDO> workerDOS = workerMapper.selectByIds(workerIds);
+        if (ArrayUtil.isEmpty(workerDOS)) {
+            throw new ServiceException(400, "导入数据工人信息不存在");
+        }
+        workerDOMap.putAll(workerDOS.stream().collect(Collectors.toMap(WorkerDO::getId, item -> item)));
+        List<SalaryDO> salaryDOS = salaryMapper.selectByIds(salaryIds);
+        if (ArrayUtil.isNotEmpty(salaryDOS)) {
+            salaryDOMap.putAll(salaryDOS.stream().collect(Collectors.toMap(SalaryDO::getId, item -> item)));
+        }
+    }
+
+    private static void judgeImportData(List<SalaryPaymentOrderImportVO> list) {
+        if (ArrayUtil.isEmpty(list)) {
+            throw new ServiceException(400, "导入数据不能为空");
+        }
+        for (int i = 0; i < list.size(); i++) {
+            //是否开票、付款方式、付款单号、付款金额、付款时间、收款对象、是否开票不能为空
+            SalaryPaymentOrderImportVO importVO = list.get(i);
+            int index = i + 1;
+            if (StrUtil.isEmpty(importVO.getIsInvoiced())) {
+                throw new ServiceException(400, "第" + index + "行数据，是否开票不能为空");
+            }
+            if (StrUtil.isEmpty(importVO.getPaymentMethod())) {
+                throw new ServiceException(400, "第" + index + "行数据，付款方式不能为空");
+            }
+            if (ObjUtil.isNull(importVO.getPaymentAmount())) {
+                throw new ServiceException(400, "第" + index + "行数据，付款金额不能为空");
+            }
+            if (ObjUtil.isNull(importVO.getPaymentTime())) {
+                throw new ServiceException(400, "第" + index + "行数据，付款时间不能为空");
+            }
+            if (ObjUtil.isNull(importVO.getWorkerId())) {
+                throw new ServiceException(400, "第" + index + "行数据，工人ID不能为空");
+            }
+        }
     }
 
 }

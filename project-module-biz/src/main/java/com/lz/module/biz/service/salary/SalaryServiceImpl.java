@@ -8,11 +8,10 @@ import com.lz.framework.common.exception.ServiceException;
 import com.lz.framework.common.pojo.PageResult;
 import com.lz.framework.common.util.object.BeanUtils;
 import com.lz.framework.mybatis.core.query.LambdaQueryWrapperX;
-import com.lz.module.biz.controller.admin.salary.vo.SalaryImportExcelVO;
+import com.lz.module.biz.controller.admin.salary.vo.SalaryImportVO;
 import com.lz.module.biz.controller.admin.salary.vo.SalaryImportRespVO;
 import com.lz.module.biz.controller.admin.salary.vo.SalaryPageReqVO;
 import com.lz.module.biz.controller.admin.salary.vo.SalarySaveReqVO;
-import com.lz.module.biz.dal.dataobject.paymentOrder.PaymentOrderDO;
 import com.lz.module.biz.dal.dataobject.salary.SalaryDO;
 import com.lz.module.biz.dal.dataobject.worker.WorkerDO;
 import com.lz.module.biz.dal.mysql.salary.SalaryMapper;
@@ -26,7 +25,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -171,13 +169,13 @@ public class SalaryServiceImpl implements SalaryService {
     }
 
     @Override
-    public SalaryImportRespVO importSalaryList(List<SalaryImportExcelVO> list) {
+    public SalaryImportRespVO importSalaryList(List<SalaryImportVO> list) {
         if (ArrayUtil.isEmpty(list)) {
             throw new ServiceException(400, "导入数据不能为空");
         }
         //校验数据
         for (int i = 0; i < list.size(); i++) {
-            SalaryImportExcelVO vo = list.get(i);
+            SalaryImportVO vo = list.get(i);
             int index = i + 1;
             if (ObjUtil.isNull(vo.getWorkerId())) {
                 throw new ServiceException(400,
@@ -193,7 +191,7 @@ public class SalaryServiceImpl implements SalaryService {
             }
         }
         //遍历去重所有的工人编号，查询出所有的工人，防止没有这个工人
-        List<Long> workerIds = list.stream().map(SalaryImportExcelVO::getWorkerId).filter(Objects::nonNull).distinct().toList();
+        List<Long> workerIds = list.stream().map(SalaryImportVO::getWorkerId).filter(Objects::nonNull).distinct().toList();
         List<WorkerDO> workerDOList = workerMapper.selectList(new LambdaQueryWrapperX<WorkerDO>()
                 .in(WorkerDO::getId, workerIds));
         //因为把所有的工人编号为key的map
@@ -204,7 +202,7 @@ public class SalaryServiceImpl implements SalaryService {
         for (int i = 0; i < list.size(); i++) {
             Long id = workerIds.get(i);
             WorkerDO workerDO = workerDOMap.get(id);
-            SalaryImportExcelVO vo = list.get(i);
+            SalaryImportVO vo = list.get(i);
             if (ObjUtil.isNull(workerDO)) {
                 throw new ServiceException(400,
                         StrUtil.format("第{}行导入失败，不存在编号: {} 的工人", i + 1, id));

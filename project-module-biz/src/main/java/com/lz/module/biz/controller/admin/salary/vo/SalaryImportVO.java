@@ -25,7 +25,7 @@ import static com.lz.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = false) // 设置 chain = false，避免用户导入有问题
-public class SalaryImportExcelVO {
+public class SalaryImportVO {
 
     @Schema(description = "名称", example = "王五")
     @ExcelProperty("名称")

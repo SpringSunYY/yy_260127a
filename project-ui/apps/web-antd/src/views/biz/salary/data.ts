@@ -235,7 +235,6 @@ export function useGridColumns(): VxeTableGridOptions<SalaryApi.Salary>['columns
     {
       field: 'workerId',
       title: '工人编号',
-      visible: false,
       minWidth: 120,
     },
     {

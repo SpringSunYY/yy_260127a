@@ -1,5 +1,10 @@
 package com.lz.module.biz.controller.admin.salaryPaymentOrder;
 
+import com.lz.framework.common.enums.CommonWhetherEnum;
+import com.lz.module.biz.controller.admin.paymentOrder.vo.PaymentOrderImportRespVO;
+import com.lz.module.biz.controller.admin.paymentOrder.vo.PaymentOrderImportVO;
+import com.lz.module.biz.enums.BizReceiptMethodEnum;
+import io.swagger.v3.oas.annotations.Parameters;
 import org.springframework.web.bind.annotation.*;
 import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
@@ -11,6 +16,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.*;
 import jakarta.validation.*;
 import jakarta.servlet.http.*;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.io.IOException;
 
@@ -28,6 +36,7 @@ import static com.lz.framework.apilog.core.enums.OperateTypeEnum.*;
 import com.lz.module.biz.controller.admin.salaryPaymentOrder.vo.*;
 import com.lz.module.biz.dal.dataobject.salaryPaymentOrder.SalaryPaymentOrderDO;
 import com.lz.module.biz.service.salaryPaymentOrder.SalaryPaymentOrderService;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "管理后台 - 工资付款信息")
 @RestController
@@ -100,5 +109,37 @@ public class SalaryPaymentOrderController {
         ExcelUtils.write(response, "工资付款信息.xls", "数据", SalaryPaymentOrderRespVO.class,
                         BeanUtils.toBean(list, SalaryPaymentOrderRespVO.class));
     }
+
+    @GetMapping("/get-import-template")
+    @Operation(summary = "获得导入工资付款信息模板")
+    public void importTemplate(HttpServletResponse response) throws IOException {
+        // 手动创建导出 demo
+        List<SalaryPaymentOrderImportVO> list = Collections.singletonList(
+                SalaryPaymentOrderImportVO.builder()
+                        .workerName("工人名称")
+                        .workerId(1L)
+                        .salaryId(1L)
+                        .salaryName("工资名称")
+                        .paymentTime(LocalDateTime.now())
+                        .paymentAmount(BigDecimal.ONE)
+                        .paymentMethod(BizReceiptMethodEnum.BIZ_RECEIPT_METHOD_1.getStatus())
+                        .paymentPurpose("付款事由")
+                        .isInvoiced(CommonWhetherEnum.COMMON_WHETHER_1.getStatus())
+                        .remark("备注").build());
+        // 输出
+        ExcelUtils.write(response, "工资付款信息导入模板.xls", "工资付款模板", SalaryPaymentOrderImportVO.class, list);
+    }
+
+    @PostMapping("/import")
+    @Operation(summary = "导入收款信息")
+    @Parameters({
+            @Parameter(name = "file", description = "Excel 文件", required = true),
+    })
+    @PreAuthorize("@ss.hasPermission('biz:salary-payment-order:create')")
+    public CommonResult<SalaryPaymentOrderImportRespVO> importExcel(@RequestParam("file") MultipartFile file) throws Exception {
+        List<SalaryPaymentOrderImportVO> list = ExcelUtils.read(file, SalaryPaymentOrderImportVO.class);
+        return success(salaryPaymentOrderService.importSalaryPaymentOrderList(list));
+    }
+
 
 }
