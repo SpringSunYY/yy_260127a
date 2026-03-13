@@ -49,7 +49,7 @@ public class SalaryPaymentOrderRespVO {
 
     @Schema(description = "付款方式", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty(value = "付款方式", converter = DictConvert.class)
-    @DictFormat("biz_payment_payee_type")
+    @DictFormat("biz_receipt_method")
     private String paymentMethod;
 
     @Schema(description = "付款凭证")

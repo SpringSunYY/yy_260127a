@@ -15,9 +15,6 @@ public class SalaryPaymentOrderSaveReqVO {
     @Schema(description = "编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "18815")
     private Long id;
 
-    @Schema(description = "付款单号", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "付款单号不能为空")
-    private String paymentNo;
 
     @Schema(description = "工资ID", example = "22538")
     private Long salaryId;

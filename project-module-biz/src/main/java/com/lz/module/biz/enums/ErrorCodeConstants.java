@@ -41,4 +41,8 @@ public interface ErrorCodeConstants {
     ErrorCode PAYMENT_ORDER_SUPPLIER_CANNOT_UPDATE = new ErrorCode(1_008_013_001, "付款信息供应商不允许修改");
     // ========== 工资付款信息 1-008-014-xxx  ==========
     ErrorCode SALARY_PAYMENT_ORDER_NOT_EXISTS = new ErrorCode(1_008_014_000, "工资付款信息不存在");
+    ErrorCode SALARY_PAYMENT_ORDER_WORKER_CANNOT_UPDATE = new ErrorCode(1_008_014_001, "工资付款信息工人不允许修改");
+    ErrorCode SALARY_PAYMENT_ORDER_SALARY_CANNOT_UPDATE = new ErrorCode(1_008_014_002, "工资付款信息工资不允许修改");
+    ErrorCode SALARY_PAYMENT_ORDER_SALARY_PAYMENT = new ErrorCode(1_008_014_004, "工资付款信息工资已支付");
+    ErrorCode SALARY_PAYMENT_ORDER_WORKER_NOT_EQUAL = new ErrorCode(1_008_014_003, "工资付款信息工人与工资不匹配");
 }

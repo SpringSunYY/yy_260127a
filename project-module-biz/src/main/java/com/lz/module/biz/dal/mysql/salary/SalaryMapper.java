@@ -22,6 +22,7 @@ public interface SalaryMapper extends BaseMapperX<SalaryDO> {
     default PageResult<SalaryDO> selectPage(SalaryPageReqVO reqVO) {
         return selectPage(reqVO, new LambdaQueryWrapperX<SalaryDO>()
                 .likeIfPresent(SalaryDO::getName, reqVO.getName())
+                .eqIfPresent(SalaryDO::getWorkerId, reqVO.getWorkerId())
                 .likeIfPresent(SalaryDO::getWorkerName, reqVO.getWorkerName())
                 .eqIfPresent(SalaryDO::getIsSettlement, reqVO.getIsSettlement())
                 .betweenIfPresent(SalaryDO::getSalaryCycleTime, reqVO.getSalaryCycleTime())

@@ -17,6 +17,9 @@ public class SalaryPageReqVO extends PageParam {
     @Schema(description = "名称", example = "王五")
     private String name;
 
+    @Schema(description = "工人编号", example = "1024")
+    private Long workerId;
+
     @Schema(description = "工人姓名", example = "芋艿")
     private String workerName;
 
