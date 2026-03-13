@@ -120,11 +120,12 @@ public class ReceiptOrderController {
         // 手动创建导出 demo
         List<ReceiptOrderImportVO> list = Collections.singletonList(
                 ReceiptOrderImportVO.builder()
-                        .receiptNo("20260110")
                         .receiptType(BizReceiptTypeEnum.BIZ_RECEIPT_TYPE_2.getStatus())
                         .projectType(BizReceiptProjectTypeEnum.BIZ_RECEIPT_PROJECT_TYPE_1.getStatus())
+                        .projectName("项目名称")
                         .projectId(1L)
-                        .payerName("昊阳建筑")
+                        .customerId(1L)
+                        .customerName("昊阳建筑")
                         .receiptDate(LocalDateTime.now())
                         .receiptAmount(BigDecimal.ONE)
                         .receiptMethod(BizReceiptMethodEnum.BIZ_RECEIPT_METHOD_1.getStatus())

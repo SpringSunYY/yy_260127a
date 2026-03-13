@@ -170,14 +170,11 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
             //校验数据,收款单号、收款类型、收款方、收款金额、收款方式、是否开票
             ReceiptOrderImportVO orderImportExcelVO = list.get(i);
             int index = i + 1;
-            if (StrUtil.isBlank(orderImportExcelVO.getReceiptNo())) {
-                throw new ServiceException(400, "第" + index + "行收款单号不能为空");
-            }
             if (StrUtil.isBlank(orderImportExcelVO.getReceiptType())) {
                 throw new ServiceException(400, "第" + index + "行收款类型不能为空");
             }
-            if (StrUtil.isBlank(orderImportExcelVO.getPayerName())) {
-                throw new ServiceException(400, "第" + index + "行收款方不能为空");
+            if (ObjUtil.isNull(orderImportExcelVO.getCustomerId())) {
+                throw new ServiceException(400, "第" + index + "行客户ID不能为空");
             }
             if (ObjUtil.isNull(orderImportExcelVO.getReceiptAmount())) {
                 throw new ServiceException(400, "第" + index + "行收款金额不能为空");
@@ -188,19 +185,24 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
             if (StrUtil.isBlank(orderImportExcelVO.getIsInvoiced())) {
                 throw new ServiceException(400, "第" + index + "行是否开票不能为空");
             }
+            if (StrUtil.isEmpty(orderImportExcelVO.getProjectType())) {
+                throw new ServiceException(400, "第" + index + "行项目类型不能为空");
+            }
+            if (ObjUtil.isNull(orderImportExcelVO.getProjectId())){
+                throw new ServiceException(400, "第" + index + "行项目ID不能为空");
+            }
         }
         //查询到所有的项目，其他的和工程的
         List<Long> projectIds = new ArrayList<>();
         List<Long> projectOtherIds = new ArrayList<>();
+        List<Long> customerIds = new ArrayList<>();
         for (ReceiptOrderImportVO item : list) {
-            if (ObjUtil.isNull(item.getProjectId())) {
-                continue;
-            }
             if (StrUtil.equals(item.getProjectType(), BizReceiptProjectTypeEnum.BIZ_RECEIPT_PROJECT_TYPE_1.getStatus())) {
                 projectIds.add(item.getProjectId());
             } else {
                 projectOtherIds.add(item.getProjectId());
             }
+            customerIds.add(item.getCustomerId());
         }
 
         List<ProjectDO> projectDOS = new ArrayList<>();
@@ -222,15 +224,16 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
             projectMap.put(BizReceiptProjectTypeEnum.BIZ_RECEIPT_PROJECT_TYPE_2.getStatus() + "-" + item.getId(),
                     new ProjectCommonDto(item.getId(), null, item.getProjectName(), null, null));
         });
+        Map<Long, CustomerDO> customerMap = new HashMap<>();
+        customerIds.forEach(item -> {
+            CustomerDO customerDO = customerMapper.selectById(item);
+            customerMap.put(customerDO.getId(), customerDO);
+        });
         ArrayList<ReceiptOrderDO> dos = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             ReceiptOrderDO receiptOrderDO = new ReceiptOrderDO();
             ReceiptOrderImportVO orderImportExcelVO = list.get(i);
             BeanUtils.copyProperties(orderImportExcelVO, receiptOrderDO);
-            //如果有项目
-            if (ObjUtil.isNull(orderImportExcelVO.getProjectId())) {
-                continue;
-            }
             if (StrUtil.isEmpty(orderImportExcelVO.getProjectType())) {
                 throw new ServiceException(400, "第" + (i + 1) + "行项目类型不能为空");
             }
@@ -245,6 +248,13 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
                 receiptOrderDO.setFiscalYear(projectCommonDto.getFiscalYear());
                 receiptOrderDO.setProjectScatteredType(projectCommonDto.getEngineeringType());
             }
+            //判断 客户
+            CustomerDO customerDO = customerMap.get(orderImportExcelVO.getCustomerId());
+            if (ObjUtil.isNull(customerDO)){
+                throw new ServiceException(400, "第" + (i + 1) + "行客户不存在,请检查客户ID是否正确");
+            }
+            receiptOrderDO.setCustomerName(customerDO.getName());
+            receiptOrderDO.setReceiptNo(IdUtils.generateTimeRandomId());
             dos.add(receiptOrderDO);
         }
         receiptOrderMapper.insertBatch(dos);

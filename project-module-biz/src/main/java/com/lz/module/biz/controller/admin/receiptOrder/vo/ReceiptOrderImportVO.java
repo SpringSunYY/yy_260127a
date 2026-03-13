@@ -13,6 +13,8 @@ import lombok.experimental.Accessors;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import static com.lz.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY;
+
 /**
  * 收款 Excel 导入 VO
  */
@@ -22,10 +24,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Accessors(chain = false) // 设置 chain = false，避免用户导入有问题
 public class ReceiptOrderImportVO {
-
-    @Schema(description = "收款单号", requiredMode = Schema.RequiredMode.REQUIRED)
-    @ExcelProperty("收款单号")
-    private String receiptNo;
 
     @Schema(description = "收款类型", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     @ExcelProperty(value = "收款类型", converter = DictConvert.class)
@@ -45,12 +43,17 @@ public class ReceiptOrderImportVO {
     @ExcelProperty("项目名称")
     private String projectName;
 
-    @Schema(description = "付款方", requiredMode = Schema.RequiredMode.REQUIRED, example = "赵六")
-    @ExcelProperty("付款方")
-    private String payerName;
+    @Schema(description = "客户ID", example = "1161")
+    @ExcelProperty("客户ID")
+    private Long customerId;
+
+    @Schema(description = "客户名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "张三")
+    @ExcelProperty("客户名称")
+    private String customerName;
 
     @Schema(description = "收款日期", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("收款日期")
+    @com.alibaba.excel.annotation.format.DateTimeFormat(value = FORMAT_YEAR_MONTH_DAY)
     private LocalDateTime receiptDate;
 
     @Schema(description = "收款金额", requiredMode = Schema.RequiredMode.REQUIRED)
