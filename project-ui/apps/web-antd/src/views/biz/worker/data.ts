@@ -107,6 +107,33 @@ export function useFormSchema(): VbenFormSchema[] {
       },
     },
     {
+      fieldName: 'payableAmount',
+      label: '应付金额',
+      rules: 'required',
+      component: 'Input',
+      componentProps: {
+        placeholder: '请输入应付金额',
+      },
+    },
+    {
+      fieldName: 'paymentAmount',
+      label: '付款金额',
+      rules: 'required',
+      component: 'Input',
+      componentProps: {
+        placeholder: '请输入付款金额',
+      },
+    },
+    {
+      fieldName: 'debtAmount',
+      label: '欠款金额',
+      rules: 'required',
+      component: 'Input',
+      componentProps: {
+        placeholder: '请输入欠款金额',
+      },
+    },
+    {
       fieldName: 'status',
       label: '状态',
       rules: 'required',
@@ -233,6 +260,24 @@ export function useGridColumns(): VxeTableGridOptions<WorkerApi.Worker>['columns
       field: 'workerName',
       title: '工人姓名',
       minWidth: 120,
+    },
+    {
+      field: 'payableAmount',
+      title: '应付金额',
+      minWidth: 120,
+      sortable: true,
+    },
+    {
+      field: 'paymentAmount',
+      title: '付款金额',
+      minWidth: 120,
+      sortable: true,
+    },
+    {
+      field: 'debtAmount',
+      title: '欠款金额',
+      minWidth: 120,
+      sortable: true,
     },
     {
       field: 'gender',

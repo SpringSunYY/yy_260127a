@@ -4,6 +4,7 @@ import com.lz.framework.common.validation.IdCard;
 import com.lz.framework.common.validation.Mobile;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -56,4 +57,15 @@ public class WorkerSaveReqVO {
     @Schema(description = "备注", example = "你说的对")
     private String remark;
 
+    @Schema(description = "应付金额", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotNull(message = "应付金额不能为空")
+    private BigDecimal payableAmount;
+
+    @Schema(description = "付款金额", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotNull(message = "付款金额不能为空")
+    private BigDecimal paymentAmount;
+
+    @Schema(description = "欠款金额", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotNull(message = "欠款金额不能为空")
+    private BigDecimal debtAmount;
 }

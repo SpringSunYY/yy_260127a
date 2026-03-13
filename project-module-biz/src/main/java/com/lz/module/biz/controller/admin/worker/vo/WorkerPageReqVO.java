@@ -42,4 +42,19 @@ public class WorkerPageReqVO extends PageParam {
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
     private LocalDateTime[] createTime;
 
+    @Schema(description = "应付金额")
+    private BigDecimal payableAmount;
+
+    @Schema(description = "付款金额")
+    private BigDecimal paymentAmount;
+
+    @Schema(description = "欠款金额")
+    private BigDecimal debtAmount;
+
+    @Schema(description = "排序字段（仅允许：paymentAmount、debtAmount、payableAmount）", example = "paymentAmount")
+    private String orderBy;
+
+    @Schema(description = "排序方向（asc/desc）", example = "desc")
+    private String order;
+
 }

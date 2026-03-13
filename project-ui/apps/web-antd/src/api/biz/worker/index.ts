@@ -18,6 +18,9 @@ export namespace WorkerApi {
     skillLevel: string; // 技能等级
     status?: string; // 状态
     remark: string; // 备注
+    payableAmount?: number; // 应付金额
+    paymentAmount?: number; // 付款金额
+    debtAmount?: number; // 欠款金额
   }
 }
 

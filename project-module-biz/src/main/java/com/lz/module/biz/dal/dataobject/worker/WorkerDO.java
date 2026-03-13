@@ -74,19 +74,30 @@ public class WorkerDO extends BaseDO {
     /**
      * 技能等级
      *
-     * 枚举 {@link TODO biz_worker_skill_level 对应的类}
      */
     private String skillLevel;
     /**
      * 状态
      *
-     * 枚举 {@link TODO biz_worker_status 对应的类}
      */
     private String status;
     /**
      * 备注
      */
     private String remark;
+
+    /**
+     * 应付金额
+     */
+    private BigDecimal payableAmount;
+    /**
+     * 付款金额
+     */
+    private BigDecimal paymentAmount;
+    /**
+     * 欠款金额
+     */
+    private BigDecimal debtAmount;
 
 
 }

@@ -2,25 +2,52 @@
 import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { WorkerApi } from '#/api/biz/worker';
 
+import { ref } from 'vue';
+
 import { Page, useVbenModal } from '@vben/common-ui';
-import { message,Tabs } from 'ant-design-vue';
-import Form from './modules/form.vue';
-
-
-import { ref, computed } from 'vue';
-import { $t } from '#/locales';
-import { ACTION_ICON, TableAction, useVbenVxeGrid } from '#/adapter/vxe-table';
-import { getWorkerPage, deleteWorker, deleteWorkerList, exportWorker } from '#/api/biz/worker';
 import { downloadFileFromBlobPart, isEmpty } from '@vben/utils';
 
-import { useGridColumns, useGridFormSchema } from './data';
+import { message } from 'ant-design-vue';
 
+import { ACTION_ICON, TableAction, useVbenVxeGrid } from '#/adapter/vxe-table';
+import {
+  deleteWorker,
+  deleteWorkerList,
+  exportWorker,
+  getWorkerPage,
+} from '#/api/biz/worker';
+import { $t } from '#/locales';
+
+import { useGridColumns, useGridFormSchema } from './data';
+import Form from './modules/form.vue';
+
+type SortOrder = 'asc' | 'desc';
+
+function normalizeSortOrder(order: unknown): SortOrder | undefined {
+  if (!order) return undefined;
+  const str = String(order).toLowerCase();
+  if (str === 'asc' || str === 'ascend') return 'asc';
+  if (str === 'desc' || str === 'descend') return 'desc';
+  return undefined;
+}
+
+function pickSort(ctx: any): { order?: SortOrder; orderBy?: string } {
+  // vxe-table 可能传 sort（单列）或 sorts（多列）
+  const sorts = Array.isArray(ctx?.sorts) ? ctx.sorts : undefined;
+  const first =
+    (sorts && sorts.find((s: any) => s?.order)) ||
+    (sorts && sorts[0]) ||
+    ctx?.sort ||
+    undefined;
+  const orderBy = first?.field ? String(first.field) : undefined;
+  const order = normalizeSortOrder(first?.order);
+  return { orderBy, order };
+}
 
 const [FormModal, formModalApi] = useVbenModal({
   connectedComponent: Form,
-  destroyOnClose: true
+  destroyOnClose: true,
 });
-
 
 /** 刷新表格 */
 function onRefresh() {
@@ -37,12 +64,11 @@ function handleEdit(row: WorkerApi.Worker) {
   formModalApi.setData(row).open();
 }
 
-
 /** 删除工人信息 */
 async function handleDelete(row: WorkerApi.Worker) {
   const hideLoading = message.loading({
     content: $t('ui.actionMessage.deleting', [row.id]),
-    key: 'action_key_msg'
+    key: 'action_key_msg',
   });
   try {
     await deleteWorker(row.id as number);
@@ -60,7 +86,7 @@ async function handleDelete(row: WorkerApi.Worker) {
 async function handleDeleteBatch() {
   const hideLoading = message.loading({
     content: $t('ui.actionMessage.deleting'),
-    key: 'action_key_msg'
+    key: 'action_key_msg',
   });
   try {
     await deleteWorkerList(checkedIds.value);
@@ -74,12 +100,8 @@ async function handleDeleteBatch() {
   }
 }
 
-const checkedIds = ref<number[]>([])
-function handleRowCheckboxChange({
-  records
-}: {
-  records: WorkerApi.Worker[];
-}) {
+const checkedIds = ref<number[]>([]);
+function handleRowCheckboxChange({ records }: { records: WorkerApi.Worker[] }) {
   checkedIds.value = records.map((item) => item.id);
 }
 
@@ -91,7 +113,7 @@ async function handleExport() {
 
 const [Grid, gridApi] = useVbenVxeGrid({
   formOptions: {
-    schema: useGridFormSchema()
+    schema: useGridFormSchema(),
   },
   gridOptions: {
     columns: useGridColumns(),
@@ -99,13 +121,21 @@ const [Grid, gridApi] = useVbenVxeGrid({
     pagerConfig: {
       enabled: true,
     },
+    sortConfig: {
+      remote: true,
+      // 仅允许单列排序：点新列时清除旧列排序状态
+      multiple: false,
+    },
     proxyConfig: {
       ajax: {
-        query: async ({ page }, formValues) => {
+        query: async (ctx, formValues) => {
+          const { page } = ctx || {};
+          const { orderBy, order } = pickSort(ctx);
           return await getWorkerPage({
             pageNo: page.currentPage,
             pageSize: page.pageSize,
             ...formValues,
+            ...(orderBy && order ? { orderBy, order } : {}),
           });
         },
       },
@@ -117,12 +147,13 @@ const [Grid, gridApi] = useVbenVxeGrid({
     toolbarConfig: {
       refresh: { code: 'query' },
       search: true,
-    }
+    },
   } as VxeTableGridOptions<WorkerApi.Worker>,
-  gridEvents:{
-      checkboxAll: handleRowCheckboxChange,
-      checkboxChange: handleRowCheckboxChange
-  }
+  gridEvents: {
+    checkboxAll: handleRowCheckboxChange,
+    checkboxChange: handleRowCheckboxChange,
+    sortChange: () => gridApi.query(),
+  },
 });
 </script>
 
@@ -185,6 +216,5 @@ const [Grid, gridApi] = useVbenVxeGrid({
         />
       </template>
     </Grid>
-
   </Page>
 </template>
