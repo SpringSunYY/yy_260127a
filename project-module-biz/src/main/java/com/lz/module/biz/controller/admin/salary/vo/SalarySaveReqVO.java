@@ -52,21 +52,4 @@ public class SalarySaveReqVO {
 
     @Schema(description = "备注", example = "你猜")
     private String remark;
-
-    @Schema(description = "是否新增", example = "true")
-    private Boolean isAddPayment;
-
-    @Schema(description = "付款单号", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String paymentNo;
-
-    @Schema(description = "付款方式", requiredMode = Schema.RequiredMode.REQUIRED)
-    @DictFormat("biz_receipt_method")
-    private String paymentMethod;
-
-    @Schema(description = "是否开票", requiredMode = Schema.RequiredMode.REQUIRED)
-    @DictFormat("common_whether")
-    private String isInvoiced;
-
-    @Schema(description = "付款凭证")
-    private String paymentCertificate;
 }

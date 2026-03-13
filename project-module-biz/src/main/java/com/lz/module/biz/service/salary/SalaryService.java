@@ -75,8 +75,7 @@ public interface SalaryService {
      * 导入工资信息
      *
      * @param list         文件列表
-     * @param isAddPayment 是否添加付款信息
      * @return 导入结果
      */
-    SalaryImportRespVO importSalaryList(List<SalaryImportExcelVO> list, Boolean isAddPayment);
+    SalaryImportRespVO importSalaryList(List<SalaryImportExcelVO> list);
 }

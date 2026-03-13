@@ -7,7 +7,6 @@ import com.lz.framework.common.pojo.PageParam;
 import com.lz.framework.common.pojo.PageResult;
 import com.lz.framework.common.util.object.BeanUtils;
 import com.lz.framework.excel.core.util.ExcelUtils;
-import com.lz.module.biz.controller.admin.receiptOrder.vo.ReceiptOrderPageReqVO;
 import com.lz.module.biz.controller.admin.salary.vo.*;
 import com.lz.module.biz.dal.dataobject.salary.SalaryDO;
 import com.lz.module.biz.service.salary.SalaryService;
@@ -119,11 +118,10 @@ public class SalaryController {
             @Parameter(name = "isAddPayment", description = "是否导入付款信息", required = true)
     })
     @PreAuthorize("@ss.hasPermission('biz:salary:create')")
-    public CommonResult<SalaryImportRespVO> importExcel(@RequestParam("file") MultipartFile file,
-                                                        @RequestParam(value = "isAddPayment", required = false, defaultValue = "true") Boolean isAddPayment)
+    public CommonResult<SalaryImportRespVO> importExcel(@RequestParam("file") MultipartFile file)
             throws Exception {
         List<SalaryImportExcelVO> list = ExcelUtils.read(file, SalaryImportExcelVO.class);
-        return success(salaryService.importSalaryList(list, isAddPayment));
+        return success(salaryService.importSalaryList(list));
     }
 
     @GetMapping("/get-import-template")

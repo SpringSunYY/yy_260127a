@@ -63,20 +63,6 @@ public class SalaryImportExcelVO {
     @ExcelProperty("应发款项")
     private BigDecimal payableAmount;
 
-    @Schema(description = "付款单号", requiredMode = Schema.RequiredMode.REQUIRED)
-    @ExcelProperty(value = "付款单号")
-    private String paymentNo;
-
-    @Schema(description = "付款方式", requiredMode = Schema.RequiredMode.REQUIRED)
-    @ExcelProperty(value = "付款方式", converter = DictConvert.class)
-    @DictFormat("biz_receipt_method")
-    private String paymentMethod;
-
-    @Schema(description = "是否开票", requiredMode = Schema.RequiredMode.REQUIRED)
-    @ExcelProperty(value = "是否开票", converter = DictConvert.class)
-    @DictFormat("common_whether")
-    private String isInvoiced;
-
     @ExcelProperty("备注")
     private String remark;
 
