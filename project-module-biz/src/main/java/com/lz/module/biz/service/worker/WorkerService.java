@@ -66,4 +66,6 @@ public interface WorkerService {
      * @return 导入结果
      */
     WorkerImportRespVO importWorkerList(List<WorkerImportVO> list);
+
+    void updateWorkerAmount(WorkerDO workerDO);
 }

@@ -33,6 +33,7 @@ public interface ErrorCodeConstants {
     ErrorCode WORKER_NOT_EXISTS = new ErrorCode(1_008_010_000, "工人信息不存在");
     // ========== 工资信息 1-008-011-xxx  ==========
     ErrorCode SALARY_NOT_EXISTS = new ErrorCode(1_008_011_000, "工资信息不存在");
+    ErrorCode SALARY_WORKER_CANNOT_UPDATE = new ErrorCode(1_008_011_001, "工资信息工人不可修改");
     // ========== 收款 1-008-012-xxx  ==========
     ErrorCode RECEIPT_ORDER_NOT_EXISTS = new ErrorCode(1_008_012_000, "收款信息不存在");
     // ========== 付款 1-008-013-xxx  ==========

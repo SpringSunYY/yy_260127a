@@ -129,12 +129,20 @@ public class SalaryController {
     public void importTemplate(HttpServletResponse response) throws IOException {
         // 手动创建导出 demo
         List<SalaryImportExcelVO> list = Collections.singletonList(
-                SalaryImportExcelVO.builder().workerId(1L).workerName("YY")
+                SalaryImportExcelVO.builder()
+                        .name("2026年1月工资")
+                        .workerId(1L)
+                        .workerName("YY")
                         .isSettlement(CommonWhetherEnum.COMMON_WHETHER_1.getStatus())
-                        .settlementTime(LocalDateTime.now()).attendanceDays(1)
+                        .salaryCycleTime(LocalDateTime.now()).attendanceDays(1)
                         .overtimeDays(1)
-                        .laborFeeAmount(BigDecimal.ONE).overtimeFee(BigDecimal.ONE).allowanceAmount(BigDecimal.ONE)
-                        .subtotalAmount(BigDecimal.ONE).socialInsurance(BigDecimal.ONE).payableAmount(BigDecimal.ONE)
+                        .laborFeeAmount(BigDecimal.ONE)
+                        .overtimeFee(BigDecimal.ONE)
+                        .allowanceAmount(BigDecimal.ONE)
+                        .subtotalAmount(BigDecimal.ONE)
+                        .socialInsurance(BigDecimal.ONE)
+                        .payableAmount(BigDecimal.ONE)
+                        .deduction(BigDecimal.ONE)
                         .remark("备注").build());
         // 输出
         ExcelUtils.write(response, "工资导入模板.xls", "工资模板", SalaryImportExcelVO.class, list);

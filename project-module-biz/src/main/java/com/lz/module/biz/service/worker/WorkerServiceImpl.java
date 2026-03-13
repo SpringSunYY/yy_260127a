@@ -124,4 +124,25 @@ public class WorkerServiceImpl implements WorkerService {
 
     }
 
+    @Override
+    public void updateWorkerAmount(WorkerDO workerDO) {
+        //应付金额-已付金额=欠款金额
+        BigDecimal payableAmount = workerDO.getPayableAmount();
+        BigDecimal paymentAmount = workerDO.getPaymentAmount();
+        if (ObjUtil.isNotNull(payableAmount) && ObjUtil.isNotNull(paymentAmount)) {
+            BigDecimal debtAmount = payableAmount.subtract(paymentAmount);
+            if (debtAmount.compareTo(BigDecimal.ZERO) <= 0) {
+                debtAmount = BigDecimal.ZERO;
+            }
+            workerDO.setDebtAmount(debtAmount);
+            if (paymentAmount.compareTo(BigDecimal.ZERO)<=0){
+                workerDO.setPaymentAmount(BigDecimal.ZERO);
+            }
+            if (payableAmount.compareTo(BigDecimal.ZERO)<=0){
+                workerDO.setPayableAmount(BigDecimal.ZERO);
+            }
+        }
+        workerMapper.updateById(workerDO);
+    }
+
 }

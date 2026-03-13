@@ -1,7 +1,8 @@
 package com.lz.module.biz.controller.admin.salary.vo;
 
-import com.lz.framework.excel.core.annotations.DictFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -15,9 +16,11 @@ public class SalarySaveReqVO {
     private Long id;
 
     @Schema(description = "名称", example = "王五")
+    @NotEmpty(message = "请输入名称")
     private String name;
 
     @Schema(description = "工人编号", example = "22970")
+    @NotNull(message = "请输入工人编号")
     private Long workerId;
 
     @Schema(description = "工人姓名", example = "芋艿")
@@ -45,6 +48,7 @@ public class SalarySaveReqVO {
     private BigDecimal allowanceAmount;
 
     @Schema(description = "小计")
+    @NotNull(message = "请输入小计")
     private BigDecimal subtotalAmount;
 
     @Schema(description = "社保")

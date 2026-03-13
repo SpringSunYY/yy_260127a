@@ -15,26 +15,23 @@ import com.lz.module.biz.controller.admin.salary.vo.SalarySaveReqVO;
 import com.lz.module.biz.dal.dataobject.paymentOrder.PaymentOrderDO;
 import com.lz.module.biz.dal.dataobject.salary.SalaryDO;
 import com.lz.module.biz.dal.dataobject.worker.WorkerDO;
-import com.lz.module.biz.dal.mysql.paymentOrder.PaymentOrderMapper;
 import com.lz.module.biz.dal.mysql.salary.SalaryMapper;
 import com.lz.module.biz.dal.mysql.worker.WorkerMapper;
+import com.lz.module.biz.service.worker.WorkerService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.lz.framework.common.exception.util.ServiceExceptionUtil.exception;
-import static com.lz.module.biz.enums.ErrorCodeConstants.SALARY_NOT_EXISTS;
-import static com.lz.module.biz.enums.ErrorCodeConstants.WORKER_NOT_EXISTS;
+import static com.lz.module.biz.enums.ErrorCodeConstants.*;
 
 /**
  * 工资信息 Service 实现类
@@ -52,58 +49,110 @@ public class SalaryServiceImpl implements SalaryService {
     @Resource
     private WorkerMapper workerMapper;
 
+    @Resource
+    private TransactionTemplate transactionTemplate;
+
+    @Resource
+    private WorkerService workerService;
+
     @Override
     public Long createSalary(SalarySaveReqVO createReqVO) {
         // 插入
         SalaryDO salary = BeanUtils.toBean(createReqVO, SalaryDO.class);
         //查询是否存在工人
-        validateWorkerExists(salary);
+        WorkerDO workerDO = validateWorkerExists(salary);
+        workerDO.setPayableAmount(workerDO.getDebtAmount().add(salary.getPayableAmount()));
+
         salary.setIsSettlement(CommonWhetherEnum.COMMON_WHETHER_2.getStatus());
-        salaryMapper.insert(salary);
+        transactionTemplate.executeWithoutResult(status -> {
+            salaryMapper.insert(salary);
+            workerService.updateWorkerAmount(workerDO);
+        });
         // 返回
         return salary.getId();
     }
 
-    private void validateWorkerExists(SalaryDO salary) {
-        if (ObjUtil.isNull(salary.getWorkerId())) {
-            return;
-        }
+    private WorkerDO validateWorkerExists(SalaryDO salary) {
         WorkerDO workerDO = workerMapper.selectById(salary.getWorkerId());
         if (ObjUtil.isNull(workerDO)) {
             throw exception(WORKER_NOT_EXISTS);
         }
         salary.setWorkerName(workerDO.getWorkerName());
+        return workerDO;
     }
 
     @Override
+    @Transactional
     public void updateSalary(SalarySaveReqVO updateReqVO) {
         // 校验存在
-        validateSalaryExists(updateReqVO.getId());
+        SalaryDO salaryDO = validateSalaryExists(updateReqVO.getId());
         // 更新
         SalaryDO updateObj = BeanUtils.toBean(updateReqVO, SalaryDO.class);
-        validateWorkerExists(updateObj);
+        //如果工人和数据库不一致
+        if (!salaryDO.getWorkerId().equals(updateObj.getWorkerId())) {
+            throw exception(SALARY_WORKER_CANNOT_UPDATE);
+        }
+        WorkerDO workerDO = validateWorkerExists(updateObj);
+        if (ObjUtil.isNotNull(workerDO)&&workerDO.getDebtAmount().compareTo(salaryDO.getPayableAmount())!=0) {
+            BigDecimal currentAmount = updateReqVO.getPayableAmount().subtract(salaryDO.getPayableAmount());
+            workerDO.setPayableAmount(workerDO.getDebtAmount().add(currentAmount));
+            workerService.updateWorkerAmount(workerDO);
+        }
         salaryMapper.updateById(updateObj);
     }
 
     @Override
+    @Transactional
     public void deleteSalary(Long id) {
         // 校验存在
-        validateSalaryExists(id);
+        SalaryDO salaryDO = validateSalaryExists(id);
+        WorkerDO workerDO = workerMapper.selectById(salaryDO.getWorkerId());
+        if (ObjUtil.isNotNull(workerDO)) {
+            workerDO.setPayableAmount(workerDO.getDebtAmount().subtract(salaryDO.getPayableAmount()));
+            workerService.updateWorkerAmount(workerDO);
+        }
         // 删除
         salaryMapper.deleteById(id);
     }
 
     @Override
     public void deleteSalaryListByIds(List<Long> ids) {
-        // 删除
-        salaryMapper.deleteByIds(ids);
+        //查到所有的工资信息
+        LambdaQueryWrapperX<SalaryDO> queryWrapper = new LambdaQueryWrapperX<>();
+        queryWrapper.in(SalaryDO::getId, ids);
+        List<SalaryDO> salaryDOList = salaryMapper.selectList(queryWrapper);
+        if (ArrayUtil.isEmpty(salaryDOList)) {
+            return;
+        }
+        //拿到所有的工人Id信息
+        List<Long> workerIds = salaryDOList.stream().map(SalaryDO::getWorkerId).collect(Collectors.toList());
+        LambdaQueryWrapperX<WorkerDO> wrapper = new LambdaQueryWrapperX<>();
+        wrapper.in(WorkerDO::getId, workerIds);
+        List<WorkerDO> workerDOS = workerMapper.selectList(wrapper);
+        Map<Long, WorkerDO> workerDOMap=new HashMap<>();
+        if (ArrayUtil.isNotEmpty(workerDOS)) {
+            //转换为map
+             workerDOMap = workerDOS.stream().collect(Collectors.toMap(WorkerDO::getId, workerDO -> workerDO));
+            for (SalaryDO salaryDO : salaryDOList) {
+                WorkerDO workerDO = workerDOMap.get(salaryDO.getWorkerId());
+                if (ObjUtil.isNull(workerDO)) continue;
+                workerDO.setPayableAmount(workerDO.getDebtAmount().subtract(salaryDO.getPayableAmount()));
+            }
+        }
+        Map<Long, WorkerDO> finalWorkerDOMap = workerDOMap;
+        transactionTemplate.executeWithoutResult(status -> {
+            salaryMapper.deleteByIds(ids);
+            finalWorkerDOMap.forEach((id, workerDO) -> workerService.updateWorkerAmount(workerDO));
+        });
     }
 
 
-    private void validateSalaryExists(Long id) {
-        if (salaryMapper.selectById(id) == null) {
+    private SalaryDO validateSalaryExists(Long id) {
+        SalaryDO salaryDO = salaryMapper.selectById(id);
+        if (salaryDO == null) {
             throw exception(SALARY_NOT_EXISTS);
         }
+        return salaryDO;
     }
 
     @Override
@@ -134,9 +183,9 @@ public class SalaryServiceImpl implements SalaryService {
                 throw new ServiceException(400,
                         StrUtil.format("第{}行工人编号不能为空", index));
             }
-            if (ObjUtil.isNull(vo.getSettlementTime())) {
+            if (ObjUtil.isNull(vo.getSalaryCycleTime())) {
                 throw new ServiceException(400,
-                        StrUtil.format("第{}行请填写结算时间", index));
+                        StrUtil.format("第{}行请填写工资周期", index));
             }
             if (ObjUtil.isNull(vo.getPayableAmount())) {
                 throw new ServiceException(400,

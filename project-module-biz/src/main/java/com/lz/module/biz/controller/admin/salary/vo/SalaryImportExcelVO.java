@@ -15,6 +15,8 @@ import lombok.experimental.Accessors;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import static com.lz.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY;
+
 /**
  * 用户 Excel 导入 VO
  */
@@ -24,6 +26,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Accessors(chain = false) // 设置 chain = false，避免用户导入有问题
 public class SalaryImportExcelVO {
+
+    @Schema(description = "名称", example = "王五")
+    @ExcelProperty("名称")
+    private String name;
 
     @ExcelProperty("工人编号")
     private Long workerId;
@@ -35,9 +41,11 @@ public class SalaryImportExcelVO {
     @DictFormat(DictTypeConstants.COMMON_WHETHER)
     private String isSettlement;
 
-    @ExcelProperty("结算日期")
     @ContentStyle(dataFormat = 22)
-    private LocalDateTime settlementTime;
+    @Schema(description = "工资周期")
+    @ExcelProperty("工资周期")
+    @com.alibaba.excel.annotation.format.DateTimeFormat(value = FORMAT_YEAR_MONTH_DAY)
+    private LocalDateTime salaryCycleTime;
 
     @ExcelProperty("出勤天数")
     private Integer attendanceDays;
@@ -59,6 +67,10 @@ public class SalaryImportExcelVO {
 
     @ExcelProperty("社保")
     private BigDecimal socialInsurance;
+
+    @Schema(description = "扣款")
+    @ExcelProperty("扣款")
+    private BigDecimal deduction;
 
     @ExcelProperty("应发款项")
     private BigDecimal payableAmount;
