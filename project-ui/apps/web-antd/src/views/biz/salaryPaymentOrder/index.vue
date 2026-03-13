@@ -14,6 +14,7 @@ import {
   deleteSalaryPaymentOrder,
   deleteSalaryPaymentOrderList,
   exportSalaryPaymentOrder,
+  getSalaryPaymentOrderAmount,
   getSalaryPaymentOrderPage,
 } from '#/api/biz/salaryPaymentOrder';
 import { $t } from '#/locales';
@@ -35,6 +36,8 @@ const [ImportModal, importModalApi] = useVbenModal({
 function handleImport() {
   importModalApi.open();
 }
+
+const totalAmount = ref<number>(0);
 
 /** 刷新表格 */
 function onRefresh() {
@@ -117,6 +120,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
     proxyConfig: {
       ajax: {
         query: async ({ page }, formValues) => {
+          totalAmount.value = await getSalaryPaymentOrderAmount(formValues);
           return await getSalaryPaymentOrderPage({
             pageNo: page.currentPage,
             pageSize: page.pageSize,
@@ -147,6 +151,14 @@ const [Grid, gridApi] = useVbenVxeGrid({
     <ImportModal @success="onRefresh" />
 
     <Grid table-title="工资付款信息列表">
+      <template #table-title>
+        <div class="flex items-center">
+          <span class="mr-4 text-lg font-bold">工资付款信息列表</span>
+          <span class="text-primary text-lg font-bold">
+            总金额: {{ totalAmount }}
+          </span>
+        </div>
+      </template>
       <template #toolbar-tools>
         <TableAction
           :actions="[

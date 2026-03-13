@@ -1,5 +1,6 @@
 package com.lz.module.biz.service.salaryPaymentOrder;
 
+import java.math.BigDecimal;
 import java.util.*;
 import jakarta.validation.*;
 import com.lz.module.biz.controller.admin.salaryPaymentOrder.vo.*;
@@ -59,6 +60,13 @@ public interface SalaryPaymentOrderService {
      */
     PageResult<SalaryPaymentOrderDO> getSalaryPaymentOrderPage(SalaryPaymentOrderPageReqVO pageReqVO);
 
+    /**
+     * 获得工资付款信息金额
+     *
+     * @param pageReqVO 分页查询
+     * @return 工资付款信息金额
+     */
+    BigDecimal getSalaryPaymentOrderAmount(@Valid SalaryPaymentOrderPageReqVO pageReqVO);
     /**
      * 导入工资付款信息
      *

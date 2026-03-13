@@ -89,6 +89,13 @@ public class SalaryPaymentOrderController {
         return success(BeanUtils.toBean(salaryPaymentOrder, SalaryPaymentOrderRespVO.class));
     }
 
+    @GetMapping("/get/amount")
+    @Operation(summary = "获得工资付款信息总额")
+    @PreAuthorize("@ss.hasPermission('biz:salary-payment-order:query')")
+    public CommonResult<BigDecimal> getSalaryPaymentOrderAmount(@Valid SalaryPaymentOrderPageReqVO pageReqVO) {
+        return success(salaryPaymentOrderService.getSalaryPaymentOrderAmount(pageReqVO));
+    }
+
     @GetMapping("/page")
     @Operation(summary = "获得工资付款信息分页")
     @PreAuthorize("@ss.hasPermission('biz:salary-payment-order:query')")

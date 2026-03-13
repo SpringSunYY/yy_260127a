@@ -9,4 +9,39 @@
         文档可见：https://www.iocoder.cn/MyBatis/x-plugins/
      -->
 
+    <select id="getSalaryPaymentOrderAmount" resultType="java.math.BigDecimal">
+        SELECT COALESCE(SUM(payment_amount), 0) FROM biz_salary_payment_order
+        <where>
+            <if test="paymentNo != null and paymentNo != ''">
+                AND payment_no LIKE CONCAT('%', #{paymentNo}, '%')
+            </if>
+            <if test="workerId != null">
+                AND worker_id = #{workerId}
+            </if>
+            <if test="workerName != null and workerName != ''">
+                AND worker_name LIKE CONCAT('%', #{workerName}, '%')
+            </if>
+            <if test="salaryId != null">
+                AND salary_id = #{salaryId}
+            </if>
+            <if test="salaryName != null and salaryName != ''">
+                AND salary_name LIKE CONCAT('%', #{salaryName}, '%')
+            </if>
+            <if test="paymentTime != null and paymentTime.length == 2">
+                AND payment_time BETWEEN #{paymentTime[0], javaType=java.time.LocalDateTime, jdbcType=TIMESTAMP} AND
+                #{paymentTime[1], javaType=java.time.LocalDateTime, jdbcType=TIMESTAMP}
+            </if>
+            <if test="paymentMethod != null">
+                AND payment_method = #{paymentMethod}
+            </if>
+            <if test="isInvoiced != null">
+                AND is_invoiced = #{isInvoiced}
+            </if>
+            <if test="createTime != null and createTime.length == 2">
+                AND create_time BETWEEN #{createTime[0], javaType=java.time.LocalDateTime, jdbcType=TIMESTAMP} AND
+                #{createTime[1], javaType=java.time.LocalDateTime, jdbcType=TIMESTAMP}
+            </if>
+            and deleted = false
+        </where>
+    </select>
 </mapper>

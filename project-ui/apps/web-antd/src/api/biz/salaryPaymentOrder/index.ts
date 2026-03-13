@@ -30,6 +30,13 @@ export function getSalaryPaymentOrderPage(params: PageParam) {
   >('/biz/salary-payment-order/page', { params });
 }
 
+/** 查询工资付款信息总价*/
+export function getSalaryPaymentOrderAmount(params: PageParam) {
+  return requestClient.get<number>('/biz/salary-payment-order/get/amount', {
+    params,
+  });
+}
+
 /** 查询工资付款信息详情 */
 export function getSalaryPaymentOrder(id: number) {
   return requestClient.get<SalaryPaymentOrderApi.SalaryPaymentOrder>(

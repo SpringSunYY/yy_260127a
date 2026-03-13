@@ -211,6 +211,11 @@ public class SalaryPaymentOrderServiceImpl implements SalaryPaymentOrderService 
     }
 
     @Override
+    public BigDecimal getSalaryPaymentOrderAmount(SalaryPaymentOrderPageReqVO pageReqVO) {
+        return salaryPaymentOrderMapper.getSalaryPaymentOrderAmount(pageReqVO);
+    }
+
+    @Override
     public SalaryPaymentOrderImportRespVO importSalaryPaymentOrderList(List<SalaryPaymentOrderImportVO> list) {
         //首先校验数据
         judgeImportData(list);

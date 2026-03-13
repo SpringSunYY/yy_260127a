@@ -1,5 +1,6 @@
 package com.lz.module.biz.dal.mysql.salaryPaymentOrder;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import com.lz.framework.common.pojo.PageResult;
@@ -31,4 +32,5 @@ public interface SalaryPaymentOrderMapper extends BaseMapperX<SalaryPaymentOrder
                 .orderByDesc(SalaryPaymentOrderDO::getId));
     }
 
+    BigDecimal getSalaryPaymentOrderAmount(SalaryPaymentOrderPageReqVO pageReqVO);
 }
