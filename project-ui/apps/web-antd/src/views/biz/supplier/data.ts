@@ -262,7 +262,7 @@ export function useGridColumns(): VxeTableGridOptions<SupplierApi.Supplier>['col
   ];
 }
 
-/** 客户信息导入的表单 */
+/** 供应商息导入的表单 */
 export function supplierImportFormSchema(): VbenFormSchema[] {
   return [
     {

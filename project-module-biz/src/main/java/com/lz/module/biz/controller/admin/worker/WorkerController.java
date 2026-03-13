@@ -1,5 +1,13 @@
 package com.lz.module.biz.controller.admin.worker;
 
+import com.lz.module.biz.controller.admin.customer.vo.CustomerImportRespVO;
+import com.lz.module.biz.controller.admin.supplier.vo.SupplierImportVO;
+import com.lz.module.biz.enums.BizWorkerSkillLevelEnum;
+import com.lz.module.biz.enums.BizWorkerStatusEnum;
+import com.lz.module.biz.enums.BizWorkerWorkTypeEnum;
+import com.lz.module.biz.enums.BizWorkerWorkerTypeEnum;
+import com.lz.module.system.enums.common.SexEnum;
+import io.swagger.v3.oas.annotations.Parameters;
 import org.springframework.web.bind.annotation.*;
 import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
@@ -11,6 +19,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.*;
 import jakarta.validation.*;
 import jakarta.servlet.http.*;
+
+import java.math.BigDecimal;
 import java.util.*;
 import java.io.IOException;
 
@@ -28,6 +38,7 @@ import static com.lz.framework.apilog.core.enums.OperateTypeEnum.*;
 import com.lz.module.biz.controller.admin.worker.vo.*;
 import com.lz.module.biz.dal.dataobject.worker.WorkerDO;
 import com.lz.module.biz.service.worker.WorkerService;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "管理后台 - 工人信息")
 @RestController
@@ -99,6 +110,42 @@ public class WorkerController {
         // 导出 Excel
         ExcelUtils.write(response, "工人信息.xls", "数据", WorkerRespVO.class,
                         BeanUtils.toBean(list, WorkerRespVO.class));
+    }
+
+    @GetMapping("/get-import-template")
+    @Operation(summary = "获得工人信息模板")
+    public void importTemplate(HttpServletResponse response) throws IOException {
+        // 手动创建导出 demo
+        List<WorkerImportVO> list = Collections.singletonList(
+                WorkerImportVO.builder()
+                        .workerName("张三")
+                        .gender("1")
+                        .idCardNo("44044020001010121X")
+                        .workerType(BizWorkerWorkerTypeEnum.BIZ_WORKER_WORKER_TYPE_2.getStatus())
+                        .workType(BizWorkerWorkTypeEnum.BIZ_WORKER_WORK_TYPE_1.getStatus())
+                        .dailySalary(BigDecimal.ZERO)
+                        .monthlySalary(BigDecimal.ZERO)
+                        .salaryDesc("描述")
+                        .skillLevel(BizWorkerSkillLevelEnum.BIZ_WORKER_SKILL_LEVEL_1.getStatus())
+                        .status(BizWorkerStatusEnum.BIZ_WORKER_STATUS_1.getStatus())
+                        .phone("13888888888")
+                        .debtAmount(BigDecimal.ZERO)
+                        .paymentAmount(BigDecimal.ZERO)
+                        .payableAmount(BigDecimal.ZERO)
+                        .remark("备注").build());
+        // 输出
+        ExcelUtils.write(response, "工人信息导入模板.xls", "工人信息模板", WorkerImportVO.class, list);
+    }
+
+    @PostMapping("/import")
+    @Operation(summary = "导入工人信息")
+    @Parameters({
+            @Parameter(name = "file", description = "Excel 文件", required = true),
+    })
+    @PreAuthorize("@ss.hasPermission('biz:worker:create')")
+    public CommonResult<WorkerImportRespVO> importExcel(@RequestParam("file") MultipartFile file) throws Exception {
+        List<WorkerImportVO> list = ExcelUtils.read(file, WorkerImportVO.class);
+        return success(workerService.importWorkerList(list));
     }
 
 }

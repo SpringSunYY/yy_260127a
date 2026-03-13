@@ -59,4 +59,11 @@ public interface WorkerService {
      */
     PageResult<WorkerDO> getWorkerPage(WorkerPageReqVO pageReqVO);
 
+    /**
+     * 导入工人信息
+     *
+     * @param list 导入数据
+     * @return 导入结果
+     */
+    WorkerImportRespVO importWorkerList(List<WorkerImportVO> list);
 }

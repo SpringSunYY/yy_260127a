@@ -368,3 +368,16 @@ export function useGridColumns(): VxeTableGridOptions<WorkerApi.Worker>['columns
     },
   ];
 }
+
+/** 工人信息导入的表单 */
+export function workerImportFormSchema(): VbenFormSchema[] {
+  return [
+    {
+      fieldName: 'file',
+      label: '供应商信息',
+      component: 'Upload',
+      rules: 'required',
+      help: '仅允许导入 xls、xlsx 格式文件',
+    },
+  ];
+}

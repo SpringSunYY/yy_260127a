@@ -17,6 +17,7 @@ import {
   getWorkerPage,
 } from '#/api/biz/worker';
 import { $t } from '#/locales';
+import ImportForm from '#/views/biz/worker/modules/import-form.vue';
 
 import { useGridColumns, useGridFormSchema } from './data';
 import Form from './modules/form.vue';
@@ -48,6 +49,15 @@ const [FormModal, formModalApi] = useVbenModal({
   connectedComponent: Form,
   destroyOnClose: true,
 });
+
+const [ImportModal, importModalApi] = useVbenModal({
+  connectedComponent: ImportForm,
+  destroyOnClose: true,
+});
+
+function handleImport() {
+  importModalApi.open();
+}
 
 /** 刷新表格 */
 function onRefresh() {
@@ -101,6 +111,7 @@ async function handleDeleteBatch() {
 }
 
 const checkedIds = ref<number[]>([]);
+
 function handleRowCheckboxChange({ records }: { records: WorkerApi.Worker[] }) {
   checkedIds.value = records.map((item) => item.id);
 }
@@ -160,6 +171,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
 <template>
   <Page auto-content-height>
     <FormModal @success="onRefresh" />
+    <ImportModal @success="onRefresh" />
 
     <Grid table-title="工人信息列表">
       <template #toolbar-tools>
@@ -187,6 +199,13 @@ const [Grid, gridApi] = useVbenVxeGrid({
               disabled: isEmpty(checkedIds),
               auth: ['biz:worker:delete'],
               onClick: handleDeleteBatch,
+            },
+            {
+              label: $t('ui.actionTitle.import', ['工人']),
+              type: 'primary',
+              icon: ACTION_ICON.UPLOAD,
+              auth: ['biz:worker:create'],
+              onClick: handleImport,
             },
           ]"
         />

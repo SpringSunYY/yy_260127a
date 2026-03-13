@@ -1,11 +1,16 @@
 package com.lz.module.biz.service.worker;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.StrUtil;
+import com.lz.framework.common.exception.ServiceException;
+import com.lz.module.biz.controller.admin.customer.vo.CustomerImportRespVO;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.*;
 import com.lz.module.biz.controller.admin.worker.vo.*;
 import com.lz.module.biz.dal.dataobject.worker.WorkerDO;
@@ -80,6 +85,43 @@ public class WorkerServiceImpl implements WorkerService {
     @Override
     public PageResult<WorkerDO> getWorkerPage(WorkerPageReqVO pageReqVO) {
         return workerMapper.selectPage(pageReqVO);
+    }
+
+    @Override
+    public WorkerImportRespVO importWorkerList(List<WorkerImportVO> list) {
+        if (CollUtil.isEmpty(list)) {
+            throw new ServiceException(400, "导入数据不能为空");
+        }
+        List<WorkerDO> workerDOS=new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            int index=i+1;
+            WorkerImportVO vo = list.get(i);
+            //工人姓名、工人类型、工人状态不能为空
+            if (StrUtil.isEmpty(vo.getWorkerName())) {
+                throw new ServiceException(400,StrUtil.format("第{}行，工人姓名不能为空",index));
+            }
+            if (StrUtil.isEmpty(vo.getWorkerType())){
+                throw new ServiceException(400,StrUtil.format("第{}行，工人类型不能为空",index));
+            }
+            if (StrUtil.isEmpty(vo.getStatus())) {
+                throw new ServiceException(400,StrUtil.format("第{}行，工人状态不能为空",index));
+            }
+            if (ObjUtil.isNull(vo.getDebtAmount())){
+                vo.setDebtAmount(BigDecimal.ZERO);
+            }
+            if (ObjUtil.isNull(vo.getPaymentAmount())) {
+                vo.setPaymentAmount(BigDecimal.ZERO);
+            }
+            if (ObjUtil.isNull(vo.getPayableAmount())) {
+                vo.setPayableAmount(BigDecimal.ZERO);
+            }
+            WorkerDO bean = BeanUtils.toBean(vo, WorkerDO.class);
+            workerDOS.add(bean);
+        }
+        workerMapper.insertBatch(workerDOS);
+        return WorkerImportRespVO.builder()
+                .message(StrUtil.format("成功导入 {} 个工人信息", workerDOS.size())).build();
+
     }
 
 }

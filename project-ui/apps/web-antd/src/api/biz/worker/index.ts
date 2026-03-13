@@ -60,3 +60,15 @@ export function deleteWorkerList(ids: number[]) {
 export function exportWorker(params: any) {
   return requestClient.download('/biz/worker/export-excel', params);
 }
+
+/** 导入工人信息模版 */
+export function importWorkerTemplate() {
+  return requestClient.download('/biz/worker/get-import-template');
+}
+
+/** 导入工人信息 */
+export function importWorker(file: File) {
+  return requestClient.upload('/biz/worker/import', {
+    file,
+  });
+}
