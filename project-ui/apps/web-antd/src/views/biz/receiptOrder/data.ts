@@ -22,10 +22,14 @@ export function useFormSchema(options?: FormSchemaOptions): VbenFormSchema[] {
     {
       fieldName: 'receiptNo',
       label: '收款单号',
-      rules: 'required',
       component: 'Input',
       componentProps: {
         placeholder: '请输入收款单号',
+      },
+      dependencies: {
+        triggerFields: ['id'],
+        disabled: (values) => !!values.id,
+        show: (values) => !!values.id,
       },
     },
     {
@@ -42,6 +46,7 @@ export function useFormSchema(options?: FormSchemaOptions): VbenFormSchema[] {
       fieldName: 'projectType',
       label: '项目类型',
       component: 'Select',
+      rules: 'required',
       componentProps: {
         options: getDictOptions(DICT_TYPE.BIZ_RECEIPT_PROJECT_TYPE, 'string'),
         placeholder: '请选择项目类型',
@@ -71,6 +76,7 @@ export function useFormSchema(options?: FormSchemaOptions): VbenFormSchema[] {
     {
       fieldName: 'projectId',
       label: '项目ID',
+      rules: 'required',
       component: 'Input',
       componentProps: {
         placeholder: '请输入项目ID',
@@ -96,6 +102,7 @@ export function useFormSchema(options?: FormSchemaOptions): VbenFormSchema[] {
       fieldName: 'customerId',
       label: '客户ID',
       component: 'Input',
+      rules: 'required',
       componentProps: {
         placeholder: '请输入客户ID',
       },

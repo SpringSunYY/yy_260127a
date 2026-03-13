@@ -9,6 +9,7 @@ import { useDebounceFn } from '@vueuse/core';
 import { message, Select } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
+import { getCustomerPage } from '#/api/biz/customer';
 import { getProjectPage } from '#/api/biz/project';
 import { getProjectOtherPage } from '#/api/biz/projectOther';
 import {
@@ -30,7 +31,7 @@ const getTitle = computed(() => {
 });
 
 onMounted(() => {
-  // 移除 onMounted 中的调用，改由 Modal onOpenChange 触发
+  loadCustomer();
 });
 // 项目搜索状态
 const projectKeyword = ref('');
@@ -97,6 +98,56 @@ const handleProjectChange = (_value: any, option: any) => {
 const handleProjectOpenChange = (open: boolean) => {
   if (open) {
     loadProjects();
+  }
+};
+
+// 付款对象搜索状态
+const customerKeyword = ref('');
+const customerOptions = ref<any[]>([]);
+const customerLoading = ref(false);
+
+// 加载客户列表
+const loadCustomer = async (keyword?: string) => {
+  customerLoading.value = true;
+  try {
+    // 客户
+    const res = await getCustomerPage({
+      pageNo: 1,
+      pageSize: 50,
+      name: keyword || '',
+    });
+    // No default
+    customerOptions.value = res?.list
+      ? res.list.map((item: any) => ({
+          id: item.id,
+          name: item.name || item.customerName || '',
+          value: item.id,
+          label: item.name || item.customerName || '',
+        }))
+      : [];
+  } catch (error) {
+    console.error(error);
+    customerOptions.value = [];
+  } finally {
+    customerLoading.value = false;
+  }
+};
+
+// 付款对象搜索
+const handleCustomerSearch = useDebounceFn((_value: string) => {
+  customerKeyword.value = _value;
+  loadCustomer(_value);
+}, 300);
+
+// 付款对象选择
+const handleCustomerChange = (_value: any, option: any) => {
+  formApi.setFieldValue('customerName', option?.name || option?.label || '');
+};
+
+// 付款对象下拉打开时加载数据
+const handleCustomerOpenChange = (open: boolean) => {
+  if (open) {
+    loadCustomer();
   }
 };
 
@@ -180,6 +231,23 @@ const [Modal, modalApi] = useVbenModal({
           @search="handleProjectSearch"
           @change="handleProjectChange"
           @dropdown-open-change="handleProjectOpenChange"
+        />
+      </template>
+      <!-- 付款对象自定义插槽 -->
+      <template #customerId="slotProps">
+        <Select
+          v-bind="slotProps"
+          show-search
+          allow-clear
+          placeholder="请选择客户"
+          :loading="customerLoading"
+          :options="customerOptions"
+          :field-names="{ label: 'name', value: 'id' }"
+          :filter-option="false"
+          class="w-full"
+          @search="handleCustomerSearch"
+          @change="handleCustomerChange"
+          @dropdown-open-change="handleCustomerOpenChange"
         />
       </template>
     </Form>

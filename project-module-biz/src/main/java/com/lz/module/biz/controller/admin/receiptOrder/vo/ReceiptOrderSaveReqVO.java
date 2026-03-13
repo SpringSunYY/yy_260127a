@@ -15,10 +15,6 @@ public class ReceiptOrderSaveReqVO {
     @Schema(description = "编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "21549")
     private Long id;
 
-    @Schema(description = "收款单号", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "收款单号不能为空")
-    private String receiptNo;
-
     @Schema(description = "收款类型", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     @NotEmpty(message = "收款类型不能为空")
     private String receiptType;

@@ -36,6 +36,7 @@ public interface ErrorCodeConstants {
     ErrorCode SALARY_WORKER_CANNOT_UPDATE = new ErrorCode(1_008_011_001, "工资信息工人不可修改");
     // ========== 收款 1-008-012-xxx  ==========
     ErrorCode RECEIPT_ORDER_NOT_EXISTS = new ErrorCode(1_008_012_000, "收款信息不存在");
+    ErrorCode RECEIPT_ORDER_CUSTOMER_CANNOT_UPDATE = new ErrorCode(1_008_012_001, "收款信息客户不允许修改");
     // ========== 付款 1-008-013-xxx  ==========
     ErrorCode PAYMENT_ORDER_NOT_EXISTS = new ErrorCode(1_008_013_000, "付款信息不存在");
     ErrorCode PAYMENT_ORDER_SUPPLIER_CANNOT_UPDATE = new ErrorCode(1_008_013_001, "付款信息供应商不允许修改");
