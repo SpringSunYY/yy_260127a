@@ -1,18 +1,13 @@
 package com.lz.module.biz.dal.dataobject.salary;
 
-import lombok.*;
-import java.util.*;
-import java.time.LocalDateTime;
-import java.math.BigDecimal;
-import java.math.BigDecimal;
-import java.math.BigDecimal;
-import java.math.BigDecimal;
-import java.math.BigDecimal;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.LocalDateTime;
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.KeySequence;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.lz.framework.mybatis.core.dataobject.BaseDO;
+import lombok.*;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * 工资信息 DO
@@ -35,6 +30,10 @@ public class SalaryDO extends BaseDO {
     @TableId
     private Long id;
     /**
+     * 名称
+     */
+    private String name;
+    /**
      * 工人编号
      */
     private Long workerId;
@@ -44,14 +43,13 @@ public class SalaryDO extends BaseDO {
     private String workerName;
     /**
      * 是否结算
-     *
-     * 枚举 {@link TODO common_whether 对应的类}
+     * <p>
      */
     private String isSettlement;
     /**
-     * 结算日期
+     * 工资周期
      */
-    private LocalDateTime settlementTime;
+    private LocalDateTime salaryCycleTime;
     /**
      * 出勤天数
      */
@@ -80,6 +78,10 @@ public class SalaryDO extends BaseDO {
      * 社保
      */
     private BigDecimal socialInsurance;
+    /**
+     * 扣款
+     */
+    private BigDecimal deduction;
     /**
      * 应发款项
      */

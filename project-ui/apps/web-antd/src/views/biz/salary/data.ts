@@ -2,7 +2,6 @@ import type { VbenFormSchema } from '#/adapter/form';
 import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { SalaryApi } from '#/api/biz/salary';
 
-import { z } from '#/adapter/form';
 import { DICT_TYPE, getDictOptions, getRangePickerDefaultProps } from '#/utils';
 
 /** 新增/修改的表单 */
@@ -14,6 +13,14 @@ export function useFormSchema(): VbenFormSchema[] {
       dependencies: {
         triggerFields: [''],
         show: () => false,
+      },
+    },
+    {
+      fieldName: 'name',
+      label: '名称',
+      component: 'Input',
+      componentProps: {
+        placeholder: '请输入名称',
       },
     },
     {
@@ -42,15 +49,18 @@ export function useFormSchema(): VbenFormSchema[] {
         buttonStyle: 'solid',
         optionType: 'button',
       },
+      dependencies: {
+        triggerFields: ['id'],
+        show: (values) => !!values.id,
+      },
     },
     {
-      fieldName: 'settlementTime',
-      label: '结算日期',
-      rules: 'required',
+      fieldName: 'salaryCycleTime',
+      label: '工资周期',
       component: 'DatePicker',
       componentProps: {
         showTime: true,
-        format: 'YYYY-MM-DD HH:mm:ss',
+        format: 'YYYY-MM-DD',
         valueFormat: 'x',
       },
     },
@@ -123,6 +133,16 @@ export function useFormSchema(): VbenFormSchema[] {
       },
     },
     {
+      fieldName: 'deduction',
+      label: '扣款',
+      component: 'InputNumber',
+      componentProps: {
+        min: 0,
+        precision: 2,
+        placeholder: '请输入扣款',
+      },
+    },
+    {
       fieldName: 'payableAmount',
       label: '应发款项',
       rules: 'required',
@@ -150,6 +170,15 @@ export function useFormSchema(): VbenFormSchema[] {
 export function useGridFormSchema(): VbenFormSchema[] {
   return [
     {
+      fieldName: 'name',
+      label: '名称',
+      component: 'Input',
+      componentProps: {
+        allowClear: true,
+        placeholder: '请输入名称',
+      },
+    },
+    {
       fieldName: 'workerName',
       label: '工人姓名',
       component: 'Input',
@@ -169,8 +198,8 @@ export function useGridFormSchema(): VbenFormSchema[] {
       },
     },
     {
-      fieldName: 'settlementTime',
-      label: '结算日期',
+      fieldName: 'salaryCycleTime',
+      label: '工资周期',
       component: 'RangePicker',
       componentProps: {
         ...getRangePickerDefaultProps(),
@@ -199,6 +228,11 @@ export function useGridColumns(): VxeTableGridOptions<SalaryApi.Salary>['columns
       minWidth: 120,
     },
     {
+      field: 'name',
+      title: '名称',
+      minWidth: 120,
+    },
+    {
       field: 'workerId',
       title: '工人编号',
       visible: false,
@@ -219,8 +253,8 @@ export function useGridColumns(): VxeTableGridOptions<SalaryApi.Salary>['columns
       },
     },
     {
-      field: 'settlementTime',
-      title: '结算日期',
+      field: 'salaryCycleTime',
+      title: '工资周期',
       minWidth: 120,
       formatter: 'formatDateTime',
     },
@@ -260,6 +294,11 @@ export function useGridColumns(): VxeTableGridOptions<SalaryApi.Salary>['columns
       minWidth: 120,
     },
     {
+      field: 'deduction',
+      title: '扣款',
+      minWidth: 120,
+    },
+    {
       field: 'payableAmount',
       title: '应发款项',
       minWidth: 120,
@@ -293,17 +332,6 @@ export function salaryImportFormSchema(): VbenFormSchema[] {
       component: 'Upload',
       rules: 'required',
       help: '仅允许导入 xls、xlsx 格式文件',
-    },
-    {
-      fieldName: 'isAddPayment',
-      label: '是否新增',
-      component: 'Switch',
-      componentProps: {
-        checkedChildren: '是',
-        unCheckedChildren: '否',
-      },
-      rules: z.boolean().default(true),
-      help: '是否同时新增付款信息',
     },
   ];
 }

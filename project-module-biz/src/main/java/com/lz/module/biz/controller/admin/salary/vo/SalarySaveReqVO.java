@@ -14,6 +14,9 @@ public class SalarySaveReqVO {
     @Schema(description = "编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "25589")
     private Long id;
 
+    @Schema(description = "名称", example = "王五")
+    private String name;
+
     @Schema(description = "工人编号", example = "22970")
     private Long workerId;
 
@@ -23,8 +26,8 @@ public class SalarySaveReqVO {
     @Schema(description = "是否结算")
     private String isSettlement;
 
-    @Schema(description = "结算日期")
-    private LocalDateTime settlementTime;
+    @Schema(description = "工资周期")
+    private LocalDateTime salaryCycleTime;
 
     @Schema(description = "出勤天数")
     private Integer attendanceDays;
@@ -46,6 +49,9 @@ public class SalarySaveReqVO {
 
     @Schema(description = "社保")
     private BigDecimal socialInsurance;
+
+    @Schema(description = "扣款")
+    private BigDecimal deduction;
 
     @Schema(description = "应发款项")
     private BigDecimal payableAmount;

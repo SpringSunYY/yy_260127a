@@ -3,6 +3,7 @@ package com.lz.module.biz.service.salary;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
+import com.lz.framework.common.enums.CommonWhetherEnum;
 import com.lz.framework.common.exception.ServiceException;
 import com.lz.framework.common.pojo.PageResult;
 import com.lz.framework.common.util.object.BeanUtils;
@@ -57,6 +58,7 @@ public class SalaryServiceImpl implements SalaryService {
         SalaryDO salary = BeanUtils.toBean(createReqVO, SalaryDO.class);
         //查询是否存在工人
         validateWorkerExists(salary);
+        salary.setIsSettlement(CommonWhetherEnum.COMMON_WHETHER_2.getStatus());
         salaryMapper.insert(salary);
         // 返回
         return salary.getId();

@@ -19,6 +19,10 @@ public class SalaryRespVO {
     @ExcelProperty("编号")
     private Long id;
 
+    @Schema(description = "名称", example = "王五")
+    @ExcelProperty("名称")
+    private String name;
+
     @Schema(description = "工人编号", example = "22970")
     @ExcelProperty("工人编号")
     private Long workerId;
@@ -29,12 +33,12 @@ public class SalaryRespVO {
 
     @Schema(description = "是否结算")
     @ExcelProperty(value = "是否结算", converter = DictConvert.class)
-    @DictFormat("common_whether")  
+    @DictFormat("common_whether")
     private String isSettlement;
 
-    @Schema(description = "结算日期")
-    @ExcelProperty("结算日期")
-    private LocalDateTime settlementTime;
+    @Schema(description = "工资周期")
+    @ExcelProperty("工资周期")
+    private LocalDateTime salaryCycleTime;
 
     @Schema(description = "出勤天数")
     @ExcelProperty("出勤天数")
@@ -63,6 +67,10 @@ public class SalaryRespVO {
     @Schema(description = "社保")
     @ExcelProperty("社保")
     private BigDecimal socialInsurance;
+
+    @Schema(description = "扣款")
+    @ExcelProperty("扣款")
+    private BigDecimal deduction;
 
     @Schema(description = "应发款项")
     @ExcelProperty("应发款项")

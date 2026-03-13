@@ -14,15 +14,18 @@ import static com.lz.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY_
 @Data
 public class SalaryPageReqVO extends PageParam {
 
+    @Schema(description = "名称", example = "王五")
+    private String name;
+
     @Schema(description = "工人姓名", example = "芋艿")
     private String workerName;
 
     @Schema(description = "是否结算")
     private String isSettlement;
 
-    @Schema(description = "结算日期")
+    @Schema(description = "工资周期")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
-    private LocalDateTime[] settlementTime;
+    private LocalDateTime[] salaryCycleTime;
 
     @Schema(description = "创建时间")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
