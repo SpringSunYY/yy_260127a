@@ -256,7 +256,7 @@ export function useGridColumns(): VxeTableGridOptions<SalaryApi.Salary>['columns
       field: 'salaryCycleTime',
       title: '工资周期',
       minWidth: 120,
-      formatter: 'formatDateTime',
+      formatter: 'formatDate',
     },
     {
       field: 'attendanceDays',

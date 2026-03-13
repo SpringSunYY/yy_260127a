@@ -198,42 +198,37 @@ public class SalaryServiceImpl implements SalaryService {
                 .in(WorkerDO::getId, workerIds));
         //因为把所有的工人编号为key的map
         Map<Long, WorkerDO> workerDOMap = workerDOList.stream().collect(Collectors.toMap(WorkerDO::getId, v -> v));
+
         //遍历列表，从map里面获取对应的工人信息
-        for (int i = 0; i < workerIds.size(); i++) {
+        ArrayList<SalaryDO> salaryDOS = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
             Long id = workerIds.get(i);
             WorkerDO workerDO = workerDOMap.get(id);
+            SalaryImportExcelVO vo = list.get(i);
             if (ObjUtil.isNull(workerDO)) {
                 throw new ServiceException(400,
                         StrUtil.format("第{}行导入失败，不存在编号: {} 的工人", i + 1, id));
             }
-        }
-
-        ArrayList<SalaryDO> salaryDOS = new ArrayList<>();
-        for (SalaryImportExcelVO vo : list) {
+            //判断是否是结算
+            if (StrUtil.equals(vo.getIsSettlement(), CommonWhetherEnum.COMMON_WHETHER_1.getStatus())) {
+                workerDO.setPaymentAmount(workerDO.getPaymentAmount().add(vo.getPayableAmount()));
+                workerDO.setPayableAmount(workerDO.getPayableAmount().add(vo.getPayableAmount()));
+            }else {
+                workerDO.setPayableAmount(workerDO.getPayableAmount().add(vo.getPayableAmount()));
+            }
             if (ObjUtil.isNotNull(vo.getWorkerId())) {
                 vo.setWorkerName(workerDOMap.get(vo.getWorkerId()).getWorkerName());
             }
             SalaryDO salaryDO = BeanUtils.toBean(vo, SalaryDO.class);
             salaryDOS.add(salaryDO);
         }
-        salaryMapper.insertBatch(salaryDOS);
+        transactionTemplate.executeWithoutResult(status -> {
+            salaryMapper.insertBatch(salaryDOS);
+            workerDOMap.forEach((id, workerDO) -> workerService.updateWorkerAmount(workerDO));
+        });
         return SalaryImportRespVO.builder()
                 .message(StrUtil.format("成功导入 {} 个工资信息", salaryDOS.size()))
                 .build();
-    }
-
-    private PaymentOrderDO getPaymentOrderDO(String paymentNo, Long workerId, String workerName,
-                                             LocalDateTime settlementTime, BigDecimal payableAmount,
-                                             String paymentMethod, String isInvoiced, String paymentCertificate, String remark) {
-        PaymentOrderDO paymentOrderDO = new PaymentOrderDO();
-        paymentOrderDO.setPaymentNo(paymentNo);
-        paymentOrderDO.setPaymentTime(settlementTime);
-        paymentOrderDO.setPaymentAmount(payableAmount);
-        paymentOrderDO.setPaymentMethod(paymentMethod);
-        paymentOrderDO.setIsInvoiced(isInvoiced);
-        paymentOrderDO.setPaymentCertificate(paymentCertificate);
-        paymentOrderDO.setRemark(remark);
-        return paymentOrderDO;
     }
 
 }
