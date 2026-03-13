@@ -17,23 +17,12 @@ public class PaymentOrderPageReqVO extends PageParam {
     @Schema(description = "付款单号")
     private String paymentNo;
 
-    @Schema(description = "项目ID", example = "11356")
-    private Long projectId;
 
-    @Schema(description = "项目类型", example = "2")
-    private String projectType;
+    @Schema(description = "供应商ID", example = "666")
+    private Long supplierId;
 
-    @Schema(description = "项目名称", example = "赵六")
-    private String projectName;
-
-    @Schema(description = "收款对象类型", example = "1")
-    private String payeeType;
-
-    @Schema(description = "收款对象ID", example = "2609")
-    private Long payeeId;
-
-    @Schema(description = "收款对象名称", example = "赵六")
-    private String payeeName;
+    @Schema(description = "供应商名称", example = "芋艿")
+    private String supplierName;
 
     @Schema(description = "付款日期")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)

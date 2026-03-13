@@ -12,9 +12,8 @@ export namespace PaymentOrderApi {
     projectId: number; // 项目ID
     projectType: string; // 项目类型
     projectName: string; // 项目名称
-    payeeType?: string; // 收款对象类型
-    payeeId: number; // 收款对象ID
-    payeeName: string; // 收款对象名称
+    supplierId: number; // 供应商ID
+    supplierName: string; // 供应商名称
     paymentTime?: Dayjs | string; // 付款日期
     paymentAmount?: number; // 付款金额
     paymentMethod?: string; // 付款方式

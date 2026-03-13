@@ -9,7 +9,7 @@ export interface FormSchemaOptions {
   onPayeeTypeChange?: () => void;
 }
 /** 新增/修改的表单 */
-export function useFormSchema(options?: FormSchemaOptions): VbenFormSchema[] {
+export function useFormSchema(): VbenFormSchema[] {
   return [
     {
       fieldName: 'id',
@@ -27,58 +27,27 @@ export function useFormSchema(options?: FormSchemaOptions): VbenFormSchema[] {
       componentProps: {
         placeholder: '请输入付款单号',
       },
-    },
-    {
-      fieldName: 'projectType',
-      label: '项目类型',
-      component: 'Select',
-      componentProps: {
-        options: getDictOptions(DICT_TYPE.BIZ_RECEIPT_PROJECT_TYPE, 'string'),
-        placeholder: '请选择项目类型',
-        onChange: options?.onProjectTypeChange,
+      dependencies: {
+        triggerFields: ['id'],
+        disabled: (values) => !!values.id,
+        show: (values) => !!values.id,
       },
     },
     {
-      fieldName: 'projectId',
-      label: '项目ID',
-      component: 'Input',
-      componentProps: {
-        placeholder: '请输入项目ID',
-      },
-    },
-    {
-      fieldName: 'projectName',
-      label: '项目名称',
-      component: 'Input',
-      componentProps: {
-        placeholder: '请输入项目名称',
-      },
-    },
-    {
-      fieldName: 'payeeType',
-      label: '付款对象类型',
+      fieldName: 'supplierId',
+      label: '供应商ID',
       rules: 'required',
-      component: 'Select',
+      component: 'Input',
       componentProps: {
-        options: getDictOptions(DICT_TYPE.BIZ_PAYMENT_PAYEE_TYPE, 'string'),
-        placeholder: '请选择付款对象类型',
-        onChange: options?.onPayeeTypeChange,
+        placeholder: '请输入供应商ID',
       },
     },
     {
-      fieldName: 'payeeId',
-      label: '付款对象ID',
+      fieldName: 'supplierName',
+      label: '供应商名称',
       component: 'Input',
       componentProps: {
-        placeholder: '请输入付款对象ID',
-      },
-    },
-    {
-      fieldName: 'payeeName',
-      label: '付款对象名称',
-      component: 'Input',
-      componentProps: {
-        placeholder: '请输入付款对象名称',
+        placeholder: '请输入供应商名称',
       },
     },
     {
@@ -88,7 +57,7 @@ export function useFormSchema(options?: FormSchemaOptions): VbenFormSchema[] {
       component: 'DatePicker',
       componentProps: {
         showTime: true,
-        format: 'YYYY-MM-DD HH:mm:ss',
+        format: 'YYYY-MM-DD',
         valueFormat: 'x',
       },
     },
@@ -116,12 +85,7 @@ export function useFormSchema(options?: FormSchemaOptions): VbenFormSchema[] {
     {
       fieldName: 'paymentCertificate',
       label: '付款凭证',
-      component: 'ImageUpload',
-      componentProps: {
-        accept: 'jpg/jpeg/png/gif/webp',
-        maxSize: 5,
-        maxNumber: 5,
-      },
+      component: 'FileUpload',
     },
     {
       fieldName: 'paymentPurpose',
@@ -145,9 +109,11 @@ export function useFormSchema(options?: FormSchemaOptions): VbenFormSchema[] {
     {
       fieldName: 'remark',
       label: '备注',
-      component: 'Input',
+      component: 'Textarea',
+      formItemClass: 'col-span-2',
       componentProps: {
         placeholder: '请输入备注',
+        rows: 3,
       },
     },
   ];
@@ -174,35 +140,35 @@ export function useGridFormSchema(): VbenFormSchema[] {
     //     placeholder: '请输入项目ID',
     //   },
     // },
-    {
-      fieldName: 'projectType',
-      label: '项目类型',
-      component: 'Select',
-      componentProps: {
-        allowClear: true,
-        options: getDictOptions(DICT_TYPE.BIZ_RECEIPT_PROJECT_TYPE, 'string'),
-        placeholder: '请选择项目类型',
-      },
-    },
-    {
-      fieldName: 'projectName',
-      label: '项目名称',
-      component: 'Input',
-      componentProps: {
-        allowClear: true,
-        placeholder: '请输入项目名称',
-      },
-    },
-    {
-      fieldName: 'payeeType',
-      label: '付款对象类型',
-      component: 'Select',
-      componentProps: {
-        allowClear: true,
-        options: getDictOptions(DICT_TYPE.BIZ_PAYMENT_PAYEE_TYPE, 'string'),
-        placeholder: '请选择付款对象类型',
-      },
-    },
+    // {
+    //   fieldName: 'projectType',
+    //   label: '项目类型',
+    //   component: 'Select',
+    //   componentProps: {
+    //     allowClear: true,
+    //     options: getDictOptions(DICT_TYPE.BIZ_RECEIPT_PROJECT_TYPE, 'string'),
+    //     placeholder: '请选择项目类型',
+    //   },
+    // },
+    // {
+    //   fieldName: 'projectName',
+    //   label: '项目名称',
+    //   component: 'Input',
+    //   componentProps: {
+    //     allowClear: true,
+    //     placeholder: '请输入项目名称',
+    //   },
+    // },
+    // {
+    //   fieldName: 'payeeType',
+    //   label: '付款对象类型',
+    //   component: 'Select',
+    //   componentProps: {
+    //     allowClear: true,
+    //     options: getDictOptions(DICT_TYPE.BIZ_PAYMENT_PAYEE_TYPE, 'string'),
+    //     placeholder: '请选择付款对象类型',
+    //   },
+    // },
     // {
     //   fieldName: 'payeeId',
     //   label: '付款对象ID',
@@ -213,12 +179,21 @@ export function useGridFormSchema(): VbenFormSchema[] {
     //   },
     // },
     {
-      fieldName: 'payeeName',
-      label: '付款对象名称',
+      fieldName: 'supplierId',
+      label: '供应商ID',
       component: 'Input',
       componentProps: {
         allowClear: true,
-        placeholder: '请输入付款对象名称',
+        placeholder: '请输入供应商ID',
+      },
+    },
+    {
+      fieldName: 'supplierName',
+      label: '供应商名称',
+      component: 'Input',
+      componentProps: {
+        allowClear: true,
+        placeholder: '请输入供应商名称',
       },
     },
     {
@@ -250,15 +225,15 @@ export function useGridFormSchema(): VbenFormSchema[] {
         placeholder: '请选择是否开票',
       },
     },
-    {
-      fieldName: 'createTime',
-      label: '创建时间',
-      component: 'RangePicker',
-      componentProps: {
-        ...getRangePickerDefaultProps(),
-        allowClear: true,
-      },
-    },
+    // {
+    //   fieldName: 'createTime',
+    //   label: '创建时间',
+    //   component: 'RangePicker',
+    //   componentProps: {
+    //     ...getRangePickerDefaultProps(),
+    //     allowClear: true,
+    //   },
+    // },
   ];
 }
 
@@ -277,43 +252,13 @@ export function useGridColumns(): VxeTableGridOptions<PaymentOrderApi.PaymentOrd
       minWidth: 120,
     },
     {
-      field: 'projectType',
-      title: '项目类型',
-      minWidth: 120,
-      cellRender: {
-        name: 'CellDict',
-        props: { type: DICT_TYPE.BIZ_RECEIPT_PROJECT_TYPE },
-      },
-    },
-    {
-      field: 'projectId',
-      title: '项目ID',
-      visible: false,
+      field: 'supplierId',
+      title: '供应商ID',
       minWidth: 120,
     },
     {
-      field: 'projectName',
-      title: '项目名称',
-      minWidth: 120,
-    },
-    {
-      field: 'payeeType',
-      title: '付款对象类型',
-      minWidth: 120,
-      cellRender: {
-        name: 'CellDict',
-        props: { type: DICT_TYPE.BIZ_PAYMENT_PAYEE_TYPE },
-      },
-    },
-    {
-      field: 'payeeId',
-      title: '付款对象ID',
-      visible: false,
-      minWidth: 120,
-    },
-    {
-      field: 'payeeName',
-      title: '付款对象名称',
+      field: 'supplierName',
+      title: '供应商名称',
       minWidth: 120,
     },
     {
@@ -339,6 +284,7 @@ export function useGridColumns(): VxeTableGridOptions<PaymentOrderApi.PaymentOrd
     {
       field: 'paymentCertificate',
       title: '付款凭证',
+      visible: false,
       minWidth: 120,
       cellRender: {
         name: 'CellImage',
@@ -366,6 +312,7 @@ export function useGridColumns(): VxeTableGridOptions<PaymentOrderApi.PaymentOrd
     {
       field: 'createTime',
       title: '创建时间',
+      visible: false,
       minWidth: 120,
       formatter: 'formatDateTime',
     },

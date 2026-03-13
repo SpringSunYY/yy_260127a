@@ -120,13 +120,8 @@ public class PaymentOrderController {
         // 手动创建导出 demo
         List<PaymentOrderImportVO> list = Collections.singletonList(
                 PaymentOrderImportVO.builder()
-                        .paymentNo("20260110")
-                        .projectType(BizReceiptProjectTypeEnum.BIZ_RECEIPT_PROJECT_TYPE_1.getStatus())
-                        .projectId(1L)
-                        .projectName("项目")
-                        .payeeType(BizPaymentPayeeTypeEnum.BIZ_PAYMENT_PAYEE_TYPE_1.getStatus())
-                        .payeeName("aaaa")
-                        .payeeId(1L)
+                        .supplierName("供应商名称")
+                        .supplierId(1L)
                         .paymentTime(LocalDateTime.now())
                         .paymentAmount(BigDecimal.ONE)
                         .paymentMethod(BizReceiptMethodEnum.BIZ_RECEIPT_METHOD_1.getStatus())

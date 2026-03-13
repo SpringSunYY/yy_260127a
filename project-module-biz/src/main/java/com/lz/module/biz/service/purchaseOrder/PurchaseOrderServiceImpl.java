@@ -169,11 +169,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deletePurchaseOrderListByIds(List<Long> ids) {
-        // 删除
-        purchaseOrderMapper.deleteByIds(ids);
-
-        // 删除子表
-        deletePurchaseOrderDetailByPurchaseIds(ids);
+       ids.forEach(this::deletePurchaseOrder);
     }
 
 

@@ -16,23 +16,11 @@
             <if test="paymentNo != null and paymentNo != ''">
                 AND payment_no LIKE CONCAT('%', #{paymentNo}, '%')
             </if>
-            <if test="projectId != null">
-                AND project_id = #{projectId}
+            <if test="supplierId != null">
+                AND supplier_id = #{supplierId}
             </if>
-            <if test="projectType != null">
-                AND project_type = #{projectType}
-            </if>
-            <if test="projectName != null and projectName != ''">
-                AND project_name LIKE CONCAT('%', #{projectName}, '%')
-            </if>
-            <if test="payeeType != null">
-                AND payee_type = #{payeeType}
-            </if>
-            <if test="payeeId != null">
-                AND payee_id = #{payeeId}
-            </if>
-            <if test="payeeName != null and payeeName != ''">
-                AND payee_name LIKE CONCAT('%', #{payeeName}, '%')
+            <if test="supplierName != null and supplierName != ''">
+                AND supplier_name LIKE CONCAT('%', #{supplierName}, '%')
             </if>
             <if test="paymentTime != null and paymentTime.length == 2">
                 AND payment_time BETWEEN #{paymentTime[0], javaType=java.time.LocalDateTime, jdbcType=TIMESTAMP} AND

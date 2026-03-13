@@ -34,33 +34,13 @@ public class PaymentOrderDO extends BaseDO {
      */
     private String paymentNo;
     /**
-     * 项目ID
+     * 供应商ID
      */
-    private Long projectId;
+    private Long supplierId;
     /**
-     * 项目类型
-     *
-     * 枚举 {@link TODO biz_receipt_project_type 对应的类}
+     * 供应商名称
      */
-    private String projectType;
-    /**
-     * 项目名称
-     */
-    private String projectName;
-    /**
-     * 收款对象类型
-     *
-     * 枚举 {@link TODO biz_payment_payee_type 对应的类}
-     */
-    private String payeeType;
-    /**
-     * 收款对象ID
-     */
-    private Long payeeId;
-    /**
-     * 收款对象名称
-     */
-    private String payeeName;
+    private String supplierName;
     /**
      * 付款日期
      */

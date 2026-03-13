@@ -195,6 +195,12 @@ export function useGridColumns(): VxeTableGridOptions<SupplierApi.Supplier>['col
       minWidth: 120,
     },
     {
+      field: 'payableAmount',
+      title: '应付金额',
+      minWidth: 120,
+      sortable: true,
+    },
+    {
       field: 'paymentAmount',
       title: '付款金额',
       minWidth: 120,
@@ -203,12 +209,6 @@ export function useGridColumns(): VxeTableGridOptions<SupplierApi.Supplier>['col
     {
       field: 'debtAmount',
       title: '欠款金额',
-      minWidth: 120,
-      sortable: true,
-    },
-    {
-      field: 'payableAmount',
-      title: '应付金额',
       minWidth: 120,
       sortable: true,
     },

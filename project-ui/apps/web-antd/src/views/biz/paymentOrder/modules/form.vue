@@ -9,18 +9,13 @@ import { useDebounceFn } from '@vueuse/core';
 import { message, Select } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
-import { getCustomerPage } from '#/api/biz/customer';
 import {
   createPaymentOrder,
   getPaymentOrder,
   updatePaymentOrder,
 } from '#/api/biz/paymentOrder';
-import { getProjectPage } from '#/api/biz/project';
-import { getProjectOtherPage } from '#/api/biz/projectOther';
 import { getSupplierPage } from '#/api/biz/supplier';
-import { getWorkerPage } from '#/api/biz/worker';
 import { $t } from '#/locales';
-import { BIZ_PAYMENT_PAYEE_TYPE, BIZ_RECEIPT_PROJECT_TYPE } from '#/utils';
 
 import { useFormSchema } from '../data';
 
@@ -32,175 +27,51 @@ const getTitle = computed(() => {
     : $t('ui.actionTitle.create', ['付款信息']);
 });
 
-// 项目搜索状态
-const projectKeyword = ref('');
-const projectOptions = ref<any[]>([]);
-const projectLoading = ref(false);
-
 // 付款对象搜索状态
-const payeeKeyword = ref('');
-const payeeOptions = ref<any[]>([]);
-const payeeLoading = ref(false);
-
-// 加载项目列表
-const loadProjects = async (keyword?: string) => {
-  projectLoading.value = true;
-  try {
-    // 优先从 form 状态获取，如果未就绪则根据表单结构默认
-    const projectType =
-      (formApi?.form as any)?.values?.projectType ||
-      formData.value?.projectType;
-
-    if (projectType === BIZ_RECEIPT_PROJECT_TYPE.receipt_project_type_2) {
-      // 其他工程
-      const res = await getProjectOtherPage({
-        pageNo: 1,
-        pageSize: 50,
-        projectName: keyword || '',
-      });
-      // 解析结果，把projectName改为name
-      projectOptions.value = res.list.map((item: any) => ({
-        id: item.id,
-        name: item.projectName,
-        value: item.id,
-        label: item.projectName,
-      }));
-    } else {
-      // 默认项目
-      const res = await getProjectPage({
-        pageNo: 1,
-        pageSize: 50,
-        name: keyword || '',
-      });
-      projectOptions.value = res.list || [];
-    }
-  } finally {
-    projectLoading.value = false;
-  }
-};
-
-// 项目类型变更
-const handleProjectTypeChange = () => {
-  formApi.setFieldValue('projectId', undefined);
-  formApi.setFieldValue('projectName', undefined);
-  projectOptions.value = [];
-  loadProjects();
-};
-
-// 项目搜索
-const handleProjectSearch = useDebounceFn((_value: string) => {
-  projectKeyword.value = _value;
-  loadProjects(_value);
-}, 300);
-
-// 项目选择
-const handleProjectChange = (_value: any, option: any) => {
-  formApi.setFieldValue('projectName', option?.name || option?.label || '');
-};
-
-// 项目下拉打开时加载数据
-const handleProjectOpenChange = (open: boolean) => {
-  if (open) {
-    loadProjects();
-  }
-};
-
-// 付款对象类型变更
-const handlePayeeTypeChange = () => {
-  formApi.setFieldValue('payeeId', undefined);
-  formApi.setFieldValue('payeeName', undefined);
-  payeeOptions.value = [];
-  loadPayees();
-};
+const supplierKeyword = ref('');
+const supplierOptions = ref<any[]>([]);
+const supplierLoading = ref(false);
 
 // 加载付款对象列表
 const loadPayees = async (keyword?: string) => {
-  payeeLoading.value = true;
+  supplierLoading.value = true;
   try {
-    const payeeType =
-      (formApi?.form as any)?.values?.payeeType || formData.value?.payeeType;
-
-    if (!payeeType) {
-      payeeOptions.value = [];
-      return;
-    }
-
-    let res: any;
-    switch (payeeType) {
-      case BIZ_PAYMENT_PAYEE_TYPE.payment_payee_type_1: {
-        // 工人
-        res = await getWorkerPage({
-          pageNo: 1,
-          pageSize: 50,
-          name: keyword || '',
-        });
-
-        break;
-      }
-      case BIZ_PAYMENT_PAYEE_TYPE.payment_payee_type_2: {
-        // 供应商
-        res = await getSupplierPage({
-          pageNo: 1,
-          pageSize: 50,
-          name: keyword || '',
-        });
-
-        break;
-      }
-      case BIZ_PAYMENT_PAYEE_TYPE.payment_payee_type_3: {
-        // 客户
-        res = await getCustomerPage({
-          pageNo: 1,
-          pageSize: 50,
-          name: keyword || '',
-        });
-
-        break;
-      }
-      // No default
-    }
-
-    if (res?.list) {
-      payeeOptions.value = res.list.map((item: any) => ({
-        id: item.id,
-        name:
-          item.name ||
-          item.workerName ||
-          item.customerName ||
-          item.supplierName ||
-          '', // 兼容不同字段名
-        value: item.id,
-        label:
-          item.name ||
-          item.workerName ||
-          item.customerName ||
-          item.supplierName ||
-          '',
-      }));
-    } else {
-      payeeOptions.value = [];
-    }
+    // 供应商
+    const res = await getSupplierPage({
+      pageNo: 1,
+      pageSize: 50,
+      name: keyword || '',
+    });
+    // No default
+    supplierOptions.value = res?.list
+      ? res.list.map((item: any) => ({
+          id: item.id,
+          name: item.name || item.supplierName || '',
+          value: item.id,
+          label: item.name || item.supplierName || '',
+        }))
+      : [];
   } catch (error) {
     console.error(error);
-    payeeOptions.value = [];
+    supplierOptions.value = [];
   } finally {
-    payeeLoading.value = false;
+    supplierLoading.value = false;
   }
 };
 
 // 付款对象搜索
-const handlePayeeSearch = useDebounceFn((_value: string) => {
-  payeeKeyword.value = _value;
+const handleSupplierSearch = useDebounceFn((_value: string) => {
+  supplierKeyword.value = _value;
   loadPayees(_value);
 }, 300);
 
 // 付款对象选择
-const handlePayeeChange = (_value: any, option: any) => {
-  formApi.setFieldValue('payeeName', option?.name || option?.label || '');
+const handleSupplierChange = (_value: any, option: any) => {
+  formApi.setFieldValue('supplierName', option?.name || option?.label || '');
 };
 
 // 付款对象下拉打开时加载数据
-const handlePayeeOpenChange = (open: boolean) => {
+const handleSupplierOpenChange = (open: boolean) => {
   if (open) {
     loadPayees();
   }
@@ -215,10 +86,7 @@ const [Form, formApi] = useVbenForm({
     labelWidth: 120,
   },
   layout: 'horizontal',
-  schema: useFormSchema({
-    onProjectTypeChange: handleProjectTypeChange,
-    onPayeeTypeChange: handlePayeeTypeChange,
-  }),
+  schema: useFormSchema(),
   showDefaultActions: false,
   wrapperClass: 'grid-cols-2 gap-x-4',
 });
@@ -267,9 +135,6 @@ const [Modal, modalApi] = useVbenModal({
     formData.value = data;
     await formApi.setValues(formData.value);
 
-    // 加载项目列表
-    await loadProjects();
-
     // 加载付款对象列表
     await loadPayees();
   },
@@ -279,39 +144,21 @@ const [Modal, modalApi] = useVbenModal({
 <template>
   <Modal :title="getTitle">
     <Form class="mx-4">
-      <!-- 项目自定义插槽 -->
-      <template #projectId="slotProps">
-        <Select
-          v-bind="slotProps"
-          show-search
-          allow-clear
-          placeholder="请选择项目"
-          :loading="projectLoading"
-          :options="projectOptions"
-          :field-names="{ label: 'name', value: 'id' }"
-          :filter-option="false"
-          class="w-full"
-          @search="handleProjectSearch"
-          @change="handleProjectChange"
-          @dropdown-open-change="handleProjectOpenChange"
-        />
-      </template>
-
       <!-- 付款对象自定义插槽 -->
-      <template #payeeId="slotProps">
+      <template #supplierId="slotProps">
         <Select
           v-bind="slotProps"
           show-search
           allow-clear
-          placeholder="请选择付款对象"
-          :loading="payeeLoading"
-          :options="payeeOptions"
+          placeholder="请选择供应商"
+          :loading="supplierLoading"
+          :options="supplierOptions"
           :field-names="{ label: 'name', value: 'id' }"
           :filter-option="false"
           class="w-full"
-          @search="handlePayeeSearch"
-          @change="handlePayeeChange"
-          @dropdown-open-change="handlePayeeOpenChange"
+          @search="handleSupplierSearch"
+          @change="handleSupplierChange"
+          @dropdown-open-change="handleSupplierOpenChange"
         />
       </template>
     </Form>

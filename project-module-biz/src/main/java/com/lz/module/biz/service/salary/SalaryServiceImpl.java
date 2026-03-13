@@ -226,9 +226,6 @@ public class SalaryServiceImpl implements SalaryService {
                                              String paymentMethod, String isInvoiced, String paymentCertificate, String remark) {
         PaymentOrderDO paymentOrderDO = new PaymentOrderDO();
         paymentOrderDO.setPaymentNo(paymentNo);
-        paymentOrderDO.setPayeeType(BizPaymentPayeeTypeEnum.BIZ_PAYMENT_PAYEE_TYPE_1.getStatus());
-        paymentOrderDO.setPayeeId(workerId);
-        paymentOrderDO.setPayeeName(workerName);
         paymentOrderDO.setPaymentTime(settlementTime);
         paymentOrderDO.setPaymentAmount(payableAmount);
         paymentOrderDO.setPaymentMethod(paymentMethod);

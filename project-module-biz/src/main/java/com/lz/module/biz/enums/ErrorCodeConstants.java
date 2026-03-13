@@ -37,4 +37,5 @@ public interface ErrorCodeConstants {
     ErrorCode RECEIPT_ORDER_NOT_EXISTS = new ErrorCode(1_008_012_000, "收款信息不存在");
     // ========== 付款 1-008-013-xxx  ==========
     ErrorCode PAYMENT_ORDER_NOT_EXISTS = new ErrorCode(1_008_013_000, "付款信息不存在");
+    ErrorCode PAYMENT_ORDER_SUPPLIER_CANNOT_UPDATE = new ErrorCode(1_008_013_001, "付款信息供应商不允许修改");
 }
