@@ -39,4 +39,6 @@ public interface ErrorCodeConstants {
     // ========== 付款 1-008-013-xxx  ==========
     ErrorCode PAYMENT_ORDER_NOT_EXISTS = new ErrorCode(1_008_013_000, "付款信息不存在");
     ErrorCode PAYMENT_ORDER_SUPPLIER_CANNOT_UPDATE = new ErrorCode(1_008_013_001, "付款信息供应商不允许修改");
+    // ========== 工资付款信息 1-008-014-xxx  ==========
+    ErrorCode SALARY_PAYMENT_ORDER_NOT_EXISTS = new ErrorCode(1_008_014_000, "工资付款信息不存在");
 }
