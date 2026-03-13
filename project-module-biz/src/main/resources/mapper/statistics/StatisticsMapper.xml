@@ -34,13 +34,13 @@
         ORDER BY name;
     </select>
     <select id="salaryStatistics" resultMap="StatisticsDOMap">
-        SELECT SUM(payable_amount) AS value,
-        DATE_FORMAT(settlement_time, #{format}) AS name
-        FROM biz_salary
+        SELECT SUM(payment_amount) AS value,
+        DATE_FORMAT(payment_time, #{format}) AS name
+        FROM biz_salary_payment_order
         <where>
             and deleted = false
             <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-                AND settlement_time BETWEEN #{startTime} AND #{endTime}
+                AND payment_time BETWEEN #{startTime} AND #{endTime}
             </if>
         </where>
         GROUP BY name

@@ -14,7 +14,7 @@ import dayjs from 'dayjs';
 
 import { getPaymentOrderAmount } from '#/api/biz/paymentOrder';
 import { getReceiptOrderAmount } from '#/api/biz/receiptOrder';
-import { getTotalPayableAmount } from '#/api/biz/salary';
+import { getSalaryPaymentOrderAmount } from '#/api/biz/salaryPaymentOrder';
 import {
   getPaymentStatistics,
   getReceiptStatistics,
@@ -139,11 +139,11 @@ const fetchSalaryData = async () => {
   const { startOfMonth, endOfMonth } = getMonthRange();
   try {
     // 本月工资
-    const monthRes = await getTotalPayableAmount({
-      settlementTime: [startOfMonth, endOfMonth] as any,
+    const monthRes = await getSalaryPaymentOrderAmount({
+      paymentTime: [startOfMonth, endOfMonth] as any,
     } as any);
     // 总工资
-    const totalRes = await getTotalPayableAmount({} as any);
+    const totalRes = await getSalaryPaymentOrderAmount({} as any);
 
     const salaryItem = overviewItems.value.find(
       (item) => item.key === 'salary',
