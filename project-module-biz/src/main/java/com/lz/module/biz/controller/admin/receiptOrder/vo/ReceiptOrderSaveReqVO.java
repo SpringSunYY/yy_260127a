@@ -41,13 +41,17 @@ public class ReceiptOrderSaveReqVO {
     @Schema(description = "项目名称", example = "李四")
     private String projectName;
 
-    @Schema(description = "付款方", requiredMode = Schema.RequiredMode.REQUIRED, example = "赵六")
-    @NotEmpty(message = "付款方不能为空")
-    private String payerName;
+    @Schema(description = "客户ID", example = "1161")
+    @NotNull(message = "客户ID不能为空")
+    private Long customerId;
 
     @Schema(description = "收款日期", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "收款日期不能为空")
     private LocalDateTime receiptDate;
+
+    @Schema(description = "客户名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "张三")
+    @NotEmpty(message = "客户名称不能为空")
+    private String customerName;
 
     @Schema(description = "收款金额", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "收款金额不能为空")

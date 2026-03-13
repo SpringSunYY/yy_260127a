@@ -58,9 +58,18 @@ public class ReceiptOrderRespVO {
     @ExcelProperty("付款方")
     private String payerName;
 
+    @Schema(description = "客户ID", example = "1161")
+    @ExcelProperty("客户ID")
+    private Long customerId;
+
+    @Schema(description = "客户名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "张三")
+    @ExcelProperty("客户名称")
+    private String customerName;
+
     @Schema(description = "收款日期", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("收款日期")
     private LocalDateTime receiptDate;
+
 
     @Schema(description = "收款金额", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("收款金额")

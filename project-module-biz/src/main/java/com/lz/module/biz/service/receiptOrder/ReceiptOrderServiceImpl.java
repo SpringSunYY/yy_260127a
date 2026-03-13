@@ -123,7 +123,8 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
         setNullIfPresent(wrapper, ReceiptOrderDO::getProjectId, receiptOrderDO.getProjectId());
         setNullIfPresent(wrapper, ReceiptOrderDO::getProjectNo, updateObj.getProjectNo());
         setNullIfPresent(wrapper, ReceiptOrderDO::getProjectName, updateObj.getProjectName());
-        setNullIfPresent(wrapper, ReceiptOrderDO::getPayerName, receiptOrderDO.getPayerName());
+        setNullIfPresent(wrapper, ReceiptOrderDO::getCustomerId, receiptOrderDO.getCustomerId());
+        setNullIfPresent(wrapper, ReceiptOrderDO::getCustomerName, receiptOrderDO.getCustomerName());
         setNullIfPresent(wrapper, ReceiptOrderDO::getReceiptDate, receiptOrderDO.getReceiptDate());
         setNullIfPresent(wrapper, ReceiptOrderDO::getReceiptAmount, receiptOrderDO.getReceiptAmount());
         setNullIfPresent(wrapper, ReceiptOrderDO::getReceiptMethod, receiptOrderDO.getReceiptMethod());

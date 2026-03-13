@@ -68,13 +68,17 @@ public class ReceiptOrderDO extends BaseDO {
      */
     private String projectName;
     /**
-     * 付款方
+     * 客户ID
      */
-    private String payerName;
+    private Long customerId;
     /**
      * 收款日期
      */
     private LocalDateTime receiptDate;
+    /**
+     * 客户名称
+     */
+    private String customerName;
     /**
      * 收款金额
      */

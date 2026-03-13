@@ -35,13 +35,15 @@ public class ReceiptOrderPageReqVO extends PageParam {
     @Schema(description = "财年")
     private Integer fiscalYear;
 
-    @Schema(description = "付款方", example = "赵六")
-    private String payerName;
+    @Schema(description = "客户ID", example = "1161")
+    private Long customerId;
 
     @Schema(description = "收款日期")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
     private LocalDateTime[] receiptDate;
 
+    @Schema(description = "客户名称", example = "张三")
+    private String customerName;
     @Schema(description = "收款方式")
     private String receiptMethod;
 

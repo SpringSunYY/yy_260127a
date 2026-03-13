@@ -34,8 +34,11 @@
             <if test="projectName != null and projectName != ''">
                 AND project_name LIKE CONCAT('%', #{projectName}, '%')
             </if>
-            <if test="payerName != null and payerName != ''">
-                AND payer_name LIKE CONCAT('%', #{payerName}, '%')
+            <if test="customerName != null and customerName != ''">
+                AND customer_name LIKE CONCAT('%', #{customerName}, '%')
+            </if>
+            <if test="customerId != null">
+                AND customer_id = #{customerId}
             </if>
             <if test="receiptDate != null and receiptDate.length == 2">
                 AND receipt_date BETWEEN

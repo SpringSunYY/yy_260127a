@@ -286,9 +286,6 @@ export function useGridColumns(): VxeTableGridOptions<PaymentOrderApi.PaymentOrd
       title: '付款凭证',
       visible: false,
       minWidth: 120,
-      cellRender: {
-        name: 'CellImage',
-      },
     },
     {
       field: 'paymentPurpose',

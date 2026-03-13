@@ -93,12 +93,20 @@ export function useFormSchema(options?: FormSchemaOptions): VbenFormSchema[] {
     //   },
     // },
     {
-      fieldName: 'payerName',
-      label: '付款方',
+      fieldName: 'customerId',
+      label: '客户ID',
+      component: 'Input',
+      componentProps: {
+        placeholder: '请输入客户ID',
+      },
+    },
+    {
+      fieldName: 'customerName',
+      label: '客户名称',
       rules: 'required',
       component: 'Input',
       componentProps: {
-        placeholder: '请输入付款方',
+        placeholder: '请输入客户名称',
       },
     },
     {
@@ -108,7 +116,7 @@ export function useFormSchema(options?: FormSchemaOptions): VbenFormSchema[] {
       component: 'DatePicker',
       componentProps: {
         showTime: true,
-        format: 'YYYY-MM-DD HH:mm:ss',
+        format: 'YYYY-MM-DD',
         valueFormat: 'x',
       },
     },
@@ -146,12 +154,7 @@ export function useFormSchema(options?: FormSchemaOptions): VbenFormSchema[] {
     {
       fieldName: 'receiptCertificate',
       label: '收款凭证',
-      component: 'ImageUpload',
-      componentProps: {
-        accept: 'jpg/jpeg/png/gif/webp',
-        maxSize: 5,
-        maxNumber: 5,
-      },
+      component: 'FileUpload',
     },
     {
       fieldName: 'receiptPurpose',
@@ -245,12 +248,21 @@ export function useGridFormSchema(): VbenFormSchema[] {
       },
     },
     {
-      fieldName: 'payerName',
-      label: '付款方',
+      fieldName: 'customerId',
+      label: '客户ID',
       component: 'Input',
       componentProps: {
         allowClear: true,
-        placeholder: '请输入付款方',
+        placeholder: '请输入客户ID',
+      },
+    },
+    {
+      fieldName: 'customerName',
+      label: '客户名称',
+      component: 'Input',
+      componentProps: {
+        allowClear: true,
+        placeholder: '请输入客户名称',
       },
     },
     {
@@ -282,15 +294,15 @@ export function useGridFormSchema(): VbenFormSchema[] {
         placeholder: '请选择是否开票',
       },
     },
-    {
-      fieldName: 'createTime',
-      label: '创建时间',
-      component: 'RangePicker',
-      componentProps: {
-        ...getRangePickerDefaultProps(),
-        allowClear: true,
-      },
-    },
+    // {
+    //   fieldName: 'createTime',
+    //   label: '创建时间',
+    //   component: 'RangePicker',
+    //   componentProps: {
+    //     ...getRangePickerDefaultProps(),
+    //     allowClear: true,
+    //   },
+    // },
   ];
 }
 
@@ -357,8 +369,13 @@ export function useGridColumns(): VxeTableGridOptions<ReceiptOrderApi.ReceiptOrd
       minWidth: 120,
     },
     {
-      field: 'payerName',
-      title: '付款方',
+      field: 'customerId',
+      title: '客户ID',
+      minWidth: 120,
+    },
+    {
+      field: 'customerName',
+      title: '客户名称',
       minWidth: 120,
     },
     {
@@ -385,9 +402,7 @@ export function useGridColumns(): VxeTableGridOptions<ReceiptOrderApi.ReceiptOrd
       field: 'receiptCertificate',
       title: '收款凭证',
       minWidth: 120,
-      cellRender: {
-        name: 'CellImage',
-      },
+      visible: false,
     },
     {
       field: 'receiptPurpose',
@@ -412,6 +427,7 @@ export function useGridColumns(): VxeTableGridOptions<ReceiptOrderApi.ReceiptOrd
       field: 'createTime',
       title: '创建时间',
       minWidth: 120,
+      visible: false,
       formatter: 'formatDateTime',
     },
     {
