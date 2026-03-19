@@ -233,3 +233,17 @@ function handlePreview(file: UploadFile) {
     </Upload>
   </div>
 </template>
+
+<style scoped>
+/* 文件名过长时省略显示，保证删除按钮不被遮挡 */
+:deep(.ant-upload-list-item-name) {
+  max-width: calc(100% - 50%) !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+:deep(.ant-upload-list-item-actions) {
+  right: 10% !important;
+  display: flex !important;
+}
+</style>
