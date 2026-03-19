@@ -108,12 +108,13 @@ export function useUpload(directory?: string) {
       const fileName = await generateFileName(file);
       // 1.2 获取文件预签名地址
       const presignedInfo = await getFilePresignedUrl(fileName, directory);
-      // 1.3 上传文件
+      // 1.3 上传文件（timeout: 0 防止大文件上传超时）
       return baseRequestClient
         .put(presignedInfo.uploadUrl, file, {
           headers: {
             'Content-Type': file.type,
           },
+          timeout: 0,
         })
         .then(() => {
           // 1.4. 记录文件信息到后端（异步）
@@ -122,8 +123,8 @@ export function useUpload(directory?: string) {
           return { url: presignedInfo.url };
         });
     } else {
-      // 模式二：后端上传
-      return uploadFile({ file, directory }, onUploadProgress);
+      // 模式二：后端上传（timeout: 0 防止大文件上传超时）
+      return uploadFile({ file, directory }, onUploadProgress, { timeout: 0 });
     }
   }
 

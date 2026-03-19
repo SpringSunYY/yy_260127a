@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { UploadFile, UploadProps } from 'ant-design-vue';
+import type { Tooltip, UploadFile, UploadProps } from 'ant-design-vue';
 import type { UploadRequestOption } from 'ant-design-vue/lib/vc-upload/interface';
 
 import type { FileUploadProps } from './typing';
@@ -25,7 +25,7 @@ const props = withDefaults(defineProps<FileUploadProps>(), {
   directory: undefined,
   disabled: false,
   helpText: '',
-  maxSize: 5000,
+  maxSize: 500,
   maxNumber: 100,
   accept: () => [],
   multiple: true,
@@ -135,7 +135,7 @@ async function customRequest(info: UploadRequestOption<any>) {
     // 构建上传 Promise
     const uploadPromise = api?.(info.file as File, progressEvent);
 
-    // 处理超时
+    // 处理超时（仅在 timeout > 0 时启用超时检测）
     let res;
     if (timeout && timeout > 0) {
       const timeoutPromise = new Promise((_, reject) => {
@@ -215,21 +215,26 @@ function handlePreview(file: UploadFile) {
           {{ $t('ui.upload.upload') }}
         </Button>
       </div>
-      <div v-if="showDescription" class="mt-2 flex flex-wrap items-center">
-        请上传不超过
-        <div class="text-primary mx-1 font-bold">{{ maxSize }}MB</div>
-        的文件
-        <template v-if="getAccept.length > 0">
-          ，支持
-          <div class="text-primary mx-1 font-bold">
-            {{ getAccept.join('/') }}
-          </div>
-          格式
-        </template>
-        ，最多
-        <div class="text-primary mx-1 font-bold">{{ maxNumber }}</div>
-        个
-      </div>
+      <Tooltip
+        v-if="showDescription"
+        :title="`请上传不超过 ${maxSize}MB 的文件${getAccept.length > 0 ? `，支持 ${getAccept.join('/')} 格式` : ''}，最多 ${maxNumber} 个`"
+      >
+        <div class="mt-2 flex flex-wrap items-center">
+          请上传不超过
+          <div class="text-primary mx-1 font-bold">{{ maxSize }}MB</div>
+          的文件
+          <template v-if="getAccept.length > 0">
+            ，支持
+            <div class="text-primary mx-1 font-bold">
+              {{ getAccept.join('/') }}
+            </div>
+            格式
+          </template>
+          ，最多
+          <div class="text-primary mx-1 font-bold">{{ maxNumber }}</div>
+          个
+        </div>
+      </Tooltip>
     </Upload>
   </div>
 </template>

@@ -64,10 +64,14 @@ export function createFile(data: InfraFileApi.File) {
 export function uploadFile(
   data: InfraFileApi.FileUploadReqVO,
   onUploadProgress?: AxiosProgressEvent,
+  config?: AxiosRequestConfig,
 ) {
   // 特殊：由于 upload 内部封装，即使 directory 为 undefined，也会传递给后端
   if (!data.directory) {
     delete data.directory;
   }
-  return requestClient.upload('/infra/file/upload', data, { onUploadProgress });
+  return requestClient.upload('/infra/file/upload', data, {
+    onUploadProgress,
+    ...config,
+  });
 }
