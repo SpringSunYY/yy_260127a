@@ -43,4 +43,7 @@ public class ProjectScatteredPageReqVO extends PageParam {
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
     private LocalDateTime[] createTime;
 
+    @Schema(description = "备注")
+    private String remark;
+
 }

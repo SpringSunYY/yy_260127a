@@ -28,6 +28,7 @@ public interface ProjectScatteredMapper extends BaseMapperX<ProjectScatteredDO> 
                 .eqIfPresent(ProjectScatteredDO::getCompletedImage, reqVO.getCompletedImage())
                 .eqIfPresent(ProjectScatteredDO::getVerification, reqVO.getVerification())
                 .betweenIfPresent(ProjectScatteredDO::getCreateTime, reqVO.getCreateTime())
+                .likeIfPresent(ProjectScatteredDO::getRemark, reqVO.getRemark())
                 .orderByDesc(ProjectScatteredDO::getId));
     }
 

@@ -15,7 +15,7 @@ public class ProjectScatteredSaveReqVO {
     private Long id;
 
     @Schema(description = "项目ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "2392")
-    @NotEmpty(message = "项目ID不能为空")
+    @NotNull(message = "项目ID不能为空")
     private Long projectId;
 
 
