@@ -10,6 +10,8 @@ import { formatDateTime, isEmpty } from '@vben/utils';
 
 import { Avatar, Button, Image, Timeline, Tooltip } from 'ant-design-vue';
 
+import { useVbenModal } from '@vben/common-ui';
+
 import { UserSelectModal } from '#/components/select-modal';
 import {
   BpmCandidateStrategyEnum,
@@ -18,6 +20,11 @@ import {
 } from '#/utils';
 
 defineOptions({ name: 'BpmProcessInstanceTimeline' });
+
+const [UserSelectModalComp, userSelectModalApi] = useVbenModal({
+  connectedComponent: UserSelectModal,
+  destroyOnClose: true,
+});
 
 withDefaults(
   defineProps<{
@@ -150,16 +157,16 @@ function getApprovalNodeTime(node: BpmProcessInstanceApi.ApprovalNodeInfo) {
 }
 
 // 选择自定义审批人
-const userSelectFormRef = ref();
 const selectedActivityNodeId = ref<string>();
 const customApproveUsers = ref<Record<string, any[]>>({}); // key：activityId，value：用户列表
 
 // 打开选择用户弹窗
 const handleSelectUser = (activityId: string, selectedList: any[]) => {
   selectedActivityNodeId.value = activityId;
-  userSelectFormRef.value.open(
-    selectedList?.length ? selectedList.map((item) => item.id) : [],
-  );
+  userSelectModalApi.setData({
+    userIds: selectedList?.length ? selectedList.map((item) => item.id) : [],
+  });
+  userSelectModalApi.open();
 };
 
 // 选择用户完成
@@ -452,8 +459,7 @@ function handleUserSelectCancel() {
     </Timeline>
 
     <!-- 用户选择弹窗 -->
-    <UserSelectModal
-      ref="userSelectFormRef"
+    <UserSelectModalComp
       v-model:value="selectedUsers"
       :multiple="true"
       title="选择用户"

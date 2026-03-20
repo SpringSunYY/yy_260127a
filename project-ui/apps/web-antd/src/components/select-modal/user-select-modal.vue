@@ -406,10 +406,10 @@ function processDeptNode(node: any): DeptTreeNode {
 </script>
 
 <template>
-  <Modal class="w-[40%]" key="user-select-modal" :title="title">
+  <Modal class="w-[55%]" key="user-select-modal" :title="title">
     <Row :gutter="[16, 16]">
       <Col :span="6">
-        <div class="h-[500px] overflow-auto rounded border">
+        <div class="h-[580px] overflow-auto rounded border">
           <div class="border-b p-2">
             <Input
               v-model:value="deptSearchKeys"
@@ -489,7 +489,7 @@ function processDeptNode(node: any): DeptTreeNode {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 500px;
+  height: 580px;
 }
 
 :deep(.ant-transfer-list) {
