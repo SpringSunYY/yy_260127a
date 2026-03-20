@@ -28,8 +28,10 @@ public interface WorkerMapper extends BaseMapperX<WorkerDO> {
                 .eqIfPresent(WorkerDO::getWorkType, reqVO.getWorkType())
                 .eqIfPresent(WorkerDO::getSkillLevel, reqVO.getSkillLevel())
                 .eqIfPresent(WorkerDO::getStatus, reqVO.getStatus())
-                .betweenIfPresent(WorkerDO::getCreateTime, reqVO.getCreateTime())
-                .orderByDesc(WorkerDO::getId);
+                .betweenIfPresent(WorkerDO::getDebtAmount, reqVO.getDebtAmount())
+                .betweenIfPresent(WorkerDO::getPaymentAmount, reqVO.getPaymentAmount())
+                .betweenIfPresent(WorkerDO::getPayableAmount, reqVO.getPayableAmount())
+                .betweenIfPresent(WorkerDO::getCreateTime, reqVO.getCreateTime());
         // 动态排序（白名单字段），未传则默认按 id 倒序
         boolean asc = "asc".equalsIgnoreCase(reqVO.getOrder());
         String orderBy = reqVO.getOrderBy();

@@ -236,6 +236,33 @@ export function useGridFormSchema(): VbenFormSchema[] {
       },
     },
     {
+      fieldName: 'payableAmount',
+      label: '应付金额',
+      component: 'NumberRange',
+      componentProps: {
+        allowClear: true,
+        precision: 2,
+      },
+    },
+    {
+      fieldName: 'paymentAmount',
+      label: '付款金额',
+      component: 'NumberRange',
+      componentProps: {
+        allowClear: true,
+        precision: 2,
+      },
+    },
+    {
+      fieldName: 'debtAmount',
+      label: '欠款金额',
+      component: 'NumberRange',
+      componentProps: {
+        allowClear: true,
+        precision: 2,
+      },
+    },
+    {
       fieldName: 'createTime',
       label: '创建时间',
       component: 'RangePicker',
