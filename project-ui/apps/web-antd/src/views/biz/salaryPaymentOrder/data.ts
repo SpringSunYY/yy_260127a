@@ -139,15 +139,15 @@ export function useGridFormSchema(): VbenFormSchema[] {
         placeholder: '请输入付款单号',
       },
     },
-    {
-      fieldName: 'salaryId',
-      label: '工资ID',
-      component: 'Input',
-      componentProps: {
-        allowClear: true,
-        placeholder: '请输入工资ID',
-      },
-    },
+    // {
+    //   fieldName: 'salaryId',
+    //   label: '工资ID',
+    //   component: 'Input',
+    //   componentProps: {
+    //     allowClear: true,
+    //     placeholder: '请输入工资ID',
+    //   },
+    // },
     {
       fieldName: 'salaryName',
       label: '工资名称',
@@ -157,15 +157,15 @@ export function useGridFormSchema(): VbenFormSchema[] {
         placeholder: '请输入工资名称',
       },
     },
-    {
-      fieldName: 'workerId',
-      label: '工人ID',
-      component: 'Input',
-      componentProps: {
-        allowClear: true,
-        placeholder: '请输入工人ID',
-      },
-    },
+    // {
+    //   fieldName: 'workerId',
+    //   label: '工人ID',
+    //   component: 'Input',
+    //   componentProps: {
+    //     allowClear: true,
+    //     placeholder: '请输入工人ID',
+    //   },
+    // },
     {
       fieldName: 'workerName',
       label: '工人名称',
@@ -202,6 +202,22 @@ export function useGridFormSchema(): VbenFormSchema[] {
         allowClear: true,
         options: getDictOptions(DICT_TYPE.COMMON_WHETHER, 'string'),
         placeholder: '请选择是否开票',
+      },
+    },
+    {
+      fieldName: 'paymentPurpose',
+      label: '付款事由',
+      component: 'Input',
+      componentProps: {
+        placeholder: '请输入付款事由',
+      },
+    },
+    {
+      fieldName: 'remark',
+      label: '备注',
+      component: 'Input',
+      componentProps: {
+        placeholder: '请输入备注',
       },
     },
     // {

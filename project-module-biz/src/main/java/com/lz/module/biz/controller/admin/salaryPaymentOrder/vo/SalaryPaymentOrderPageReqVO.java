@@ -1,11 +1,10 @@
 package com.lz.module.biz.controller.admin.salaryPaymentOrder.vo;
 
-import lombok.*;
-import java.util.*;
-import io.swagger.v3.oas.annotations.media.Schema;
 import com.lz.framework.common.pojo.PageParam;
-import java.math.BigDecimal;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDateTime;
 
 import static com.lz.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND;
@@ -38,6 +37,12 @@ public class SalaryPaymentOrderPageReqVO extends PageParam {
 
     @Schema(description = "是否开票")
     private String isInvoiced;
+
+    @Schema(description = "备注")
+    private String remark;
+
+    @Schema(description = "付款事由")
+    private String paymentPurpose;
 
     @Schema(description = "创建时间")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)

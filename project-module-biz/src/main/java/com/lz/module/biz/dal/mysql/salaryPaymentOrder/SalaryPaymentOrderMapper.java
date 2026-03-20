@@ -28,6 +28,8 @@ public interface SalaryPaymentOrderMapper extends BaseMapperX<SalaryPaymentOrder
                 .betweenIfPresent(SalaryPaymentOrderDO::getPaymentTime, reqVO.getPaymentTime())
                 .eqIfPresent(SalaryPaymentOrderDO::getPaymentMethod, reqVO.getPaymentMethod())
                 .eqIfPresent(SalaryPaymentOrderDO::getIsInvoiced, reqVO.getIsInvoiced())
+                .likeIfPresent(SalaryPaymentOrderDO::getPaymentPurpose, reqVO.getPaymentPurpose())
+                .likeIfPresent(SalaryPaymentOrderDO::getRemark, reqVO.getRemark())
                 .betweenIfPresent(SalaryPaymentOrderDO::getCreateTime, reqVO.getCreateTime())
                 .orderByDesc(SalaryPaymentOrderDO::getId));
     }
