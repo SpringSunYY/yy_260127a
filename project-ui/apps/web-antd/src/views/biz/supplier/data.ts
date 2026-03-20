@@ -132,42 +132,33 @@ export function useGridFormSchema(): VbenFormSchema[] {
         placeholder: '请输入供应商名称',
       },
     },
-    // {
-    //   fieldName: 'telephone',
-    //   label: '电话',
-    //   component: 'Input',
-    //   componentProps: {
-    //     allowClear: true,
-    //     placeholder: '请输入电话',
-    //   },
-    // },
-    // {
-    //   fieldName: 'qq',
-    //   label: 'QQ',
-    //   component: 'Input',
-    //   componentProps: {
-    //     allowClear: true,
-    //     placeholder: '请输入QQ',
-    //   },
-    // },
-    // {
-    //   fieldName: 'weChat',
-    //   label: '微信',
-    //   component: 'Input',
-    //   componentProps: {
-    //     allowClear: true,
-    //     placeholder: '请输入微信',
-    //   },
-    // },
-    // {
-    //   fieldName: 'email',
-    //   label: '邮箱',
-    //   component: 'Input',
-    //   componentProps: {
-    //     allowClear: true,
-    //     placeholder: '请输入邮箱',
-    //   },
-    // },
+    {
+      fieldName: 'payableAmount',
+      label: '应付金额',
+      component: 'NumberRange',
+      componentProps: {
+        allowClear: true,
+        precision: 2,
+      },
+    },
+    {
+      fieldName: 'paymentAmount',
+      label: '付款金额',
+      component: 'NumberRange',
+      componentProps: {
+        allowClear: true,
+        precision: 2,
+      },
+    },
+    {
+      fieldName: 'debtAmount',
+      label: '欠款金额',
+      component: 'NumberRange',
+      componentProps: {
+        allowClear: true,
+        precision: 2,
+      },
+    },
     {
       fieldName: 'createTime',
       label: '创建时间',

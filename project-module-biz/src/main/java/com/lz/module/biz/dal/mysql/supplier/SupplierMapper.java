@@ -24,6 +24,9 @@ public interface SupplierMapper extends BaseMapperX<SupplierDO> {
                 .likeIfPresent(SupplierDO::getQq, reqVO.getQq())
                 .likeIfPresent(SupplierDO::getWeChat, reqVO.getWeChat())
                 .likeIfPresent(SupplierDO::getEmail, reqVO.getEmail())
+                .betweenIfPresent(SupplierDO::getDebtAmount, reqVO.getDebtAmount())
+                .betweenIfPresent(SupplierDO::getPaymentAmount, reqVO.getPaymentAmount())
+                .betweenIfPresent(SupplierDO::getPayableAmount, reqVO.getPayableAmount())
                 .betweenIfPresent(SupplierDO::getCreateTime, reqVO.getCreateTime());
 
         // 动态排序（白名单字段），未传则默认按 id 倒序

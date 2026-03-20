@@ -30,13 +30,13 @@ public class SupplierPageReqVO extends PageParam {
     private String email;
 
     @Schema(description = "付款金额")
-    private BigDecimal paymentAmount;
+    private BigDecimal[] paymentAmount;
 
     @Schema(description = "欠款金额")
-    private BigDecimal debtAmount;
+    private BigDecimal[] debtAmount;
 
     @Schema(description = "应付金额")
-    private BigDecimal payableAmount;
+    private BigDecimal[] payableAmount;
 
     @Schema(description = "创建时间")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
