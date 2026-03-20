@@ -87,9 +87,11 @@ export function useFormSchema(): VbenFormSchema[] {
     {
       fieldName: 'remark',
       label: '备注',
-      component: 'Input',
+      component: 'Textarea',
+      formItemClass: 'col-span-2',
       componentProps: {
         placeholder: '请输入备注',
+        rows: 3,
       },
     },
   ];
@@ -178,6 +180,14 @@ export function useGridFormSchema(): VbenFormSchema[] {
       componentProps: {
         ...getRangePickerDefaultProps(),
         allowClear: true,
+      },
+    },
+    {
+      fieldName: 'remark',
+      label: '备注',
+      component: 'Input',
+      componentProps: {
+        placeholder: '请输入备注',
       },
     },
   ];

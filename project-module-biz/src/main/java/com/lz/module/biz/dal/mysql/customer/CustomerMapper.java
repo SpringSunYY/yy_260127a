@@ -28,6 +28,7 @@ public interface CustomerMapper extends BaseMapperX<CustomerDO> {
                 .eqIfPresent(CustomerDO::getDetailAddress, reqVO.getDetailAddress())
                 .eqIfPresent(CustomerDO::getIndustry, reqVO.getIndustry())
                 .betweenIfPresent(CustomerDO::getCreateTime, reqVO.getCreateTime())
+                .likeIfPresent(CustomerDO::getRemark, reqVO.getRemark())
                 .orderByDesc(CustomerDO::getId));
     }
 
