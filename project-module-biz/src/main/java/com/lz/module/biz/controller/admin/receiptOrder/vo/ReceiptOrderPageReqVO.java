@@ -50,6 +50,12 @@ public class ReceiptOrderPageReqVO extends PageParam {
     @Schema(description = "是否开票")
     private String isInvoiced;
 
+    @Schema(description = "备注")
+    private String remark;
+
+    @Schema(description = "收款事由")
+    private String receiptPurpose;
+
     @Schema(description = "创建时间")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
     private LocalDateTime[] createTime;

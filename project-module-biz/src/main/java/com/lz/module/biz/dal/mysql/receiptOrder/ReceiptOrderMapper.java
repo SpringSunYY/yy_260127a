@@ -37,6 +37,8 @@ public interface ReceiptOrderMapper extends BaseMapperX<ReceiptOrderDO> {
                 .eqIfPresent(ReceiptOrderDO::getReceiptMethod, reqVO.getReceiptMethod())
                 .eqIfPresent(ReceiptOrderDO::getIsInvoiced, reqVO.getIsInvoiced())
                 .betweenIfPresent(ReceiptOrderDO::getCreateTime, reqVO.getCreateTime())
+                .likeIfPresent(ReceiptOrderDO::getReceiptPurpose, reqVO.getReceiptPurpose())
+                .likeIfPresent(ReceiptOrderDO::getRemark, reqVO.getRemark())
                 .orderByDesc(ReceiptOrderDO::getId);
     }
 

@@ -174,9 +174,10 @@ export function useFormSchema(options?: FormSchemaOptions): VbenFormSchema[] {
     {
       fieldName: 'remark',
       label: '备注',
-      component: 'Input',
+      component: 'Textarea',
       componentProps: {
         placeholder: '请输入备注',
+        rows: 3,
       },
     },
   ];
@@ -254,15 +255,15 @@ export function useGridFormSchema(): VbenFormSchema[] {
         placeholder: '请输入项目名称',
       },
     },
-    {
-      fieldName: 'customerId',
-      label: '客户ID',
-      component: 'Input',
-      componentProps: {
-        allowClear: true,
-        placeholder: '请输入客户ID',
-      },
-    },
+    // {
+    //   fieldName: 'customerId',
+    //   label: '客户ID',
+    //   component: 'Input',
+    //   componentProps: {
+    //     allowClear: true,
+    //     placeholder: '请输入客户ID',
+    //   },
+    // },
     {
       fieldName: 'customerName',
       label: '客户名称',
@@ -299,6 +300,22 @@ export function useGridFormSchema(): VbenFormSchema[] {
         allowClear: true,
         options: getDictOptions(DICT_TYPE.COMMON_WHETHER, 'string'),
         placeholder: '请选择是否开票',
+      },
+    },
+    {
+      fieldName: 'receiptPurpose',
+      label: '收款事由',
+      component: 'Input',
+      componentProps: {
+        placeholder: '请输入收款事由',
+      },
+    },
+    {
+      fieldName: 'remark',
+      label: '备注',
+      component: 'Input',
+      componentProps: {
+        placeholder: '请输入备注',
       },
     },
     // {

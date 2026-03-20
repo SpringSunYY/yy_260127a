@@ -52,6 +52,12 @@
             <if test="isInvoiced != null">
                 AND is_invoiced = #{isInvoiced}
             </if>
+            <if test="receiptPurpose != null and receiptPurpose != ''">
+                AND receipt_purpose LIKE CONCAT('%', #{receiptPurpose}, '%')
+            </if>
+            <if test="remark != null and remark != ''">
+                AND remark LIKE CONCAT('%', #{remark}, '%')
+            </if>
             <if test="createTime != null and createTime.length == 2">
                 AND create_time BETWEEN #{createTime[0], javaType=java.time.LocalDateTime, jdbcType=TIMESTAMP} AND
                 #{createTime[1], javaType=java.time.LocalDateTime, jdbcType=TIMESTAMP}
