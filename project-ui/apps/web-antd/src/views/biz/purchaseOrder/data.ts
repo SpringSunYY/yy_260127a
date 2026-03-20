@@ -146,15 +146,15 @@ export function useGridFormSchema(): VbenFormSchema[] {
         placeholder: '请输入采购名称',
       },
     },
-    {
-      fieldName: 'supplierId',
-      label: '供应商ID',
-      component: 'Input',
-      componentProps: {
-        allowClear: true,
-        placeholder: '请选择供应商',
-      },
-    },
+    // {
+    //   fieldName: 'supplierId',
+    //   label: '供应商ID',
+    //   component: 'Input',
+    //   componentProps: {
+    //     allowClear: true,
+    //     placeholder: '请选择供应商',
+    //   },
+    // },
     {
       fieldName: 'supplierName',
       label: '供应商名称',
@@ -164,15 +164,15 @@ export function useGridFormSchema(): VbenFormSchema[] {
         placeholder: '请输入供应商名称',
       },
     },
-    {
-      fieldName: 'purchaseUserId',
-      label: '采购人ID',
-      component: 'Input',
-      componentProps: {
-        allowClear: true,
-        placeholder: '请输入采购人ID',
-      },
-    },
+    // {
+    //   fieldName: 'purchaseUserId',
+    //   label: '采购人ID',
+    //   component: 'Input',
+    //   componentProps: {
+    //     allowClear: true,
+    //     placeholder: '请输入采购人ID',
+    //   },
+    // },
     {
       fieldName: 'purchaserUserName',
       label: '采购人',
