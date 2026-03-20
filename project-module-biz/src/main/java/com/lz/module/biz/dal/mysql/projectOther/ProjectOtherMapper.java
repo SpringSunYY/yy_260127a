@@ -27,6 +27,7 @@ public interface ProjectOtherMapper extends BaseMapperX<ProjectOtherDO> {
                 .eqIfPresent(ProjectOtherDO::getMaterialDesc, reqVO.getMaterialDesc())
                 .eqIfPresent(ProjectOtherDO::getProgressStatus, reqVO.getProgressStatus())
                 .betweenIfPresent(ProjectOtherDO::getCreateTime, reqVO.getCreateTime())
+                .likeIfPresent(ProjectOtherDO::getRemark, reqVO.getRemark())
                 .orderByDesc(ProjectOtherDO::getId));
     }
 
