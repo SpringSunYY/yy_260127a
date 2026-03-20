@@ -127,8 +127,6 @@ public class SalaryPaymentOrderServiceImpl implements SalaryPaymentOrderService 
     public void deleteSalaryPaymentOrder(Long id) {
         // 校验存在
         SalaryPaymentOrderDO salaryPaymentOrderDO = validateSalaryPaymentOrderExists(id);
-        //查询工资信息
-        SalaryDO salaryDO = salaryMapper.selectById(salaryPaymentOrderDO.getSalaryId());
         //查询工人信息
         WorkerDO worker = workerService.getWorker(salaryPaymentOrderDO.getWorkerId());
         if (ObjUtil.isNotNull(worker)) {
@@ -138,9 +136,6 @@ public class SalaryPaymentOrderServiceImpl implements SalaryPaymentOrderService 
             salaryPaymentOrderMapper.deleteById(id);
             if (ObjUtil.isNotNull(worker)) {
                 workerService.updateWorkerAmount(worker);
-            }
-            if (ObjUtil.isNotNull(salaryDO)) {
-                salaryMapper.selectById(salaryDO);
             }
         });
     }
@@ -159,9 +154,6 @@ public class SalaryPaymentOrderServiceImpl implements SalaryPaymentOrderService 
         if (ArrayUtil.isNotEmpty(workerDOS)) {
             workerDOMap = workerDOS.stream().collect(Collectors.toMap(WorkerDO::getId, item -> item));
         }
-        //拿到所有的工资单
-        List<Long> salaryIds = salaryPaymentOrderDOS.stream().map(SalaryPaymentOrderDO::getSalaryId).collect(Collectors.toList());
-        List<SalaryDO> salaryDOS = salaryMapper.selectByIds(salaryIds);
         for (SalaryPaymentOrderDO item : salaryPaymentOrderDOS) {
             WorkerDO workerDO = workerDOMap.get(item.getWorkerId());
             if (ObjUtil.isNotNull(workerDO)) {
@@ -173,9 +165,6 @@ public class SalaryPaymentOrderServiceImpl implements SalaryPaymentOrderService 
             salaryPaymentOrderMapper.deleteByIds(ids);
             if (ArrayUtil.isNotEmpty(workerDOS)) {
                 finalWorkerDOMap.values().forEach(item -> workerService.updateWorkerAmount(item));
-            }
-            if (ArrayUtil.isNotEmpty(salaryDOS)) {
-                salaryMapper.selectByIds(salaryDOS);
             }
         });
     }
