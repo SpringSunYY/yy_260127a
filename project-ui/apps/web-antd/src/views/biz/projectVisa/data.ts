@@ -110,15 +110,15 @@ export function useFormSchema(): VbenFormSchema[] {
 /** 列表的搜索表单 */
 export function useGridFormSchema(): VbenFormSchema[] {
   return [
-    {
-      fieldName: 'projectId',
-      label: '项目ID',
-      component: 'Input',
-      componentProps: {
-        allowClear: true,
-        placeholder: '请输入项目ID',
-      },
-    },
+    // {
+    //   fieldName: 'projectId',
+    //   label: '项目ID',
+    //   component: 'Input',
+    //   componentProps: {
+    //     allowClear: true,
+    //     placeholder: '请输入项目ID',
+    //   },
+    // },
     {
       fieldName: 'projectNo',
       label: '项目编号',
@@ -182,6 +182,15 @@ export function useGridFormSchema(): VbenFormSchema[] {
     //     allowClear: true,
     //   },
     // },
+    {
+      fieldName: 'remark',
+      label: '备注',
+      component: 'Input',
+      componentProps: {
+        allowClear: true,
+        placeholder: '请输入备注',
+      },
+    },
   ];
 }
 

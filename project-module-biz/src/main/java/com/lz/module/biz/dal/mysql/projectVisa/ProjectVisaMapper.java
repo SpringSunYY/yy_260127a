@@ -25,6 +25,7 @@ public interface ProjectVisaMapper extends BaseMapperX<ProjectVisaDO> {
                 .likeIfPresent(ProjectVisaDO::getEngineeringName, reqVO.getEngineeringName())
                 .likeIfPresent(ProjectVisaDO::getVisaName, reqVO.getVisaName())
                 .betweenIfPresent(ProjectVisaDO::getCreateTime, reqVO.getCreateTime())
+                .likeIfPresent(ProjectVisaDO::getRemark, reqVO.getRemark())
                 .orderByDesc(ProjectVisaDO::getId));
     }
 
