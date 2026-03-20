@@ -10,6 +10,8 @@ import com.alibaba.excel.annotation.*;
 import com.lz.framework.excel.core.annotations.DictFormat;
 import com.lz.framework.excel.core.convert.DictConvert;
 
+import static com.lz.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY;
+
 @Schema(description = "管理后台 - 工资付款信息 Response VO")
 @Data
 @ExcelIgnoreUnannotated
@@ -41,6 +43,7 @@ public class SalaryPaymentOrderRespVO {
 
     @Schema(description = "付款日期", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("付款日期")
+    @com.alibaba.excel.annotation.format.DateTimeFormat(value = FORMAT_YEAR_MONTH_DAY)
     private LocalDateTime paymentTime;
 
     @Schema(description = "付款金额", requiredMode = Schema.RequiredMode.REQUIRED)

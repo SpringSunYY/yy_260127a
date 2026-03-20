@@ -8,6 +8,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDateTime;
 import com.alibaba.excel.annotation.*;
 
+import static com.lz.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY;
+
 @Schema(description = "管理后台 - 项目签证 Response VO")
 @Data
 @ExcelIgnoreUnannotated
@@ -35,6 +37,7 @@ public class ProjectVisaRespVO {
 
     @Schema(description = "时间")
     @ExcelProperty("时间")
+    @com.alibaba.excel.annotation.format.DateTimeFormat(value = FORMAT_YEAR_MONTH_DAY)
     private LocalDateTime visaTime;
 
     @Schema(description = "工程名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "王五")

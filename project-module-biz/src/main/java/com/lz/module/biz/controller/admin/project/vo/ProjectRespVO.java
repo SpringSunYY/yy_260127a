@@ -9,6 +9,8 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+import static com.lz.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY;
+
 @Schema(description = "管理后台 - 项目信息 Response VO")
 @Data
 @ExcelIgnoreUnannotated
@@ -55,10 +57,12 @@ public class ProjectRespVO {
 
     @Schema(description = "交底时间")
     @ExcelProperty("交底时间")
+    @com.alibaba.excel.annotation.format.DateTimeFormat(value = FORMAT_YEAR_MONTH_DAY)
     private LocalDateTime deliverTime;
 
     @Schema(description = "完工移交时间")
     @ExcelProperty("完工移交时间")
+    @com.alibaba.excel.annotation.format.DateTimeFormat(value = FORMAT_YEAR_MONTH_DAY)
     private LocalDateTime completedTime;
 
     @Schema(description = "财年")

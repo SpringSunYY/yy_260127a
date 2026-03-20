@@ -10,6 +10,8 @@ import com.alibaba.excel.annotation.*;
 import com.lz.framework.excel.core.annotations.DictFormat;
 import com.lz.framework.excel.core.convert.DictConvert;
 
+import static com.lz.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY;
+
 @Schema(description = "管理后台 - 采购信息 Response VO")
 @Data
 @ExcelIgnoreUnannotated
@@ -54,10 +56,12 @@ public class PurchaseOrderRespVO {
 
     @Schema(description = "期望到货日期")
     @ExcelProperty("期望到货日期")
+    @com.alibaba.excel.annotation.format.DateTimeFormat(value = FORMAT_YEAR_MONTH_DAY)
     private LocalDateTime expectedTime;
 
     @Schema(description = "实际到货日期")
     @ExcelProperty("实际到货日期")
+    @com.alibaba.excel.annotation.format.DateTimeFormat(value = FORMAT_YEAR_MONTH_DAY)
     private LocalDateTime actualTime;
 
     @Schema(description = "采购状态", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")

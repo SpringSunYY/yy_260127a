@@ -10,6 +10,8 @@ import com.alibaba.excel.annotation.*;
 import com.lz.framework.excel.core.annotations.DictFormat;
 import com.lz.framework.excel.core.convert.DictConvert;
 
+import static com.lz.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY;
+
 @Schema(description = "管理后台 - 其他工程 Response VO")
 @Data
 @ExcelIgnoreUnannotated
@@ -25,7 +27,7 @@ public class ProjectOtherRespVO {
 
     @Schema(description = "项目类型", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     @ExcelProperty(value = "项目类型", converter = DictConvert.class)
-    @DictFormat("biz_project_other_project_type")  
+    @DictFormat("biz_project_other_project_type")
     private String projectType;
 
     @Schema(description = "地址")
@@ -34,6 +36,7 @@ public class ProjectOtherRespVO {
 
     @Schema(description = "时间")
     @ExcelProperty("时间")
+    @com.alibaba.excel.annotation.format.DateTimeFormat(value = FORMAT_YEAR_MONTH_DAY)
     private LocalDateTime projectDate;
 
     @Schema(description = "施工费")
@@ -42,7 +45,7 @@ public class ProjectOtherRespVO {
 
     @Schema(description = "已结算", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty(value = "已结算", converter = DictConvert.class)
-    @DictFormat("common_whether")  
+    @DictFormat("common_whether")
     private String isSettled;
 
     @Schema(description = "附件")
@@ -55,7 +58,7 @@ public class ProjectOtherRespVO {
 
     @Schema(description = "进度", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     @ExcelProperty(value = "进度", converter = DictConvert.class)
-    @DictFormat("biz_project_other_project_progress")  
+    @DictFormat("biz_project_other_project_progress")
     private String progressStatus;
 
     @Schema(description = "备注", example = "你猜")

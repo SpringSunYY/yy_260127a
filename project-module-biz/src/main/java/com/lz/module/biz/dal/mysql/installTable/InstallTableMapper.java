@@ -28,6 +28,7 @@ public interface InstallTableMapper extends BaseMapperX<InstallTableDO> {
                 .likeIfPresent(InstallTableDO::getInstallerName, reqVO.getInstallerName())
                 .eqIfPresent(InstallTableDO::getIsHighAltitude, reqVO.getIsHighAltitude())
                 .eqIfPresent(InstallTableDO::getIsOpenTee, reqVO.getIsOpenTee())
+                .eqIfPresent(InstallTableDO::getAddMeterBox, reqVO.getAddMeterBox())
                 .likeIfPresent(InstallTableDO::getRemark, reqVO.getRemark())
                 .betweenIfPresent(InstallTableDO::getCreateTime, reqVO.getCreateTime())
                 .orderByDesc(InstallTableDO::getId));

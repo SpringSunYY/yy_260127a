@@ -9,6 +9,8 @@ import com.alibaba.excel.annotation.*;
 import com.lz.framework.excel.core.annotations.DictFormat;
 import com.lz.framework.excel.core.convert.DictConvert;
 
+import static com.lz.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY;
+
 @Schema(description = "管理后台 - 零散工程 Response VO")
 @Data
 @ExcelIgnoreUnannotated
@@ -36,21 +38,22 @@ public class ProjectScatteredRespVO {
 
     @Schema(description = "时间", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("时间")
+    @com.alibaba.excel.annotation.format.DateTimeFormat(value = FORMAT_YEAR_MONTH_DAY)
     private LocalDateTime scatteredTime;
 
     @Schema(description = "工程阶段", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty(value = "工程阶段", converter = DictConvert.class)
-    @DictFormat("biz_project_project_progress")  
+    @DictFormat("biz_project_project_progress")
     private String projectProgress;
 
     @Schema(description = "竣工图")
     @ExcelProperty(value = "竣工图", converter = DictConvert.class)
-    @DictFormat("common_whether")  
+    @DictFormat("common_whether")
     private String completedImage;
 
     @Schema(description = "现场核销")
     @ExcelProperty(value = "现场核销", converter = DictConvert.class)
-    @DictFormat("common_whether")  
+    @DictFormat("common_whether")
     private String verification;
 
     @Schema(description = "附件")

@@ -10,6 +10,8 @@ import com.alibaba.excel.annotation.*;
 import com.lz.framework.excel.core.annotations.DictFormat;
 import com.lz.framework.excel.core.convert.DictConvert;
 
+import static com.lz.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY;
+
 @Schema(description = "管理后台 - 装表信息 Response VO")
 @Data
 @ExcelIgnoreUnannotated
@@ -21,6 +23,7 @@ public class InstallTableRespVO {
 
     @Schema(description = "安装日期")
     @ExcelProperty("安装日期")
+    @com.alibaba.excel.annotation.format.DateTimeFormat(value = FORMAT_YEAR_MONTH_DAY)
     private LocalDateTime installDate;
 
     @Schema(description = "小区名称", example = "张三")
@@ -106,6 +109,7 @@ public class InstallTableRespVO {
 
     @Schema(description = "加表箱")
     @ExcelProperty(value = "加表箱", converter = DictConvert.class)
+    @DictFormat("common_whether")
     private String addMeterBox;
 
     @Schema(description = "安装人员", example = "赵六")

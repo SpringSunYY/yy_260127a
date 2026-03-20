@@ -48,6 +48,9 @@ public class InstallTablePageReqVO extends PageParam {
     @Schema(description = "开T")
     private String isOpenTee;
 
+    @Schema(description = "加装箱")
+    private String addMeterBox;
+
     @Schema(description = "备注", example = "你猜")
     private String remark;
 
