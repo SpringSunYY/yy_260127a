@@ -31,14 +31,10 @@ public class SalaryRespVO {
     @ExcelProperty("工人姓名")
     private String workerName;
 
-    @Schema(description = "是否结算")
-    @ExcelProperty(value = "是否结算", converter = DictConvert.class)
-    @DictFormat("common_whether")
-    private String isSettlement;
 
     @Schema(description = "工资周期")
     @ExcelProperty("工资周期")
-    private LocalDateTime salaryCycleTime;
+    private String salaryCycleTime;
 
     @Schema(description = "出勤天数")
     @ExcelProperty("出勤天数")

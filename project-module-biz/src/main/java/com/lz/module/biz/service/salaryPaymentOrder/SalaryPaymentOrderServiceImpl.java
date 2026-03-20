@@ -3,7 +3,6 @@ package com.lz.module.biz.service.salaryPaymentOrder;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
-import com.lz.framework.common.enums.CommonWhetherEnum;
 import com.lz.framework.common.exception.ServiceException;
 import com.lz.framework.common.pojo.PageResult;
 import com.lz.framework.common.util.id.IdUtils;
@@ -85,13 +84,9 @@ public class SalaryPaymentOrderServiceImpl implements SalaryPaymentOrderService 
         if (ObjUtil.isNull(salaryDO)) {
             throw exception(SALARY_NOT_EXISTS);
         }
-        if (salaryDO.getIsSettlement().equals(CommonWhetherEnum.COMMON_WHETHER_1.getStatus())) {
-            throw exception(SALARY_PAYMENT_ORDER_SALARY_PAYMENT);
-        }
         if (!salaryDO.getWorkerId().equals(orderDO.getWorkerId())) {
             throw exception(SALARY_PAYMENT_ORDER_WORKER_NOT_EQUAL);
         }
-        salaryDO.setIsSettlement(CommonWhetherEnum.COMMON_WHETHER_1.getStatus());
         return salaryDO;
     }
 
@@ -134,9 +129,6 @@ public class SalaryPaymentOrderServiceImpl implements SalaryPaymentOrderService 
         SalaryPaymentOrderDO salaryPaymentOrderDO = validateSalaryPaymentOrderExists(id);
         //查询工资信息
         SalaryDO salaryDO = salaryMapper.selectById(salaryPaymentOrderDO.getSalaryId());
-        if (ObjUtil.isNotNull(salaryDO)) {
-            salaryDO.setIsSettlement(CommonWhetherEnum.COMMON_WHETHER_2.getStatus());
-        }
         //查询工人信息
         WorkerDO worker = workerService.getWorker(salaryPaymentOrderDO.getWorkerId());
         if (ObjUtil.isNotNull(worker)) {
@@ -170,9 +162,6 @@ public class SalaryPaymentOrderServiceImpl implements SalaryPaymentOrderService 
         //拿到所有的工资单
         List<Long> salaryIds = salaryPaymentOrderDOS.stream().map(SalaryPaymentOrderDO::getSalaryId).collect(Collectors.toList());
         List<SalaryDO> salaryDOS = salaryMapper.selectByIds(salaryIds);
-        if (ArrayUtil.isNotEmpty(salaryDOS)) {
-            salaryDOS.forEach(item -> item.setIsSettlement(CommonWhetherEnum.COMMON_WHETHER_2.getStatus()));
-        }
         for (SalaryPaymentOrderDO item : salaryPaymentOrderDOS) {
             WorkerDO workerDO = workerDOMap.get(item.getWorkerId());
             if (ObjUtil.isNotNull(workerDO)) {
@@ -260,10 +249,6 @@ public class SalaryPaymentOrderServiceImpl implements SalaryPaymentOrderService 
                 if (ObjUtil.isNull(salaryDO)) {
                     throw new ServiceException(400, StrUtil.format("第{}行工资信息不存在", index));
                 }
-                //如果是已经支付
-                if (salaryDO.getIsSettlement().equals(CommonWhetherEnum.COMMON_WHETHER_1.getStatus())) {
-                    throw new ServiceException(400, StrUtil.format("第{}行工资信息已支付", index));
-                }
                 //如果工人和工资不匹配
                 if (!salaryDO.getWorkerId().equals(workerDO.getId())) {
                     throw new ServiceException(400, StrUtil.format("第{}行工人和工资不匹配", index));
@@ -274,7 +259,6 @@ public class SalaryPaymentOrderServiceImpl implements SalaryPaymentOrderService 
             orderDO.setPaymentNo(IdUtils.generateTimeRandomId());
             salaryPaymentOrderDOS.add(orderDO);
         }
-        salaryDOMap.forEach((key, value) -> value.setIsSettlement(CommonWhetherEnum.COMMON_WHETHER_1.getStatus()));
         return salaryPaymentOrderDOS;
     }
 
@@ -326,5 +310,4 @@ public class SalaryPaymentOrderServiceImpl implements SalaryPaymentOrderService 
             }
         }
     }
-
 }

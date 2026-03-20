@@ -26,11 +26,8 @@ public class SalarySaveReqVO {
     @Schema(description = "工人姓名", example = "芋艿")
     private String workerName;
 
-    @Schema(description = "是否结算")
-    private String isSettlement;
-
     @Schema(description = "工资周期")
-    private LocalDateTime salaryCycleTime;
+    private String salaryCycleTime;
 
     @Schema(description = "出勤天数")
     private Integer attendanceDays;

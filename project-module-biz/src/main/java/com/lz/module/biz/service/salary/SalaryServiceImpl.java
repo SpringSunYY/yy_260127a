@@ -3,13 +3,12 @@ package com.lz.module.biz.service.salary;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
-import com.lz.framework.common.enums.CommonWhetherEnum;
 import com.lz.framework.common.exception.ServiceException;
 import com.lz.framework.common.pojo.PageResult;
 import com.lz.framework.common.util.object.BeanUtils;
 import com.lz.framework.mybatis.core.query.LambdaQueryWrapperX;
-import com.lz.module.biz.controller.admin.salary.vo.SalaryImportVO;
 import com.lz.module.biz.controller.admin.salary.vo.SalaryImportRespVO;
+import com.lz.module.biz.controller.admin.salary.vo.SalaryImportVO;
 import com.lz.module.biz.controller.admin.salary.vo.SalaryPageReqVO;
 import com.lz.module.biz.controller.admin.salary.vo.SalarySaveReqVO;
 import com.lz.module.biz.dal.dataobject.salary.SalaryDO;
@@ -61,7 +60,6 @@ public class SalaryServiceImpl implements SalaryService {
         WorkerDO workerDO = validateWorkerExists(salary);
         workerDO.setPayableAmount(workerDO.getDebtAmount().add(salary.getPayableAmount()));
 
-        salary.setIsSettlement(CommonWhetherEnum.COMMON_WHETHER_2.getStatus());
         transactionTemplate.executeWithoutResult(status -> {
             salaryMapper.insert(salary);
             workerService.updateWorkerAmount(workerDO);
@@ -91,7 +89,7 @@ public class SalaryServiceImpl implements SalaryService {
             throw exception(SALARY_WORKER_CANNOT_UPDATE);
         }
         WorkerDO workerDO = validateWorkerExists(updateObj);
-        if (ObjUtil.isNotNull(workerDO)&&workerDO.getDebtAmount().compareTo(salaryDO.getPayableAmount())!=0) {
+        if (ObjUtil.isNotNull(workerDO) && workerDO.getDebtAmount().compareTo(salaryDO.getPayableAmount()) != 0) {
             BigDecimal currentAmount = updateReqVO.getPayableAmount().subtract(salaryDO.getPayableAmount());
             workerDO.setPayableAmount(workerDO.getDebtAmount().add(currentAmount));
             workerService.updateWorkerAmount(workerDO);
@@ -127,10 +125,10 @@ public class SalaryServiceImpl implements SalaryService {
         LambdaQueryWrapperX<WorkerDO> wrapper = new LambdaQueryWrapperX<>();
         wrapper.in(WorkerDO::getId, workerIds);
         List<WorkerDO> workerDOS = workerMapper.selectList(wrapper);
-        Map<Long, WorkerDO> workerDOMap=new HashMap<>();
+        Map<Long, WorkerDO> workerDOMap = new HashMap<>();
         if (ArrayUtil.isNotEmpty(workerDOS)) {
             //转换为map
-             workerDOMap = workerDOS.stream().collect(Collectors.toMap(WorkerDO::getId, workerDO -> workerDO));
+            workerDOMap = workerDOS.stream().collect(Collectors.toMap(WorkerDO::getId, workerDO -> workerDO));
             for (SalaryDO salaryDO : salaryDOList) {
                 WorkerDO workerDO = workerDOMap.get(salaryDO.getWorkerId());
                 if (ObjUtil.isNull(workerDO)) continue;
@@ -208,12 +206,8 @@ public class SalaryServiceImpl implements SalaryService {
                         StrUtil.format("第{}行导入失败，不存在编号: {} 的工人", i + 1, id));
             }
             //判断是否是结算
-            if (StrUtil.equals(vo.getIsSettlement(), CommonWhetherEnum.COMMON_WHETHER_1.getStatus())) {
-                workerDO.setPaymentAmount(workerDO.getPaymentAmount().add(vo.getPayableAmount()));
-                workerDO.setPayableAmount(workerDO.getPayableAmount().add(vo.getPayableAmount()));
-            }else {
-                workerDO.setPayableAmount(workerDO.getPayableAmount().add(vo.getPayableAmount()));
-            }
+            workerDO.setPayableAmount(workerDO.getPayableAmount().add(vo.getPayableAmount()));
+
             if (ObjUtil.isNotNull(vo.getWorkerId())) {
                 vo.setWorkerName(workerDOMap.get(vo.getWorkerId()).getWorkerName());
             }

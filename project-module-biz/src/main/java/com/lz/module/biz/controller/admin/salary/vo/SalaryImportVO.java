@@ -37,15 +37,10 @@ public class SalaryImportVO {
     @ExcelProperty("工人姓名")
     private String workerName;
 
-    @ExcelProperty(value = "是否结算", converter = DictConvert.class)
-    @DictFormat(DictTypeConstants.COMMON_WHETHER)
-    private String isSettlement;
-
     @ContentStyle(dataFormat = 22)
     @Schema(description = "工资周期")
     @ExcelProperty("工资周期")
-    @com.alibaba.excel.annotation.format.DateTimeFormat(value = FORMAT_YEAR_MONTH_DAY)
-    private LocalDateTime salaryCycleTime;
+    private String salaryCycleTime;
 
     @ExcelProperty("出勤天数")
     private Integer attendanceDays;

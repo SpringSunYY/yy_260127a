@@ -42,14 +42,9 @@ public class SalaryDO extends BaseDO {
      */
     private String workerName;
     /**
-     * 是否结算
-     * <p>
-     */
-    private String isSettlement;
-    /**
      * 工资周期
      */
-    private LocalDateTime salaryCycleTime;
+    private String salaryCycleTime;
     /**
      * 出勤天数
      */

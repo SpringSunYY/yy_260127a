@@ -91,6 +91,10 @@ const [Modal, modalApi] = useVbenModal({
     modalApi.lock();
     // 提交表单
     const data = (await formApi.getValues()) as SalaryApi.Salary;
+    // 处理工资周期格式化
+    if (data.salaryCycleTime && Array.isArray(data.salaryCycleTime) && data.salaryCycleTime.length === 2) {
+      data.salaryCycleTime = `${data.salaryCycleTime[0]}至${data.salaryCycleTime[1]}`;
+    }
     try {
       await (formData.value?.id ? updateSalary(data) : createSalary(data));
       // 关闭并提示
@@ -117,6 +121,13 @@ const [Modal, modalApi] = useVbenModal({
         data = await getSalary(data.id);
       } finally {
         modalApi.unlock();
+      }
+    }
+    // 将工资周期字符串格式转为数组格式
+    if (data.salaryCycleTime && typeof data.salaryCycleTime === 'string') {
+      const parts = data.salaryCycleTime.split('至');
+      if (parts.length === 2) {
+        data.salaryCycleTime = [parts[0].trim(), parts[1].trim()];
       }
     }
     // 设置到 values

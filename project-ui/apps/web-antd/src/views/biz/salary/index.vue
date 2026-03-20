@@ -116,11 +116,16 @@ const [Grid, gridApi] = useVbenVxeGrid({
     proxyConfig: {
       ajax: {
         query: async ({ page }, formValues) => {
-          totalAmount.value = await getTotalPayableAmount(formValues);
+          // 处理工资周期格式化
+          const queryParams = { ...formValues };
+          if (queryParams.salaryCycleTime && Array.isArray(queryParams.salaryCycleTime) && queryParams.salaryCycleTime.length === 2) {
+            queryParams.salaryCycleTime = `${queryParams.salaryCycleTime[0]}至${queryParams.salaryCycleTime[1]}`;
+          }
+          totalAmount.value = await getTotalPayableAmount(queryParams);
           return await getSalaryPage({
             pageNo: page.currentPage,
             pageSize: page.pageSize,
-            ...formValues,
+            ...queryParams,
           });
         },
       },

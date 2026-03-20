@@ -2,7 +2,7 @@ import type { VbenFormSchema } from '#/adapter/form';
 import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { SalaryApi } from '#/api/biz/salary';
 
-import { DICT_TYPE, getDictOptions, getRangePickerDefaultProps } from '#/utils';
+import { getRangePickerDefaultProps } from '#/utils';
 
 /** 新增/修改的表单 */
 export function useFormSchema(): VbenFormSchema[] {
@@ -41,27 +41,18 @@ export function useFormSchema(): VbenFormSchema[] {
       },
     },
     {
-      fieldName: 'isSettlement',
-      label: '是否结算',
-      component: 'RadioGroup',
-      componentProps: {
-        options: getDictOptions(DICT_TYPE.COMMON_WHETHER, 'string'),
-        buttonStyle: 'solid',
-        optionType: 'button',
-      },
-      dependencies: {
-        triggerFields: ['id'],
-        show: (values) => !!values.id,
-      },
-    },
-    {
       fieldName: 'salaryCycleTime',
       label: '工资周期',
-      component: 'DatePicker',
+      component: 'RangePicker',
       componentProps: {
-        showTime: true,
         format: 'YYYY-MM-DD',
-        valueFormat: 'x',
+        valueFormat: 'YYYY-MM-DD',
+        transformDateFunc: (dates: any) => {
+          if (dates && dates.length === 2) {
+            return `${dates[0]}至${dates[1]}`;
+          }
+          return undefined;
+        },
       },
     },
     {
@@ -188,22 +179,19 @@ export function useGridFormSchema(): VbenFormSchema[] {
       },
     },
     {
-      fieldName: 'isSettlement',
-      label: '是否结算',
-      component: 'Select',
-      componentProps: {
-        allowClear: true,
-        options: getDictOptions(DICT_TYPE.COMMON_WHETHER, 'string'),
-        placeholder: '请选择是否结算',
-      },
-    },
-    {
       fieldName: 'salaryCycleTime',
       label: '工资周期',
       component: 'RangePicker',
       componentProps: {
-        ...getRangePickerDefaultProps(),
         allowClear: true,
+        format: 'YYYY-MM-DD',
+        valueFormat: 'YYYY-MM-DD',
+        transformDateFunc: (dates: any) => {
+          if (dates && dates.length === 2) {
+            return `${dates[0]}至${dates[1]}`;
+          }
+          return undefined;
+        },
       },
     },
     {
@@ -243,19 +231,9 @@ export function useGridColumns(): VxeTableGridOptions<SalaryApi.Salary>['columns
       minWidth: 120,
     },
     {
-      field: 'isSettlement',
-      title: '是否结算',
-      minWidth: 120,
-      cellRender: {
-        name: 'CellDict',
-        props: { type: DICT_TYPE.COMMON_WHETHER },
-      },
-    },
-    {
       field: 'salaryCycleTime',
       title: '工资周期',
-      minWidth: 120,
-      formatter: 'formatDate',
+      minWidth: 180,
     },
     {
       field: 'attendanceDays',

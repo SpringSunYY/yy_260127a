@@ -7,9 +7,8 @@ import com.lz.framework.common.pojo.PageResult;
 import com.lz.framework.mybatis.core.query.LambdaQueryWrapperX;
 import com.lz.framework.mybatis.core.mapper.BaseMapperX;
 import com.lz.module.biz.dal.dataobject.salary.SalaryDO;
-import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.ibatis.annotations.Mapper;
-import com.lz.module.biz.controller.admin.salary.vo.*;
+import com.lz.module.biz.controller.admin.salary.vo.SalaryPageReqVO;
 
 /**
  * 工资信息 Mapper
@@ -24,8 +23,7 @@ public interface SalaryMapper extends BaseMapperX<SalaryDO> {
                 .likeIfPresent(SalaryDO::getName, reqVO.getName())
                 .eqIfPresent(SalaryDO::getWorkerId, reqVO.getWorkerId())
                 .likeIfPresent(SalaryDO::getWorkerName, reqVO.getWorkerName())
-                .eqIfPresent(SalaryDO::getIsSettlement, reqVO.getIsSettlement())
-                .betweenIfPresent(SalaryDO::getSalaryCycleTime, reqVO.getSalaryCycleTime())
+                .likeIfPresent(SalaryDO::getSalaryCycleTime, reqVO.getSalaryCycleTime())
                 .betweenIfPresent(SalaryDO::getCreateTime, reqVO.getCreateTime())
                 .orderByDesc(SalaryDO::getCreateTime));
     }

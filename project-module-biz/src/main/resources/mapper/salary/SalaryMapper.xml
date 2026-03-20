@@ -16,14 +16,8 @@
             <if test="workerName != null and workerName != ''">
                 and worker_name like concat('%', #{workerName}, '%')
             </if>
-            <if test="isSettlement != null and isSettlement != ''">
-                and is_settlement = #{isSettlement}
-            </if>
-            <if test="salaryCycleTime != null and salaryCycleTime.length == 2">
-                and salary_cycle_time between
-                #{salaryCycleTime[0], javaType=java.time.LocalDateTime, jdbcType=TIMESTAMP}
-                and
-                #{salaryCycleTime[1], javaType=java.time.LocalDateTime, jdbcType=TIMESTAMP}
+            <if test="salaryCycleTime != null and salaryCycleTime != ''">
+                and salary_cycle_time like concat('%', #{salaryCycleTime}, '%')
             </if>
             <if test="createTime != null and createTime.length == 2">
                 AND create_time BETWEEN #{createTime[0], javaType=java.time.LocalDateTime, jdbcType=TIMESTAMP} AND

@@ -23,12 +23,8 @@ public class SalaryPageReqVO extends PageParam {
     @Schema(description = "工人姓名", example = "芋艿")
     private String workerName;
 
-    @Schema(description = "是否结算")
-    private String isSettlement;
-
     @Schema(description = "工资周期")
-    @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
-    private LocalDateTime[] salaryCycleTime;
+    private String salaryCycleTime;
 
     @Schema(description = "创建时间")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)

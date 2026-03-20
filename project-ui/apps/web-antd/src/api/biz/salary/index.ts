@@ -1,5 +1,3 @@
-import type { Dayjs } from 'dayjs';
-
 import type { PageParam, PageResult } from '@vben/request';
 
 import { requestClient } from '#/api/request';
@@ -10,8 +8,7 @@ export namespace SalaryApi {
     id: number; // 编号
     workerId: number; // 工人编号
     workerName: string; // 工人姓名
-    isSettlement: string; // 是否结算
-    settlementTime: Dayjs | string; // 结算日期
+    salaryCycleTime: string; // 工资周期，格式如 "2025-10-01至2025-11-01"
     attendanceDays: number; // 出勤天数
     overtimeDays: number; // 加班天数
     laborFeeAmount: number; // 劳务费金额
