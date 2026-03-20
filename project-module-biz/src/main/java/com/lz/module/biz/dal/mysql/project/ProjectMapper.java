@@ -1,13 +1,11 @@
 package com.lz.module.biz.dal.mysql.project;
 
-import java.util.*;
-
 import com.lz.framework.common.pojo.PageResult;
-import com.lz.framework.mybatis.core.query.LambdaQueryWrapperX;
 import com.lz.framework.mybatis.core.mapper.BaseMapperX;
+import com.lz.framework.mybatis.core.query.LambdaQueryWrapperX;
+import com.lz.module.biz.controller.admin.project.vo.ProjectPageReqVO;
 import com.lz.module.biz.dal.dataobject.project.ProjectDO;
 import org.apache.ibatis.annotations.Mapper;
-import com.lz.module.biz.controller.admin.project.vo.*;
 
 /**
  * 项目信息 Mapper
@@ -30,11 +28,14 @@ public interface ProjectMapper extends BaseMapperX<ProjectDO> {
                 .betweenIfPresent(ProjectDO::getCompletedTime, reqVO.getCompletedTime())
                 .eqIfPresent(ProjectDO::getFiscalYear, reqVO.getFiscalYear())
                 .eqIfPresent(ProjectDO::getProjectProgress, reqVO.getProjectProgress())
+                .eqIfPresent(ProjectDO::getIsCompletedFile, reqVO.getIsCompletedFile())
+                .eqIfPresent(ProjectDO::getIsVerification, reqVO.getIsVerification())
                 .eqIfPresent(ProjectDO::getIsCompleted, reqVO.getIsCompleted())
-                .eqIfPresent(ProjectDO::getVerification, reqVO.getVerification())
-                .eqIfPresent(ProjectDO::getDeterminedQuantity, reqVO.getDeterminedQuantity())
-                .eqIfPresent(ProjectDO::getMaterialVerification, reqVO.getMaterialVerification())
+                .eqIfPresent(ProjectDO::getIsDeterminedQuantity, reqVO.getIsDeterminedQuantity())
+                .eqIfPresent(ProjectDO::getIsMaterialVerification, reqVO.getIsMaterialVerification())
+                .eqIfPresent(ProjectDO::getIsSettlementFile, reqVO.getIsSettlementFile())
                 .betweenIfPresent(ProjectDO::getCreateTime, reqVO.getCreateTime())
+                .likeIfPresent(ProjectDO::getRemark, reqVO.getRemark())
                 .orderByDesc(ProjectDO::getId));
     }
 

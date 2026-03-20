@@ -125,9 +125,11 @@ public class ProjectController {
                         .fiscalYear(2023)
                         .projectProgress(BizProjectProgressEnum.BIZ_PROJECT_PROGRESS_2.getStatus())
                         .isCompleted(CommonWhetherEnum.COMMON_WHETHER_1.getStatus())
-                        .verification(CommonWhetherEnum.COMMON_WHETHER_1.getStatus())
-                        .determinedQuantity(CommonWhetherEnum.COMMON_WHETHER_1.getStatus())
-                        .materialVerification(CommonWhetherEnum.COMMON_WHETHER_1.getStatus())
+                        .isSettlementFile(CommonWhetherEnum.COMMON_WHETHER_1.getStatus())
+                        .isCompletedFile(CommonWhetherEnum.COMMON_WHETHER_1.getStatus())
+                        .isVerification(CommonWhetherEnum.COMMON_WHETHER_1.getStatus())
+                        .isDeterminedQuantity(CommonWhetherEnum.COMMON_WHETHER_1.getStatus())
+                        .isMaterialVerification(CommonWhetherEnum.COMMON_WHETHER_1.getStatus())
                         .remark("备注").build());
         // 输出
         ExcelUtils.write(response, "项目信息导入模板.xls", "项目模板", ProjectImportExcelVO.class, list);

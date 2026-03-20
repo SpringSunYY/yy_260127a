@@ -49,20 +49,29 @@ public class ProjectPageReqVO extends PageParam {
     @Schema(description = "工程阶段")
     private String projectProgress;
 
+    @Schema(description = "竣工资料")
+    private String isCompletedFile;
+
+    @Schema(description = "现场核销")
+    private String isVerification;
+
     @Schema(description = "竣工图")
     private String isCompleted;
 
-    @Schema(description = "现场核销")
-    private String verification;
-
-    @Schema(description = "竣工工程量确认单")
-    private String determinedQuantity;
+    @Schema(description = "竣工工程确定量")
+    private String isDeterminedQuantity;
 
     @Schema(description = "材料核销")
-    private String materialVerification;
+    private String isMaterialVerification;
+
+    @Schema(description = "结算审定书")
+    private String isSettlementFile;
 
     @Schema(description = "创建时间")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
     private LocalDateTime[] createTime;
+
+    @Schema(description = "备注")
+    private String remark;
 
 }

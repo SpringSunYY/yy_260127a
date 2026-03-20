@@ -39,7 +39,6 @@ public class ProjectDO extends BaseDO {
     /**
      * 项目类型
      * <p>
-     * 枚举 {@link TODO biz_project_type 对应的类}
      */
     private String projectType;
     /**
@@ -49,13 +48,11 @@ public class ProjectDO extends BaseDO {
     /**
      * 工程类型
      * <p>
-     * 枚举 {@link TODO biz_project_project_progress 对应的类}
      */
     private String engineeringType;
     /**
      * 属于PMC
      * <p>
-     * 枚举 {@link TODO common_whether 对应的类}
      */
     private String isPmc;
     /**
@@ -85,33 +82,38 @@ public class ProjectDO extends BaseDO {
     /**
      * 工程阶段
      * <p>
-     * 枚举 {@link TODO biz_project_project_progress 对应的类}
      */
     private String projectProgress;
     /**
+     * 竣工资料
+     *
+     */
+    private String isCompletedFile;
+    /**
+     * 现场核销
+     *
+     */
+    private String isVerification;
+    /**
      * 竣工图
-     * <p>
-     * 枚举 {@link TODO common_whether 对应的类}
+     *
      */
     private String isCompleted;
     /**
-     * 现场核销
-     * <p>
-     * 枚举 {@link TODO common_whether 对应的类}
+     * 竣工工程确定量
+     *
      */
-    private String verification;
-    /**
-     * 竣工工程量确认单
-     * <p>
-     * 枚举 {@link TODO common_whether 对应的类}
-     */
-    private String determinedQuantity;
+    private String isDeterminedQuantity;
     /**
      * 材料核销
-     * <p>
-     * 枚举 {@link TODO common_whether 对应的类}
+     *
      */
-    private String materialVerification;
+    private String isMaterialVerification;
+    /**
+     * 结算审定书
+     *
+     */
+    private String isSettlementFile;
     /**
      * 附件
      */

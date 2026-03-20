@@ -139,16 +139,16 @@ export function useFormSchema(): VbenFormSchema[] {
       },
     },
     {
-      fieldName: 'isCompleted',
-      label: '竣工图',
+      fieldName: 'isCompletedFile',
+      label: '竣工资料',
       component: 'Select',
       componentProps: {
         options: getDictOptions(DICT_TYPE.COMMON_WHETHER, 'string'),
-        placeholder: '请选择竣工图',
+        placeholder: '请选择竣工资料',
       },
     },
     {
-      fieldName: 'verification',
+      fieldName: 'isVerification',
       label: '现场核销',
       component: 'Select',
       componentProps: {
@@ -157,16 +157,26 @@ export function useFormSchema(): VbenFormSchema[] {
       },
     },
     {
-      fieldName: 'determinedQuantity',
-      label: '竣工工程量确认单',
-      component: 'Select',
+      fieldName: 'isCompleted',
+      label: '竣工图',
+      component: 'RadioGroup',
       componentProps: {
         options: getDictOptions(DICT_TYPE.COMMON_WHETHER, 'string'),
-        placeholder: '请选择竣工工程量确认单',
+        buttonStyle: 'solid',
+        optionType: 'button',
       },
     },
     {
-      fieldName: 'materialVerification',
+      fieldName: 'isDeterminedQuantity',
+      label: '竣工工程确定量',
+      component: 'Select',
+      componentProps: {
+        options: getDictOptions(DICT_TYPE.COMMON_WHETHER, 'string'),
+        placeholder: '请选择竣工工程确定量',
+      },
+    },
+    {
+      fieldName: 'isMaterialVerification',
       label: '材料核销',
       component: 'Select',
       componentProps: {
@@ -175,8 +185,18 @@ export function useFormSchema(): VbenFormSchema[] {
       },
     },
     {
+      fieldName: 'isSettlementFile',
+      label: '结算审定书',
+      component: 'Select',
+      componentProps: {
+        options: getDictOptions(DICT_TYPE.COMMON_WHETHER, 'string'),
+        placeholder: '请选择结算审定书',
+      },
+    },
+    {
       fieldName: 'appendixFile',
       label: '附件',
+      formItemClass: 'col-span-2',
       component: 'FileUpload',
     },
     {
@@ -239,7 +259,7 @@ export function useGridFormSchema(): VbenFormSchema[] {
       componentProps: {
         allowClear: true,
         options: getDictOptions(
-          DICT_TYPE.BIZ_PROJECT_PROJECT_PROGRESS,
+          DICT_TYPE.BIZ_PROJECT_ENGINEERING_TYPE,
           'string',
         ),
         placeholder: '请选择工程类型',
@@ -292,16 +312,23 @@ export function useGridFormSchema(): VbenFormSchema[] {
       },
     },
     {
-      fieldName: 'projectProgress',
-      label: '工程阶段',
+      fieldName: 'isCompletedFile',
+      label: '竣工资料',
       component: 'Select',
       componentProps: {
         allowClear: true,
-        options: getDictOptions(
-          DICT_TYPE.BIZ_PROJECT_PROJECT_PROGRESS,
-          'string',
-        ),
-        placeholder: '请选择工程阶段',
+        options: getDictOptions(DICT_TYPE.COMMON_WHETHER, 'string'),
+        placeholder: '请选择竣工资料',
+      },
+    },
+    {
+      fieldName: 'isVerification',
+      label: '现场核销',
+      component: 'Select',
+      componentProps: {
+        allowClear: true,
+        options: getDictOptions(DICT_TYPE.COMMON_WHETHER, 'string'),
+        placeholder: '请选择现场核销',
       },
     },
     {
@@ -315,33 +342,41 @@ export function useGridFormSchema(): VbenFormSchema[] {
       },
     },
     {
-      fieldName: 'verification',
-      label: '现场核销',
+      fieldName: 'isDeterminedQuantity',
+      label: '竣工工程确定量',
       component: 'Select',
       componentProps: {
         allowClear: true,
         options: getDictOptions(DICT_TYPE.COMMON_WHETHER, 'string'),
-        placeholder: '请选择现场核销',
+        placeholder: '请选择竣工工程确定量',
       },
     },
     {
-      fieldName: 'determinedQuantity',
-      label: '竣工工程量',
-      component: 'Select',
-      componentProps: {
-        allowClear: true,
-        options: getDictOptions(DICT_TYPE.COMMON_WHETHER, 'string'),
-        placeholder: '请选择竣工工程量确认单',
-      },
-    },
-    {
-      fieldName: 'materialVerification',
+      fieldName: 'isMaterialVerification',
       label: '材料核销',
       component: 'Select',
       componentProps: {
         allowClear: true,
         options: getDictOptions(DICT_TYPE.COMMON_WHETHER, 'string'),
         placeholder: '请选择材料核销',
+      },
+    },
+    {
+      fieldName: 'isSettlementFile',
+      label: '结算审定书',
+      component: 'Select',
+      componentProps: {
+        allowClear: true,
+        options: getDictOptions(DICT_TYPE.COMMON_WHETHER, 'string'),
+        placeholder: '请选择结算审定书',
+      },
+    },
+    {
+      fieldName: 'remark',
+      label: '备注',
+      component: 'Input',
+      componentProps: {
+        placeholder: '请输入备注',
       },
     },
     // {
@@ -450,6 +485,24 @@ export function useGridColumns(): VxeTableGridOptions<ProjectApi.Project>['colum
       minWidth: 120,
     },
     {
+      field: 'isCompletedFile',
+      title: '竣工资料',
+      minWidth: 120,
+      cellRender: {
+        name: 'CellDict',
+        props: { type: DICT_TYPE.COMMON_WHETHER },
+      },
+    },
+    {
+      field: 'isVerification',
+      title: '现场核销',
+      minWidth: 120,
+      cellRender: {
+        name: 'CellDict',
+        props: { type: DICT_TYPE.COMMON_WHETHER },
+      },
+    },
+    {
       field: 'isCompleted',
       title: '竣工图',
       minWidth: 120,
@@ -459,8 +512,8 @@ export function useGridColumns(): VxeTableGridOptions<ProjectApi.Project>['colum
       },
     },
     {
-      field: 'verification',
-      title: '现场核销',
+      field: 'isDeterminedQuantity',
+      title: '竣工工程确定量',
       minWidth: 120,
       cellRender: {
         name: 'CellDict',
@@ -468,17 +521,17 @@ export function useGridColumns(): VxeTableGridOptions<ProjectApi.Project>['colum
       },
     },
     {
-      field: 'determinedQuantity',
-      title: '竣工工程量确认单',
-      minWidth: 120,
-      cellRender: {
-        name: 'CellDict',
-        props: { type: DICT_TYPE.COMMON_WHETHER },
-      },
-    },
-    {
-      field: 'materialVerification',
+      field: 'isMaterialVerification',
       title: '材料核销',
+      minWidth: 120,
+      cellRender: {
+        name: 'CellDict',
+        props: { type: DICT_TYPE.COMMON_WHETHER },
+      },
+    },
+    {
+      field: 'isSettlementFile',
+      title: '结算审定书',
       minWidth: 120,
       cellRender: {
         name: 'CellDict',

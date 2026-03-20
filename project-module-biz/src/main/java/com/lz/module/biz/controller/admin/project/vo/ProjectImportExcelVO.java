@@ -76,26 +76,35 @@ public class ProjectImportExcelVO {
     @DictFormat("biz_project_project_progress")
     private String projectProgress;
 
+    @Schema(description = "竣工资料")
+    @ExcelProperty(value = "竣工资料", converter = DictConvert.class)
+    @DictFormat("common_whether")
+    private String isCompletedFile;
+
+    @Schema(description = "现场核销")
+    @ExcelProperty(value = "现场核销", converter = DictConvert.class)
+    @DictFormat("common_whether")
+    private String isVerification;
+
     @Schema(description = "竣工图")
     @ExcelProperty(value = "竣工图", converter = DictConvert.class)
     @DictFormat("common_whether")
     private String isCompleted;
 
-    @Schema(description = "现场核销")
-    @ExcelProperty(value = "现场核销", converter = DictConvert.class)
+    @Schema(description = "竣工工程确定量")
+    @ExcelProperty(value = "竣工工程确定量", converter = DictConvert.class)
     @DictFormat("common_whether")
-    private String verification;
-
-    @Schema(description = "竣工工程量确认单")
-    @ExcelProperty(value = "竣工工程量确认单", converter = DictConvert.class)
-    @DictFormat("common_whether")
-    private String determinedQuantity;
+    private String isDeterminedQuantity;
 
     @Schema(description = "材料核销")
     @ExcelProperty(value = "材料核销", converter = DictConvert.class)
     @DictFormat("common_whether")
-    private String materialVerification;
+    private String isMaterialVerification;
 
+    @Schema(description = "结算审定书")
+    @ExcelProperty(value = "结算审定书", converter = DictConvert.class)
+    @DictFormat("common_whether")
+    private String isSettlementFile;
     @Schema(description = "备注", example = "随便")
     @ExcelProperty("备注")
     private String remark;

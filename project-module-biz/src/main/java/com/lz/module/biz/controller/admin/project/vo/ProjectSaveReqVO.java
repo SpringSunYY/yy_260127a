@@ -54,22 +54,27 @@ public class ProjectSaveReqVO {
     @Schema(description = "签证数")
     private Integer visaNum;
 
+    @Schema(description = "竣工资料")
+    private String isCompletedFile;
+
     @Schema(description = "工程阶段", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotEmpty(message = "工程阶段不能为空")
     private String projectProgress;
 
+    @Schema(description = "现场核销")
+    private String isVerification;
+
     @Schema(description = "竣工图")
     private String isCompleted;
 
-
-    @Schema(description = "现场核销")
-    private String verification;
-
-    @Schema(description = "竣工工程量确认单")
-    private String determinedQuantity;
+    @Schema(description = "竣工工程确定量")
+    private String isDeterminedQuantity;
 
     @Schema(description = "材料核销")
-    private String materialVerification;
+    private String isMaterialVerification;
+
+    @Schema(description = "结算审定书")
+    private String isSettlementFile;
 
     @Schema(description = "附件")
     private String appendixFile;

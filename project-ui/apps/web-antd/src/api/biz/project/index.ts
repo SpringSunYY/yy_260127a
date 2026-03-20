@@ -18,14 +18,15 @@ export namespace ProjectApi {
     customerName: string; // 服务商名称
     deliverTime: Dayjs | string; // 交底时间
     fiscalYear: number; // 财年
+    completedTime: Dayjs | string; // 完工移交时间
     visaNum: number; // 签证数
+    isCompletedFile: string; // 竣工资料
     projectProgress?: string; // 工程阶段
+    isVerification: string; // 现场核销
     isCompleted: string; // 竣工图
-    completedFile: string; // 竣工资料
-    verification: string; // 现场核销
-    determinedQuantity: string; // 竣工工程量确认单
-    materialVerification: string; // 材料核销
-    settlementFile: string; // 结算审定书
+    isDeterminedQuantity: string; // 竣工工程确定量
+    isMaterialVerification: string; // 材料核销
+    isSettlementFile: string; // 结算审定书
     appendixFile: string; // 附件
     remark: string; // 备注
   }
