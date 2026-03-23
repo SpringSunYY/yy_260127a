@@ -39,6 +39,7 @@ public class SupplierServiceImpl implements SupplierService {
     public Long createSupplier(SupplierSaveReqVO createReqVO) {
         // 插入
         SupplierDO supplier = BeanUtils.toBean(createReqVO, SupplierDO.class);
+        calculateAmount(supplier);
         supplierMapper.insert(supplier);
 
         // 返回
@@ -51,6 +52,7 @@ public class SupplierServiceImpl implements SupplierService {
         validateSupplierExists(updateReqVO.getId());
         // 更新
         SupplierDO updateObj = BeanUtils.toBean(updateReqVO, SupplierDO.class);
+        calculateAmount(updateObj);
         supplierMapper.updateById(updateObj);
     }
 
@@ -103,6 +105,11 @@ public class SupplierServiceImpl implements SupplierService {
 
     @Override
     public void updateSupplierAmount(SupplierDO supplierDO) {
+        calculateAmount(supplierDO);
+        supplierMapper.updateById(supplierDO);
+    }
+
+    private static void calculateAmount(SupplierDO supplierDO) {
         //应付金额-已付金额=欠款金额
         BigDecimal payableAmount = supplierDO.getPayableAmount();
         BigDecimal paymentAmount = supplierDO.getPaymentAmount();
@@ -116,7 +123,6 @@ public class SupplierServiceImpl implements SupplierService {
                 supplierDO.setPayableAmount(BigDecimal.ZERO);
             }
         }
-        supplierMapper.updateById(supplierDO);
     }
 
 }

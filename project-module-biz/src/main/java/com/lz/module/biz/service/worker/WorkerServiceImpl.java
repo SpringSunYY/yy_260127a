@@ -39,6 +39,7 @@ public class WorkerServiceImpl implements WorkerService {
     public Long createWorker(WorkerSaveReqVO createReqVO) {
         // 插入
         WorkerDO worker = BeanUtils.toBean(createReqVO, WorkerDO.class);
+        calculateAmount(worker);
         workerMapper.insert(worker);
 
         // 返回
@@ -51,6 +52,7 @@ public class WorkerServiceImpl implements WorkerService {
         validateWorkerExists(updateReqVO.getId());
         // 更新
         WorkerDO updateObj = BeanUtils.toBean(updateReqVO, WorkerDO.class);
+        calculateAmount(updateObj);
         workerMapper.updateById(updateObj);
     }
 
@@ -124,6 +126,11 @@ public class WorkerServiceImpl implements WorkerService {
 
     @Override
     public void updateWorkerAmount(WorkerDO workerDO) {
+        calculateAmount(workerDO);
+        workerMapper.updateById(workerDO);
+    }
+
+    private static void calculateAmount(WorkerDO workerDO) {
         //应付金额-已付金额=欠款金额
         BigDecimal payableAmount = workerDO.getPayableAmount();
         BigDecimal paymentAmount = workerDO.getPaymentAmount();
@@ -140,7 +147,6 @@ public class WorkerServiceImpl implements WorkerService {
                 workerDO.setPayableAmount(BigDecimal.ZERO);
             }
         }
-        workerMapper.updateById(workerDO);
     }
 
 }

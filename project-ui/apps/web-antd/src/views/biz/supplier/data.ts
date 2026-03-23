@@ -135,6 +135,7 @@ export function useGridFormSchema(): VbenFormSchema[] {
     {
       fieldName: 'payableAmount',
       label: '应付金额',
+      rules: 'required',
       component: 'NumberRange',
       componentProps: {
         allowClear: true,
@@ -144,6 +145,7 @@ export function useGridFormSchema(): VbenFormSchema[] {
     {
       fieldName: 'paymentAmount',
       label: '付款金额',
+      rules: 'required',
       component: 'NumberRange',
       componentProps: {
         allowClear: true,
@@ -153,6 +155,7 @@ export function useGridFormSchema(): VbenFormSchema[] {
     {
       fieldName: 'debtAmount',
       label: '欠款金额',
+      rules: 'required',
       component: 'NumberRange',
       componentProps: {
         allowClear: true,
