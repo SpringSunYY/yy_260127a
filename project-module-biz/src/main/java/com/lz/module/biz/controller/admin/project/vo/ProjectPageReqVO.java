@@ -58,7 +58,7 @@ public class ProjectPageReqVO extends PageParam {
     @Schema(description = "竣工图")
     private String isCompleted;
 
-    @Schema(description = "竣工工程确定量")
+    @Schema(description = "工程量确认单")
     private String isDeterminedQuantity;
 
     @Schema(description = "材料核销")

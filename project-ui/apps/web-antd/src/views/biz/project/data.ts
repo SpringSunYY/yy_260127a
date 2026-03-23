@@ -159,20 +159,19 @@ export function useFormSchema(): VbenFormSchema[] {
     {
       fieldName: 'isCompleted',
       label: '竣工图',
-      component: 'RadioGroup',
+      component: 'Select',
       componentProps: {
         options: getDictOptions(DICT_TYPE.COMMON_WHETHER, 'string'),
-        buttonStyle: 'solid',
-        optionType: 'button',
+        placeholder: '请选择竣工图',
       },
     },
     {
       fieldName: 'isDeterminedQuantity',
-      label: '竣工工程确定量',
+      label: '工程量确认单',
       component: 'Select',
       componentProps: {
         options: getDictOptions(DICT_TYPE.COMMON_WHETHER, 'string'),
-        placeholder: '请选择竣工工程确定量',
+        placeholder: '请选择工程量确认单',
       },
     },
     {
@@ -343,12 +342,12 @@ export function useGridFormSchema(): VbenFormSchema[] {
     },
     {
       fieldName: 'isDeterminedQuantity',
-      label: '竣工工程确定量',
+      label: '工程量确认单',
       component: 'Select',
       componentProps: {
         allowClear: true,
         options: getDictOptions(DICT_TYPE.COMMON_WHETHER, 'string'),
-        placeholder: '请选择竣工工程确定量',
+        placeholder: '请选择工程量确认单',
       },
     },
     {
@@ -430,7 +429,7 @@ export function useGridColumns(): VxeTableGridOptions<ProjectApi.Project>['colum
       minWidth: 120,
       cellRender: {
         name: 'CellDict',
-        props: { type: DICT_TYPE.BIZ_PROJECT_PROJECT_PROGRESS },
+        props: { type: DICT_TYPE.BIZ_PROJECT_ENGINEERING_TYPE },
       },
     },
     {
@@ -513,7 +512,7 @@ export function useGridColumns(): VxeTableGridOptions<ProjectApi.Project>['colum
     },
     {
       field: 'isDeterminedQuantity',
-      title: '竣工工程确定量',
+      title: '工程量确认单',
       minWidth: 120,
       cellRender: {
         name: 'CellDict',

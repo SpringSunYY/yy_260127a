@@ -94,8 +94,8 @@ public class ProjectRespVO {
     @DictFormat("common_whether")
     private String isCompleted;
 
-    @Schema(description = "竣工工程确定量")
-    @ExcelProperty(value = "竣工工程确定量", converter = DictConvert.class)
+    @Schema(description = "工程量确认单")
+    @ExcelProperty(value = "工程量确认单", converter = DictConvert.class)
     @DictFormat("common_whether")
     private String isDeterminedQuantity;
 

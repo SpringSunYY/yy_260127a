@@ -100,7 +100,7 @@ public class ProjectDO extends BaseDO {
      */
     private String isCompleted;
     /**
-     * 竣工工程确定量
+     * 工程量确认单
      *
      */
     private String isDeterminedQuantity;

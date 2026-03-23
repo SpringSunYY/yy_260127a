@@ -24,7 +24,7 @@ export namespace ProjectApi {
     projectProgress?: string; // 工程阶段
     isVerification: string; // 现场核销
     isCompleted: string; // 竣工图
-    isDeterminedQuantity: string; // 竣工工程确定量
+    isDeterminedQuantity: string; // 工程量确认单
     isMaterialVerification: string; // 材料核销
     isSettlementFile: string; // 结算审定书
     appendixFile: string; // 附件
