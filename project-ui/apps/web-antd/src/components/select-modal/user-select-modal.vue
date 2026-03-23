@@ -23,7 +23,7 @@ import {
 } from 'ant-design-vue';
 
 import { getSimpleDeptList } from '#/api/system/dept';
-import { getUserPage } from '#/api/system/user';
+import { getSimpleUserPage, getUserPage } from '#/api/system/user';
 
 // 部门树节点接口
 interface DeptTreeNode {
@@ -197,7 +197,8 @@ const filteredDeptTree = computed(() => {
 // 加载用户数据
 async function loadUserData(pageNo: number, pageSize: number) {
   try {
-    const { list, total } = await getUserPage({
+    console.log('loadUserData', pageNo, pageSize);
+    const { list, total } = await getSimpleUserPage({
       pageNo,
       pageSize,
       deptId: selectedDeptId.value,

@@ -5,12 +5,11 @@ import type { BpmProcessInstanceApi } from '#/api/bpm/processInstance';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
+import { useVbenModal } from '@vben/common-ui';
 import { IconifyIcon } from '@vben/icons';
 import { formatDateTime, isEmpty } from '@vben/utils';
 
 import { Avatar, Button, Image, Timeline, Tooltip } from 'ant-design-vue';
-
-import { useVbenModal } from '@vben/common-ui';
 
 import { UserSelectModal } from '#/components/select-modal';
 import {
@@ -20,11 +19,6 @@ import {
 } from '#/utils';
 
 defineOptions({ name: 'BpmProcessInstanceTimeline' });
-
-const [UserSelectModalComp, userSelectModalApi] = useVbenModal({
-  connectedComponent: UserSelectModal,
-  destroyOnClose: true,
-});
 
 withDefaults(
   defineProps<{
@@ -39,6 +33,11 @@ withDefaults(
 const emit = defineEmits<{
   selectUserConfirm: [activityId: string, userList: any[]];
 }>();
+
+const [UserSelectModalComp, userSelectModalApi] = useVbenModal({
+  connectedComponent: UserSelectModal,
+  destroyOnClose: true,
+});
 
 const { push } = useRouter(); // 路由
 

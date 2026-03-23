@@ -112,6 +112,22 @@ public class UserController {
                 pageResult.getTotal()));
     }
 
+    @GetMapping("/simple-page")
+    @Operation(summary = "获得用户精简信息分页列表")
+    public CommonResult<PageResult<UserSimplePageRespVO>> getSimpleUserPage(@Validated UserPageReqVO pageReqVO) {
+        // 获得用户分页列表
+        PageResult<AdminUserDO> pageResult = userService.getUserPage(pageReqVO);
+        if (CollUtil.isEmpty(pageResult.getList())) {
+            return success(new PageResult<>(pageResult.getTotal()));
+        }
+        // 拼接数据
+        Map<Long, DeptDO> deptMap = deptService.getDeptMap(
+                convertList(pageResult.getList(), AdminUserDO::getDeptId)
+        );
+        return success(new PageResult<>(UserConvert.INSTANCE.convertSimplePageList(pageResult.getList(), deptMap),
+                pageResult.getTotal()));
+    }
+
     @GetMapping({"/list-all-simple", "/simple-list"})
     @Operation(summary = "获取用户精简信息列表", description = "只包含被开启的用户，主要用于前端的下拉选项")
     public CommonResult<List<UserSimpleRespVO>> getSimpleUserList() {
