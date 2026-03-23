@@ -107,11 +107,15 @@ public class SalaryPaymentOrderServiceImpl implements SalaryPaymentOrderService 
         // 更新
         SalaryPaymentOrderDO updateObj = BeanUtils.toBean(updateReqVO, SalaryPaymentOrderDO.class);
         //如果工人信息被修改了
-        if (!salaryPaymentOrderDO.getWorkerId().equals(updateObj.getWorkerId())) {
+        if (ObjUtil.isNotNull(salaryPaymentOrderDO.getSalaryId())
+                && ObjUtil.isNotNull(updateObj.getSalaryId())
+                && !salaryPaymentOrderDO.getWorkerId().equals(updateObj.getWorkerId())) {
             throw exception(SALARY_PAYMENT_ORDER_WORKER_CANNOT_UPDATE);
         }
         //如果工资信息被修改了
-        if (!salaryPaymentOrderDO.getSalaryId().equals(updateObj.getSalaryId())) {
+        if (ObjUtil.isNotNull(salaryPaymentOrderDO.getSalaryId())
+                && ObjUtil.isNotNull(updateObj.getSalaryId())
+                && !salaryPaymentOrderDO.getSalaryId().equals(updateObj.getSalaryId())) {
             throw exception(SALARY_PAYMENT_ORDER_SALARY_CANNOT_UPDATE);
         }
         WorkerDO workerDO = judgeWorker(updateObj);
