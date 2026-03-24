@@ -128,24 +128,24 @@ export function useFormSchema(): VbenFormSchema[] {
 /** 列表的搜索表单 */
 export function useGridFormSchema(): VbenFormSchema[] {
   return [
-    {
-      fieldName: 'orderNo',
-      label: '采购单号',
-      component: 'Input',
-      componentProps: {
-        allowClear: true,
-        placeholder: '请输入采购单号',
-      },
-    },
-    {
-      fieldName: 'name',
-      label: '采购名称',
-      component: 'Input',
-      componentProps: {
-        allowClear: true,
-        placeholder: '请输入采购名称',
-      },
-    },
+    // {
+    //   fieldName: 'orderNo',
+    //   label: '采购单号',
+    //   component: 'Input',
+    //   componentProps: {
+    //     allowClear: true,
+    //     placeholder: '请输入采购单号',
+    //   },
+    // },
+    // {
+    //   fieldName: 'name',
+    //   label: '采购名称',
+    //   component: 'Input',
+    //   componentProps: {
+    //     allowClear: true,
+    //     placeholder: '请输入采购名称',
+    //   },
+    // },
     // {
     //   fieldName: 'supplierId',
     //   label: '供应商ID',

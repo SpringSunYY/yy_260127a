@@ -311,6 +311,18 @@ export function useGridFormSchema(): VbenFormSchema[] {
       },
     },
     {
+      fieldName: 'projectProgress',
+      label: '工程阶段',
+      component: 'Select',
+      componentProps: {
+        options: getDictOptions(
+          DICT_TYPE.BIZ_PROJECT_PROJECT_PROGRESS,
+          'string',
+        ),
+        placeholder: '请选择工程阶段',
+      },
+    },
+    {
       fieldName: 'isCompletedFile',
       label: '竣工资料',
       component: 'Select',
